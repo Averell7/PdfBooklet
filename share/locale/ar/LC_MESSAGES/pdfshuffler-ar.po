@@ -1,0 +1,281 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PDF-Shuffler 0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-11-28 12:53+0100\n"
+"PO-Revision-Date: 2014-11-28 12:55+0100\n"
+"Last-Translator: Averell7 <averell7@users.sourceforge.net>\n"
+"Language-Team: Hatim Alahmadi <dr.hatim@hotmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"Language: ar_SA\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#: pdfshuffler_g.py:127
+msgid "Can't load icon. Application is not installed correctly."
+msgstr ""
+
+#: pdfshuffler_g.py:318
+msgid "No document"
+msgstr ""
+
+#: pdfshuffler_g.py:320
+msgid "Several documents"
+msgstr ""
+
+#: pdfshuffler_g.py:336
+#, python-format
+msgid "Rendering thumbnails... [%(i1)s/%(i2)s]"
+msgstr ""
+
+#: pdfshuffler_g.py:453
+msgid "page"
+msgstr "صفحة"
+
+#: pdfshuffler_g.py:479
+msgid "Export ..."
+msgstr "تصدير ..."
+
+#: pdfshuffler_g.py:488
+#: pdfshuffler_g.py:610
+msgid "PDF files"
+msgstr "ملفات pdf"
+
+#: pdfshuffler_g.py:494
+#: pdfshuffler_g.py:605
+msgid "All files"
+msgstr "كل الملفات"
+
+#: pdfshuffler_g.py:538
+#, fuzzy, python-format
+msgid ""
+"File %s is encrypted.\n"
+"Support for encrypted files has not been implemented yet.\n"
+"File export failed."
+msgstr "Support for such files has not been implemented yet."
+
+#: pdfshuffler_g.py:594
+msgid "Import..."
+msgstr "استيراد ..."
+
+#: pdfshuffler_g.py:630
+msgid "OpenDocument not supported yet!"
+msgstr "فتح مستند غير مدعوم حاليا!"
+
+#: pdfshuffler_g.py:632
+msgid "Image file not supported yet!"
+msgstr "ملف الصورة غير مدعوم حاليا!"
+
+#: pdfshuffler_g.py:634
+msgid "File type not supported!"
+msgstr "نوع الملف غير مدعوم!"
+
+#: pdfshuffler_g.py:636
+#, python-format
+msgid "File %s does not exist"
+msgstr "الملف %s غير موجود"
+
+#: pdfshuffler_g.py:638
+msgid "Closed, no files selected"
+msgstr "إغلاق, لا يوجد ملف محدد"
+
+#: pdfshuffler_g.py:1030
+msgid "Left"
+msgstr "يسار"
+
+#: pdfshuffler_g.py:1030
+msgid "Right"
+msgstr "يمين"
+
+#: pdfshuffler_g.py:1031
+msgid "Top"
+msgstr "أعلى"
+
+#: pdfshuffler_g.py:1031
+msgid "Bottom"
+msgstr "أسفل"
+
+#: pdfshuffler_g.py:1049
+#, fuzzy
+msgid "Crop Selected Pages"
+msgstr "قص الصفحات المحددة"
+
+#: pdfshuffler_g.py:1057
+msgid "Crop Margins"
+msgstr "قص الهوامش"
+
+#: pdfshuffler_g.py:1064
+#, python-format
+msgid "% of width"
+msgstr "% of width"
+
+#: pdfshuffler_g.py:1064
+#, python-format
+msgid "% of height"
+msgstr "% of height"
+
+#: pdfshuffler_g.py:1102
+msgid "Dialog closed"
+msgstr "اغلاق النافذة"
+
+#: pdfshuffler_g.py:1116
+#, python-format
+msgid "%s is a tool for rearranging and modifying PDF files. Developed using GTK+ and Python"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:83
+#: data/pdfshuffler_g.glade:370
+msgid "Rotate _Right"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:95
+#: data/pdfshuffler_g.glade:358
+msgid "Rotate _Left"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:107
+msgid "C_rop"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:130
+msgid "Add _Blank Page Before"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:190
+msgid "Add Blank Page _After"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:281
+msgid "_File"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:289
+msgid "_Open"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:301
+msgid "_Save"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:313
+msgid "Save _As..."
+msgstr ""
+
+#: data/pdfshuffler_g.glade:331
+msgid "_Quit"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:350
+msgid "_Edit"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:382
+msgid "Add blank page _before"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:439
+msgid "Add blank page _after"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:502
+msgid "_Delete"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:514
+msgid "_Crop"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:533
+msgid "_View"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:541
+msgid "Zoom _in"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:553
+msgid "Zoom _out"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:572
+msgid "_Help"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:580
+#, fuzzy
+msgid "_About"
+msgstr "حول"
+
+#: data/pdfshuffler_g.glade:617
+msgid "Open"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:632
+msgid "Save"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:647
+msgid "Save as"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:672
+msgid "Zoom in"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:687
+msgid "Zoom out"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:712
+msgid "Rotate left"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:727
+msgid "Rotate right"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:742
+msgid "Crop"
+msgstr ""
+
+#: data/pdfshuffler_g.glade:757
+#, fuzzy
+msgid "Delete"
+msgstr "حذف الصفحات"
+
+#~ msgid "Import pdf"
+#~ msgstr "استيراد pdf"
+
+#~ msgid "Export pdf"
+#~ msgstr "تصدير pdf"
+
+#~ msgid "Rotate Page(s) Clockwise"
+#~ msgstr "تدوير مع عقارب الساعة"
+
+#~ msgid "Rotate Page(s) Counterclockwise"
+#~ msgstr "تدوير عكس عقارب الساعة"
+
+#~ msgid "Crop Page(s)"
+#~ msgstr "قص صفحات"
+
+#~ msgid "Error writing file: %s"
+#~ msgstr "ملف تسجيل الخطأ: %s"
+
+#~ msgid "File %s is encrypted."
+#~ msgstr "الملف %s  مشفّر."
+
+#~ msgid "File export failed."
+#~ msgstr "فشل تصدير الملف."
+
+#~ msgid "exporting to:"
+#~ msgstr "تصدير إلى:"
+
+#~ msgid ""
+#~ "PDF-Shuffler is a simple pyGTK utility which lets you merge, split and "
+#~ "rearrange PDF documents. You can also rotate and crop individual pages of "
+#~ "a pdf document."
+#~ msgstr ""
+#~ "PDF-Shuffler أداة pyGTK بسيطة تسمح لنا بدمج, وتقسيم وترتيب مستندات pdf. "
+#~ "تستطيع أيضا تدوير وقص صفحات معينة في مستند pdf."

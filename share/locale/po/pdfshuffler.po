@@ -1,0 +1,281 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PDF-Shuffler 0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-02-22 12:35+0100\n"
+"PO-Revision-Date: 2014-02-22 12:38+0100\n"
+"Last-Translator: GL <gaston.lagaffe@wanadoo.fr>\n"
+"Language-Team: Emmanuel <emmanuel@simple-linux.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: french\n"
+"X-Poedit-Country: FRANCE\n"
+
+#: ..\..\..\pdfshuffler_g.py:127
+msgid "Can't load icon. Application is not installed correctly."
+msgstr "Impossible de charger l'icône. L'application n'est pas installée correctement."
+
+#: ..\..\..\pdfshuffler_g.py:318
+msgid "No document"
+msgstr "Pas de document"
+
+#: ..\..\..\pdfshuffler_g.py:320
+msgid "Several documents"
+msgstr "Plusieurs documents"
+
+#: ..\..\..\pdfshuffler_g.py:336
+#, python-format
+msgid "Rendering thumbnails... [%(i1)s/%(i2)s]"
+msgstr "Rendu miniatures... [%(i1)s/%(i2)s]"
+
+#: ..\..\..\pdfshuffler_g.py:453
+msgid "page"
+msgstr "page"
+
+#: ..\..\..\pdfshuffler_g.py:479
+msgid "Export ..."
+msgstr "Exporter ..."
+
+#: ..\..\..\pdfshuffler_g.py:488
+#: ..\..\..\pdfshuffler_g.py:609
+msgid "PDF files"
+msgstr "Fichier PDF"
+
+#: ..\..\..\pdfshuffler_g.py:493
+#: ..\..\..\pdfshuffler_g.py:604
+msgid "All files"
+msgstr "Tous les fichiers"
+
+#: ..\..\..\pdfshuffler_g.py:537
+#, python-format
+msgid ""
+"File %s is encrypted.\n"
+"Support for encrypted files has not been implemented yet.\n"
+"File export failed."
+msgstr ""
+"Le fichier %s est crypté.\n"
+"Le support pour ce type de fichier n'a pas encore été implémenté.\n"
+"L'exportation du fichier a échoué"
+
+#: ..\..\..\pdfshuffler_g.py:593
+msgid "Import..."
+msgstr "Importer ..."
+
+#: ..\..\..\pdfshuffler_g.py:628
+msgid "OpenDocument not supported yet!"
+msgstr "OpenDocument n'est pas encore supporté !"
+
+#: ..\..\..\pdfshuffler_g.py:630
+msgid "Image file not supported yet!"
+msgstr "Le format image n'est pas encore supporté !"
+
+#: ..\..\..\pdfshuffler_g.py:632
+msgid "File type not supported!"
+msgstr "Type de ficher pas encore supporté !"
+
+#: ..\..\..\pdfshuffler_g.py:634
+#, python-format
+msgid "File %s does not exist"
+msgstr "Le fichier %s n'existe pas"
+
+#: ..\..\..\pdfshuffler_g.py:636
+msgid "Closed, no files selected"
+msgstr "Fermé, aucun fichier sélectionné"
+
+#: ..\..\..\pdfshuffler_g.py:1028
+msgid "Left"
+msgstr "Gauche"
+
+#: ..\..\..\pdfshuffler_g.py:1028
+msgid "Right"
+msgstr "Droite"
+
+#: ..\..\..\pdfshuffler_g.py:1029
+msgid "Top"
+msgstr "Dessus"
+
+#: ..\..\..\pdfshuffler_g.py:1029
+msgid "Bottom"
+msgstr "Bas"
+
+#: ..\..\..\pdfshuffler_g.py:1047
+msgid "Crop Selected Pages"
+msgstr "Couper la(les) page(s) sélectionné(es)"
+
+#: ..\..\..\pdfshuffler_g.py:1055
+msgid "Crop Margins"
+msgstr "Couper les marges"
+
+#: ..\..\..\pdfshuffler_g.py:1062
+#, python-format
+msgid "% of width"
+msgstr " \\%de la largeur"
+
+#: ..\..\..\pdfshuffler_g.py:1062
+#, python-format
+msgid "% of height"
+msgstr " \\%de la hauteur"
+
+#: ..\..\..\pdfshuffler_g.py:1100
+msgid "Dialog closed"
+msgstr "Fenêtre de dialogue fermée"
+
+#: ..\..\..\pdfshuffler_g.py:1114
+#, python-format
+msgid "%s is a tool for rearranging and modifying PDF files. Developed using GTK+ and Python"
+msgstr "%s est un outil destiné à réarranger et modifier les pages de fichiers PDF. Développé avec GTK+ et Python"
+
+#: ..\..\..\data\pdfshuffler_g.glade:83
+#: ..\..\..\data\pdfshuffler_g.glade:370
+msgid "Rotate _Right"
+msgstr "Tourner à droite"
+
+#: ..\..\..\data\pdfshuffler_g.glade:95
+#: ..\..\..\data\pdfshuffler_g.glade:358
+msgid "Rotate _Left"
+msgstr "Tourner à gauche"
+
+#: ..\..\..\data\pdfshuffler_g.glade:107
+msgid "C_rop"
+msgstr "_Couper les mages"
+
+#: ..\..\..\data\pdfshuffler_g.glade:130
+msgid "Add _Blank Page Before"
+msgstr "Ajouter une page_ blanche avant"
+
+#: ..\..\..\data\pdfshuffler_g.glade:190
+msgid "Add Blank Page _After"
+msgstr "_Ajouter une page blanche après"
+
+#: ..\..\..\data\pdfshuffler_g.glade:281
+msgid "_File"
+msgstr "_Fichier"
+
+#: ..\..\..\data\pdfshuffler_g.glade:289
+msgid "_Open"
+msgstr "_Ouvrir"
+
+#: ..\..\..\data\pdfshuffler_g.glade:301
+msgid "_Save"
+msgstr "_Enregistrer"
+
+#: ..\..\..\data\pdfshuffler_g.glade:313
+msgid "Save _As..."
+msgstr "Enregistrer _sous..."
+
+#: ..\..\..\data\pdfshuffler_g.glade:331
+msgid "_Quit"
+msgstr "_Quitter"
+
+#: ..\..\..\data\pdfshuffler_g.glade:350
+msgid "_Edit"
+msgstr "É_diter"
+
+#: ..\..\..\data\pdfshuffler_g.glade:382
+msgid "Add blank page _before"
+msgstr "Ajouter une page _blanche avant"
+
+#: ..\..\..\data\pdfshuffler_g.glade:439
+msgid "Add blank page _after"
+msgstr "Ajouter une page blanche _après"
+
+#: ..\..\..\data\pdfshuffler_g.glade:502
+msgid "_Delete"
+msgstr "_Effacer"
+
+#: ..\..\..\data\pdfshuffler_g.glade:514
+msgid "_Crop"
+msgstr "_Recouper"
+
+#: ..\..\..\data\pdfshuffler_g.glade:533
+msgid "_View"
+msgstr "_Voir"
+
+#: ..\..\..\data\pdfshuffler_g.glade:541
+msgid "Zoom _in"
+msgstr "_Zoom avant"
+
+#: ..\..\..\data\pdfshuffler_g.glade:553
+msgid "Zoom _out"
+msgstr "Zoom _arrière"
+
+#: ..\..\..\data\pdfshuffler_g.glade:572
+msgid "_Help"
+msgstr "_Aide"
+
+#: ..\..\..\data\pdfshuffler_g.glade:580
+msgid "_About"
+msgstr "A propos"
+
+#: ..\..\..\data\pdfshuffler_g.glade:617
+msgid "Open"
+msgstr "Ouvrir"
+
+#: ..\..\..\data\pdfshuffler_g.glade:632
+msgid "Save"
+msgstr "Enregistrer"
+
+#: ..\..\..\data\pdfshuffler_g.glade:647
+msgid "Save as"
+msgstr "Enregistrer sous..."
+
+#: ..\..\..\data\pdfshuffler_g.glade:672
+msgid "Zoom in"
+msgstr "Agrandir"
+
+#: ..\..\..\data\pdfshuffler_g.glade:687
+msgid "Zoom out"
+msgstr "Réduire"
+
+#: ..\..\..\data\pdfshuffler_g.glade:712
+msgid "Rotate left"
+msgstr "Tourner à gauche"
+
+#: ..\..\..\data\pdfshuffler_g.glade:727
+msgid "Rotate right"
+msgstr "Tourner à droite"
+
+#: ..\..\..\data\pdfshuffler_g.glade:742
+msgid "Crop"
+msgstr "Couper les marges"
+
+#: ..\..\..\data\pdfshuffler_g.glade:757
+msgid "Delete"
+msgstr "Effacer"
+
+#~ msgid "Error writing file: %s"
+#~ msgstr "Une erreur s'est produite pendant l'écriture du fichier : %s"
+
+#~ msgid "File %s is encrypted."
+#~ msgstr "Le fichier %s est codé."
+
+#~ msgid "File export failed."
+#~ msgstr "Exportation des fichiers échouée."
+
+#~ msgid "exporting to:"
+#~ msgstr "exporter en :"
+
+#~ msgid "Import pdf"
+#~ msgstr "Importer PDF"
+
+#~ msgid "Export pdf"
+#~ msgstr "Exporter PDF"
+
+#~ msgid "Rotate Page(s) Clockwise"
+#~ msgstr "Rotation de la(les) page(s) en sens horaire"
+
+#~ msgid "Rotate Page(s) Counterclockwise"
+#~ msgstr "Rotation de la(les) page(s) en sens anti-horaire"
+
+#~ msgid "Crop Page(s)"
+#~ msgstr "Couper la(les) page(s)"
+
+#~ msgid ""
+#~ "PDF-Shuffler is a simple pyGTK utility which lets you merge, split and "
+#~ "rearrange PDF documents. You can also rotate and crop individual pages of "
+#~ "a pdf document."
+#~ msgstr ""
+#~ "PDF-Shuffler est un simple outil pyGTK qui vous permet de réunir, couper "
+#~ "et réarrangez des documents PDF. Vous pouvez aussi pivoter et couper des "
+#~ "pages individuelles d'un document pdf."

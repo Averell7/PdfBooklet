@@ -1,0 +1,794 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-02-22 12:35+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ..\..\..\pdfbooklet.py:366 ..\..\..\pdfshuffler_g.py:593
+msgid "Import..."
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:376 ..\..\..\files_chooser.py:77
+#: ..\..\..\pdfshuffler_g.py:493 ..\..\..\pdfshuffler_g.py:604
+msgid "All files"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:381
+msgid "INI files"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:484
+msgid "Save project..."
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:658
+msgid "Pdf-Booklet_User's_Guide.pdf"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:677 ..\..\..\pdfbooklet.py:1952
+#: ..\..\..\pdfbooklet.py:2118 ..\..\..\pdfbooklet.py:2632
+msgid "No selection"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:677 ..\..\..\pdfbooklet.py:2118
+msgid ""
+"There is no selected page. \n"
+"Please select a page first. "
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:732 ..\..\..\pdfbooklet.py:748
+#: ..\..\..\pdfbooklet.py:762 ..\..\..\pdfbooklet.py:765
+#: ..\..\..\pdfbooklet.py:781 ..\..\..\pdfbooklet.py:785
+#: ..\..\..\pdfbooklet.py:792 ..\..\..\pdfbooklet.py:795
+#: ..\..\..\pdfbooklet.py:2638
+msgid "Invalid data"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:732 ..\..\..\pdfbooklet.py:748
+#: ..\..\..\pdfbooklet.py:765 ..\..\..\pdfbooklet.py:792
+#: ..\..\..\pdfbooklet.py:795
+#, python-format
+msgid "Invalid data for %s - must be numeric. Aborting \n"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:762 ..\..\..\pdfbooklet.py:785
+#, python-format
+msgid "Invalid data for %s - must be > 0. Aborting \n"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:781
+#, python-format
+msgid "Invalid data for %s - must be >= 0. Aborting \n"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:811
+msgid "rows"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:813
+msgid "columns"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:822
+msgid "step"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:831
+msgid "folios"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:832 ..\..\..\data\pdfbooklet2.glade:2126
+msgid "Leading blank pages"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:834 ..\..\..\data\pdfbooklet2.glade:2075
+msgid "Trailing blank pages"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:836 ..\..\..\data\pdfbooklet2.glade:2174
+msgid "Reference page"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:881
+msgid "Width"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:883
+msgid "Height"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:893
+#, python-format
+msgid "Size of output file =    %s mm x %s mm "
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:1275
+#, python-format
+msgid ""
+"Expected page number was : %d. Only %d found. \n"
+"There is an error in your layout, please correct"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:1952
+msgid ""
+"There is no selected file. \n"
+"Please select a file first. "
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2019 ..\..\..\pdfshuffler_g.py:453
+msgid "page"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2616
+msgid "No file loaded"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2616
+msgid "Please select a file first"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2632
+msgid "There is no selection"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2638
+#, python-format
+msgid "Invalid data for Selection : %s. Aborting \n"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2687
+#, python-format
+msgid "Blank pages to be added : %s"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2756
+#, python-format
+msgid "Booklet %s : pages %s - %s"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2957
+msgid "File existing"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2957
+msgid ""
+"The outputfile already exists \n"
+"overWrite ? "
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2965
+msgid "File already open"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2965
+msgid ""
+"The output file is already opened \n"
+"probably in Adobe Reader. \n"
+"Close the file and start again"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2994
+msgid "Output page Horizontal Shift"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:2997
+msgid "Output page Vertical Shift"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:3000
+msgid "Output page Scale"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:3003
+msgid "Output page Rotation"
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:3055
+#, python-format
+msgid "Assembling pages: %s "
+msgstr ""
+
+#: ..\..\..\pdfbooklet.py:3063
+#, python-format
+msgid "Total length : %s "
+msgstr ""
+
+#: ..\..\..\files_chooser.py:45
+msgid "Filename"
+msgstr ""
+
+#: ..\..\..\files_chooser.py:82 ..\..\..\pdfshuffler_g.py:488
+#: ..\..\..\pdfshuffler_g.py:609
+msgid "PDF files"
+msgstr ""
+
+#: ..\..\..\files_chooser.py:99 ..\..\..\files_chooser.py:150
+#: ..\..\..\pdfshuffler_g.py:632
+msgid "File type not supported!"
+msgstr ""
+
+#: ..\..\..\files_chooser.py:101 ..\..\..\files_chooser.py:152
+#: ..\..\..\pdfshuffler_g.py:634
+#, python-format
+msgid "File %s does not exist"
+msgstr ""
+
+#: ..\..\..\files_chooser.py:103 ..\..\..\pdfshuffler_g.py:636
+msgid "Closed, no files selected"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:127
+msgid "Can't load icon. Application is not installed correctly."
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:318
+msgid "No document"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:320
+msgid "Several documents"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:336
+#, python-format
+msgid "Rendering thumbnails... [%(i1)s/%(i2)s]"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:479
+msgid "Export ..."
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:537
+#, python-format
+msgid ""
+"File %s is encrypted.\n"
+"Support for encrypted files has not been implemented yet.\n"
+"File export failed."
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:628
+msgid "OpenDocument not supported yet!"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:630
+msgid "Image file not supported yet!"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1028
+msgid "Left"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1028
+msgid "Right"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1029
+msgid "Top"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1029
+msgid "Bottom"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1047
+msgid "Crop Selected Pages"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1055
+msgid "Crop Margins"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1062
+#, python-format
+msgid "% of width"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1062
+#, python-format
+msgid "% of height"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1100
+msgid "Dialog closed"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1114
+#, python-format
+msgid ""
+"%s is a tool for rearranging and modifying PDF files. Developed using GTK+ "
+"and Python"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:18
+msgid ""
+"Pdf-Shuffler is delivered under the GNU General Public Licence (GPL) Version "
+"3.\n"
+"Pdf-Booklet is delivered under the CeCill Licence. "
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:120
+msgid "Copy transformations"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:130
+msgid "Paste Transformations"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:140
+msgid "Standard Transformations"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:151
+msgid "Rotate 0"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:161
+msgid "Rotate 90"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:171
+msgid "Rotate 180"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:181
+msgid "Rotate 270"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:196
+msgid "Custom Transformations"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:207
+msgid "Load"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:216 ..\..\..\data\pdfshuffler_g.glade:632
+msgid "Save"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:295
+msgid ""
+"<b>Syntax : </b>\n"
+"separate items by commas, \n"
+"or on different lines. \n"
+"\n"
+"## \t: single page\n"
+"[## - ##] : page range\n"
+"b   \t: blank page\n"
+"#b \t: repeated blank pages. \n"
+"\n"
+"<b>Examples : </b>\n"
+"10, 25, 43\n"
+"[10-20]\n"
+"5b\n"
+"\n"
+"<b>For files other than the first, </b>\n"
+"indicate the number followed by a colon. \n"
+"\n"
+"Examples :\n"
+"2:10, 3:25, 1:43\n"
+"2:[10-20]\n"
+"\n"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:377
+msgid ""
+"This is an advanced feature. Please read documentation to use it properly.\n"
+"Here is a short summary :\n"
+"\n"
+"Enter page numbers separated by commas on a separate line for each row\n"
+"Blank pages can be indicated by a b. \n"
+"\n"
+"Example : \n"
+"\n"
+"8,1,2,7\n"
+"3,6,5,4\n"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:467 ..\..\..\data\pdfbooklet2.glade:1380
+msgid "Step :"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:478
+msgid "Automatic"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:495
+msgid "="
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:636 ..\..\..\data\pdfbooklet2.glade:1714
+msgid "Vertical Shift (mm)"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:648 ..\..\..\data\pdfbooklet2.glade:1726
+msgid "Scale (%)"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:660 ..\..\..\data\pdfbooklet2.glade:1738
+msgid "Rotation (degrees)"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:672 ..\..\..\data\pdfbooklet2.glade:1777
+msgid "Horizontal Shift (mm)"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:776 ..\..\..\data\pdfbooklet2.glade:1976
+msgid "this page only"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:796
+msgid "Apply"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:811 ..\..\..\data\pdfbooklet2.glade:1992
+msgid "Reset"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:826
+msgid "Close"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:885
+msgid "_Files"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:893
+msgid "_File manager"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:911
+msgid "_Open Project"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:923
+msgid "_Save project"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:935
+msgid "Save project _as ..."
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:953
+msgid "Save settings as _default"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:971 ..\..\..\data\pdfshuffler_g.glade:331
+msgid "_Quit"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1032
+msgid "_Pages"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1040
+msgid "_Edit pages list"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1052
+msgid "_Pages selector"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1071 ..\..\..\data\pdfshuffler_g.glade:572
+msgid "_Help"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1079
+msgid "User's Guide"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1091 ..\..\..\data\pdfshuffler_g.glade:580
+msgid "_About"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1146
+msgid "Single Booklet"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1163
+msgid "Multiple Booklets"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1180
+msgid "2 pages"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1197
+msgid "x pages in line"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1214
+msgid "x pages in columns"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1231
+msgid "x copies"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1248
+msgid "One Page"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1265
+msgid "User defined"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1393
+msgid "Type : Calendar"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1406
+msgid "Type : Book"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1419
+msgid "Leafs in a booklet :"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1432
+msgid "columns :"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1445
+msgid "rows :"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1517
+msgid "Auto"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1533
+msgid "No change"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1553
+msgid "user defined (W / H)"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1624
+msgid "Auto scale"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1648
+msgid "<b>Output size</b>"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1664
+msgid "       "
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1678
+msgid "<b>Disposition</b>"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1688
+msgid "Disposition"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1855
+msgid "<b>Output page transformations</b>"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:1959
+msgid "<b>Global rotation</b>"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2020
+msgid ""
+"To add transformations for individual pages \n"
+"select a page in the preview \n"
+"and click on the Transformations button. "
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2049
+msgid "Global Transformations"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2134
+msgid "Right to left"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2155
+msgid "<b>Page setup</b>"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2229
+msgid "Output file"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2241
+msgid ""
+"%F : Full file path without extension\n"
+"%P : Path\n"
+"%N : Name\n"
+"%B : Basename\n"
+"%E : Extension"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2261
+msgid "..."
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2288
+msgid "Show Pdf"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2299
+msgid "Overwrite output files"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2313
+msgid "Save settings with pdf"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2327
+msgid "Don't compress output"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2362
+msgid "<b>Output</b>"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2382
+msgid "Options"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2420
+msgid "<b>Log</b>"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2433
+msgid "Log"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2555
+msgid "Update"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2570
+msgid "Transformations"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2586
+msgid "Go"
+msgstr ""
+
+#: ..\..\..\data\pdfbooklet2.glade:2604
+msgid "---"
+msgstr ""
+
+#: ..\..\..\data\chooser_dialog.glade:30
+msgid "Open File(s) in List"
+msgstr ""
+
+#: ..\..\..\data\chooser_dialog.glade:47 ..\..\..\data\chooser_dialog.glade:97
+msgid "Cancel"
+msgstr ""
+
+#: ..\..\..\data\chooser_dialog.glade:80
+msgid "Open Selected File(s)"
+msgstr ""
+
+#: ..\..\..\data\chooser_dialog.glade:170
+msgid "Move file up"
+msgstr ""
+
+#: ..\..\..\data\chooser_dialog.glade:192
+msgid "Move file down"
+msgstr ""
+
+#: ..\..\..\data\chooser_dialog.glade:295
+msgid "<b>Input files</b>"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:83 ..\..\..\data\pdfshuffler_g.glade:370
+msgid "Rotate _Right"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:95 ..\..\..\data\pdfshuffler_g.glade:358
+msgid "Rotate _Left"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:107
+msgid "C_rop"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:130
+msgid "Add _Blank Page Before"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:190
+msgid "Add Blank Page _After"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:281
+msgid "_File"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:289
+msgid "_Open"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:301
+msgid "_Save"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:313
+msgid "Save _As..."
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:350
+msgid "_Edit"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:382
+msgid "Add blank page _before"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:439
+msgid "Add blank page _after"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:502
+msgid "_Delete"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:514
+msgid "_Crop"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:533
+msgid "_View"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:541
+msgid "Zoom _in"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:553
+msgid "Zoom _out"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:617
+msgid "Open"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:647
+msgid "Save as"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:672
+msgid "Zoom in"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:687
+msgid "Zoom out"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:712
+msgid "Rotate left"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:727
+msgid "Rotate right"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:742
+msgid "Crop"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:757
+msgid "Delete"
+msgstr ""

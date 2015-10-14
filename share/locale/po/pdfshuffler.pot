@@ -1,0 +1,244 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-02-22 12:35+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ..\..\..\pdfshuffler_g.py:127
+msgid "Can't load icon. Application is not installed correctly."
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:318
+msgid "No document"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:320
+msgid "Several documents"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:336
+#, python-format
+msgid "Rendering thumbnails... [%(i1)s/%(i2)s]"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:453
+msgid "page"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:479
+msgid "Export ..."
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:488 ..\..\..\pdfshuffler_g.py:609
+msgid "PDF files"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:493 ..\..\..\pdfshuffler_g.py:604
+msgid "All files"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:537
+#, python-format
+msgid ""
+"File %s is encrypted.\n"
+"Support for encrypted files has not been implemented yet.\n"
+"File export failed."
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:593
+msgid "Import..."
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:628
+msgid "OpenDocument not supported yet!"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:630
+msgid "Image file not supported yet!"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:632
+msgid "File type not supported!"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:634
+#, python-format
+msgid "File %s does not exist"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:636
+msgid "Closed, no files selected"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1028
+msgid "Left"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1028
+msgid "Right"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1029
+msgid "Top"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1029
+msgid "Bottom"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1047
+msgid "Crop Selected Pages"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1055
+msgid "Crop Margins"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1062
+#, python-format
+msgid "% of width"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1062
+#, python-format
+msgid "% of height"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1100
+msgid "Dialog closed"
+msgstr ""
+
+#: ..\..\..\pdfshuffler_g.py:1114
+#, python-format
+msgid ""
+"%s is a tool for rearranging and modifying PDF files. Developed using GTK+ "
+"and Python"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:83 ..\..\..\data\pdfshuffler_g.glade:370
+msgid "Rotate _Right"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:95 ..\..\..\data\pdfshuffler_g.glade:358
+msgid "Rotate _Left"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:107
+msgid "C_rop"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:130
+msgid "Add _Blank Page Before"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:190
+msgid "Add Blank Page _After"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:281
+msgid "_File"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:289
+msgid "_Open"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:301
+msgid "_Save"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:313
+msgid "Save _As..."
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:331
+msgid "_Quit"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:350
+msgid "_Edit"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:382
+msgid "Add blank page _before"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:439
+msgid "Add blank page _after"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:502
+msgid "_Delete"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:514
+msgid "_Crop"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:533
+msgid "_View"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:541
+msgid "Zoom _in"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:553
+msgid "Zoom _out"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:572
+msgid "_Help"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:580
+msgid "_About"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:617
+msgid "Open"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:632
+msgid "Save"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:647
+msgid "Save as"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:672
+msgid "Zoom in"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:687
+msgid "Zoom out"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:712
+msgid "Rotate left"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:727
+msgid "Rotate right"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:742
+msgid "Crop"
+msgstr ""
+
+#: ..\..\..\data\pdfshuffler_g.glade:757
+msgid "Delete"
+msgstr ""
