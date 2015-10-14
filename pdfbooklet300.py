@@ -12,7 +12,7 @@ from __future__ import unicode_literals
 # This version is compatible with Linux
 
 
-PB_version = "2.4.0"
+PB_version = "3.0.0"
 """
 TODO : enregistrer un projet  dans un répertoire avec caractères unicode
 vérifier menuAdd
@@ -89,6 +89,10 @@ from subprocess import Popen, PIPE
 from ctypes import *
 import threading
 import tempfile, io
+import urllib
+from urllib.parse import urlparse
+from urllib.request import urljoin
+
 
 from optparse import OptionParser
 import traceback
@@ -1691,7 +1695,7 @@ class gtkGui:
         pass
 
     def OnDraw(self, area, cr):
-        global page
+        global page, pdftempfile
         global areaAllocationW_i, areaAllocationH_i
         global previewColPos_a, previewRowPos_a, pageContent_a, previewPagePos_a
         global refPageSize_a, numPages
@@ -1710,6 +1714,20 @@ class gtkGui:
         # TODO render document  (not necessary each time)
         try :
             document = Poppler.Document.new_from_file("file:///" + os.path.join(temp_path_u, "preview.pdf"), None)
+##            file_url = urllib.parse.urljoin('file:', urllib.request.pathname2url(pdftempfile.name))
+##            print( file_url)
+##            pdftempfile.seek(0)
+##            data1 = pdftempfile.read()
+##            f1 = open("toto.pdf", "wb")
+##            f1.write(data1)
+##            f1.close()
+##            data2 = "".join(map(chr, data1))  # converts bytes to string
+##            print( len(data2))
+##            #pdftempfile.seek(0)
+##            #document = Poppler.Document.new_from_file(file_url, None)
+##
+##            document = Poppler.Document.new_from_data(data2, len(data2), None) #Does not work due to this bug : https://bugs.launchpad.net/poppler-python/+bug/312462
+##                            # see also : http://stackoverflow.com/questions/21684346/how-to-display-a-pdf-that-has-been-downloaded-in-python
             self.document= document
             #print ("print OK")
         except :
@@ -1717,7 +1735,6 @@ class gtkGui:
             printExcept()
             return False
 
-        #document2 = poppler.document_new_from_data(data, len(data), None)  #Does not work due to this bug : https://bugs.launchpad.net/poppler-python/+bug/312462
         page = document.get_page(0)
         self.page = page
 
@@ -3508,7 +3525,7 @@ class pdfRender():
 
 
     def createNewPdf(self, ar_pages, ar_layout, preview = -1) :
-        global outputFile, debug_b, inputFile_a, inputFiles_a, previewtempfile, result
+        global outputFile, debug_b, inputFile_a, inputFiles_a, previewtempfile, result, pdftempfile
 
         if debug_b == 1 :
             logfile_f = open ("log.txt", "wb")
@@ -3544,6 +3561,8 @@ class pdfRender():
 
         if preview >= 0 :
             outputStream = open(os.path.join(temp_path_u, "preview.pdf"), "wb")
+##            pdftempfile.flush()
+##            outputStream = pdftempfile
         else :
             if os.path.isfile(outputFile) :
                 if app.overwrite.get_active() == 0 :
@@ -3735,7 +3754,13 @@ class pdfRender():
         app.print2(_("Total length : %s ") % (time_e - time_s), 1)
 
         output.write(outputStream)
-        outputStream.close()
+        #output.write(pdftempfile)
+        if preview == 0 :
+            outputStream.close()
+            pass
+##        pdftempfile.seek(0)
+##        data = pdftempfile.read()
+##        print(">>>",  len(data))
         del output
 
 
@@ -3916,6 +3941,9 @@ def main() :
     global prog_path_u
     global temp_path_u
     global cfg_path_u
+    global pdftempfile
+    pdftempfile = tempfile.NamedTemporaryFile()
+
 
     isExcept = False
     startup_b = True
