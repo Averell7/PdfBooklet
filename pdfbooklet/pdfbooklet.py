@@ -350,7 +350,8 @@ class myConfigParser() :
                     value = '1'
                 elif value == False :
                     value = '0'
-                data1 = (b + " = " + value + "\n").encode("utf8")
+                data1 = (b + " = " + value + "\n").encode("utf8")  # En python 3 cette ligne précédente convertit en bytes !!!
+                data1 = (b + " = " + value + "\n")
                 iniFile.write(data1)
             iniFile.write("\n")
         iniFile.close()
@@ -401,6 +402,7 @@ class TxtOnly :
             self.parseIniFile(filename_u)
             preview_b = True
             project_b = False
+            return True
 
 
     def readNumEntry(self, entry, widget_s = "") :
@@ -508,11 +510,14 @@ class TxtOnly :
     def readBoolean(self, entry) :
 
         value = ""
-        if sys.version_info[0] == 2 :
-            if isinstance(entry, unicode) :
-                value = entry
-        elif isinstance(entry, str) :
-            value = entry
+
+        if isinstance(entry, str) :
+            if entry.strip().lower() == "true" :
+                value = True
+            else :
+                value = False
+        elif isinstance(entry, bool) :
+            return entry
         else :
             value = entry.get_text()
         try :
@@ -537,9 +542,9 @@ class TxtOnly :
 
         # migration to 2.4 format : copy xxxx1 values to xxxx and delete xxxx1
         for section in config :
-            for option in section :
+            for option in config[section] :
                 if option in["htranslate1", "vtranslate1", "scale1", "rotate1", "xscale1", "yscale1"] :  # Clean no longer used data
-                    if option[:-1] in section :
+                    if option[:-1] in config[section] :
                         config[section][option[:-1]] = config[section][option]
                         del config[section][option]
 
@@ -568,15 +573,15 @@ class TxtOnly :
         numfolio = self.setOption("numfolio", 0)
         prependPages = self.setOption("prependPages", 0)
         appendPages = self.setOption("appendPages", 1)
-        self.booklet = self.setOption("booklet")
+        self.booklet = self.setOption("booklet", 1)
 ##        self.setOption("referencePage", self.arw["entry31"])
 ##        self.setOption("output", self.arw["entry2"])
 ##        self.setOption("width", self.arw["outputWidth"])
 ##        self.setOption("height", self.arw["outputHeight"])
 ##        self.setOption("userLayout", self.arw["user_layout"])
 
-##        self.setOption("Htranslate", self.arw["Htranslate2"], "output")
-##        self.setOption("Vtranslate", self.arw["Vtranslate2"], "output")
+##        self.setOption("htranslate", self.arw["htranslate2"], "output")
+##        self.setOption("vtranslate", self.arw["vtranslate2"], "output")
 ##        self.setOption("Scale", self.arw["scale2"], "output")
 ##        self.setOption("Rotate", self.arw["rotation2"], "output")
 ##        self.setOption("xscale", self.arw["xscale2"], "output")
@@ -677,7 +682,7 @@ class TxtOnly :
                 return default
 
     def loadPdfFiles(self) :
-        global inputFile_a, inputFiles_a, pagesIndex_a
+        global inputFile_a, inputFiles_a, pagesIndex_a, refPageSize_a
 
         i = 1
         inputFile_a = {}
@@ -703,6 +708,98 @@ class TxtOnly :
 
                 i += 1
 
+        # Ouput page size
+        if 1 in inputFiles_a :
+            fileName = inputFiles_a[1]
+            fileName = unicode2(fileName)
+            page0 = inputFile_a[fileName].getPage(1)   # TODO : ce devrait être ref_page  (page ref sur autres fichiers
+            llx_i=page0.mediaBox.getLowerLeft_x()
+            lly_i=page0.mediaBox.getLowerLeft_y()
+            urx_i=page0.mediaBox.getUpperRight_x()
+            ury_i=page0.mediaBox.getUpperRight_y()
+
+            urx_i=float(urx_i) - float(llx_i)
+            ury_i=float(ury_i) - float(lly_i)
+
+            refPageSize_a = [urx_i, ury_i]
+
+
+    def output_page_size(self, radiosize, logdata = 1) :
+
+
+        global config, rows_i, columns_i, step_i, sections, output, input1, input2, adobe_l, inputFiles_a, inputFile_a
+        global numfolio, prependPages, appendPages, ref_page, selection
+        global numPages, pagesSel, llx_i, lly_i, urx_i, ury_i, mediabox_l, outputScale, refPageSize_a
+
+        # Ouput page size
+        if 1 in inputFiles_a :
+            fileName = inputFiles_a[1]
+            fileName = unicode2(fileName)
+            page0 = inputFile_a[fileName].getPage(1)   # TODO : £££  il y avait page_ref page ref sur autres fichiers
+            llx_i=page0.mediaBox.getLowerLeft_x()
+            lly_i=page0.mediaBox.getLowerLeft_y()
+            urx_i=page0.mediaBox.getUpperRight_x()
+            ury_i=page0.mediaBox.getUpperRight_y()
+
+            urx_i=float(urx_i) - float(llx_i)
+            ury_i=float(ury_i) - float(lly_i)
+
+            refPageSize_a = [urx_i, ury_i]
+
+
+        #££self.print2 (_("Size of source file =    %s mm x %s mm ") % (int(urx_i * adobe_l), int(ury_i * adobe_l)), 1)
+
+        oWidth_i = urx_i * columns_i
+        oHeight_i = ury_i * rows_i
+
+        if radiosize == 1 :
+            mediabox_l = [oWidth_i, oHeight_i]
+        elif radiosize == 2 :                         # size = no change
+            if oWidth_i < oHeight_i :                           # set orientation
+                mediabox_l = [urx_i, ury_i]
+            else :
+                mediabox_l = [ury_i, urx_i]
+
+            # calculate  the scale factor
+            deltaW = mediabox_l[0] / oWidth_i
+            deltaH = mediabox_l[1] / oHeight_i
+            if deltaW < deltaH :
+                outputScale = deltaW
+            else :
+                outputScale = deltaH
+
+
+        elif radiosize == 3 :         # user defined
+
+                customX = self.readNumEntry(self.arw["outputWidth"], _("Width"))
+                if customX == None : return False
+                customY = self.readNumEntry(self.arw["outputHeight"], _("Height"))
+                if customY == None : return False
+
+
+                mediabox_l = [ customX * (1 / adobe_l), customY * (1 / adobe_l)]
+
+
+                # calculate  the scale factor
+                deltaW = mediabox_l[0] / oWidth_i
+                deltaH = mediabox_l[1] / oHeight_i
+                if deltaW < deltaH :
+                    outputScale = deltaW
+                else :
+                    outputScale = deltaH
+
+
+        outputUrx_i = mediabox_l[0]
+        outputUry_i = mediabox_l[1]
+        #if logdata == 0 :
+        #    self.print2 (_("Size of output file =    %s mm x %s mm ") % (int(outputUrx_i * adobe_l), int(outputUry_i * adobe_l)), 1)
+
+
+
+class dummy:
+    def __init__(self) :
+
+        self.pagesTr = {}
 
 class gtkGui:
     # parameters :
@@ -758,7 +855,7 @@ class gtkGui:
 
         self.widgets = Gtk.Builder()
         #self.widgets.set_translation_domain('pdfbooklet')
-        self.widgets.add_from_file(sfp('data/pdfbooklet2.glade'))
+        self.widgets.add_from_file(sfp('data/pdfbooklet2new.glade'))
         arWidgets = self.widgets.get_objects()
         self.arw = {}
         for z in arWidgets :
@@ -796,7 +893,7 @@ class gtkGui:
         self.status = self.arw["status"]
 
         # Global transformations
-        self.Vtranslate1 = self.arw["Vtranslate1"]
+        self.Vtranslate1 = self.arw["vtranslate1"]
         self.scale1 = self.arw["scale1"]
         self.rotation1 = self.arw["rotation1"]
         self.thispage = self.arw["thispage"]
@@ -1033,9 +1130,9 @@ class gtkGui:
 
         # update with last selections in the gui
         # perhaps we could also update first pagesTr
-        out_a = self.makeIniFile()
-        for section in out_a :
-            config[section] = out_a[section]
+        self.makeIniFile()
+##        for section in out_a :
+##            config[section] = out_a[section]
 
 
         #config.write(iniFile)
@@ -1494,72 +1591,20 @@ class gtkGui:
         selection = self.selection_s
 
 
-        # Ouput page size
-        if 1 in inputFiles_a :
-            fileName = inputFiles_a[1]
-            fileName = unicode2(fileName)
-            page0 = inputFile_a[fileName].getPage(ref_page)   # TODO : page ref sur autres fichiers
-            llx_i=page0.mediaBox.getLowerLeft_x()
-            lly_i=page0.mediaBox.getLowerLeft_y()
-            urx_i=page0.mediaBox.getUpperRight_x()
-            ury_i=page0.mediaBox.getUpperRight_y()
-
-            urx_i=float(urx_i) - float(llx_i)
-            ury_i=float(ury_i) - float(lly_i)
-
-            refPageSize_a = [urx_i, ury_i]
-
-
-        #££self.print2 (_("Size of source file =    %s mm x %s mm ") % (int(urx_i * adobe_l), int(ury_i * adobe_l)), 1)
-
-        oWidth_i = urx_i * columns_i
-        oHeight_i = ury_i * rows_i
-
-        if self.arw["radiosize1"].get_active() == 1 :
-            mediabox_l = [oWidth_i, oHeight_i]
-        elif self.arw["radiosize2"].get_active() == 1 :                         # size = no change
-            if oWidth_i < oHeight_i :                           # set orientation
-                mediabox_l = [urx_i, ury_i]
-            else :
-                mediabox_l = [ury_i, urx_i]
-
-            # calculate  the scale factor
-            deltaW = mediabox_l[0] / oWidth_i
-            deltaH = mediabox_l[1] / oHeight_i
-            if deltaW < deltaH :
-                outputScale = deltaW
-            else :
-                outputScale = deltaH
-
-
-        elif self.arw["radiosize3"].get_active() == 1 :         # user defined
-
-                customX = self.readNumEntry(self.arw["outputWidth"], _("Width"))
-                if customX == None : return False
-                customY = self.readNumEntry(self.arw["outputHeight"], _("Height"))
-                if customY == None : return False
-
-
-                mediabox_l = [ customX * (1 / adobe_l), customY * (1 / adobe_l)]
-
-
-                # calculate  the scale factor
-                deltaW = mediabox_l[0] / oWidth_i
-                deltaH = mediabox_l[1] / oHeight_i
-                if deltaW < deltaH :
-                    outputScale = deltaW
-                else :
-                    outputScale = deltaH
-
-
-        outputUrx_i = mediabox_l[0]
-        outputUry_i = mediabox_l[1]
-        if logdata == 0 :
-            self.print2 (_("Size of output file =    %s mm x %s mm ") % (int(outputUrx_i * adobe_l), int(outputUry_i * adobe_l)), 1)
-
         self.makeIniFile()
+        if self.arw["radiosize1"].get_active() == 1 :
+            radiosize = 1
+        elif self.arw["radiosize2"].get_active() == 1 :
+            radiosize = 2
+        if self.arw["radiosize1"].get_active() == 3 :
+            radiosize = 3
 
+        ini.output_page_size(radiosize, logdata)
         return True
+
+
+
+
 
 
     def setOption(self, option, widget, section = "options") :
@@ -1609,10 +1654,10 @@ class gtkGui:
         self.setOption("height", self.arw["outputHeight"])
         self.setOption("userLayout", self.arw["user_layout"])
 
-        self.setOption("Htranslate", self.arw["Htranslate2"], "output")
-        self.setOption("Vtranslate", self.arw["Vtranslate2"], "output")
-        self.setOption("Scale", self.arw["scale2"], "output")
-        self.setOption("Rotate", self.arw["rotation2"], "output")
+        self.setOption("htranslate", self.arw["htranslate2"], "output")
+        self.setOption("htranslate", self.arw["vtranslate2"], "output")
+        self.setOption("scale", self.arw["scale2"], "output")
+        self.setOption("rotate", self.arw["rotation2"], "output")
         self.setOption("xscale", self.arw["xscale2"], "output")
         self.setOption("yscale", self.arw["yscale2"], "output")
         self.setOption("vflip", self.arw["vflip2"], "output")
@@ -1682,25 +1727,26 @@ class gtkGui:
         global out_a
 
         out_a = config
+
 ##        out_a["options"] = {}
 ##        out_a["output"] = {}
 ##        out_a["mru"] = {}
 ##        options_l = []
 
 
-        out_a["options"]["rows"] = self.arw["entry11"].get_text()
-        out_a["options"]["columns"] = self.arw["entry12"].get_text()
-        out_a["options"]["booklet"] = str(ini.booklet)
-        out_a["options"]["step"] = self.arw["entry15"].get_text()
-        out_a["options"]["numfolio"] = self.arw["entry13"].get_text()
-        out_a["options"]["prependPages"] = self.arw["entry32"].get_text()
-        out_a["options"]["appendPages"] = self.arw["entry33"].get_text()
-        out_a["options"]["referencePage"] = self.arw["entry31"].get_text()
-        out_a["options"]["pageSelection"] = self.selection_s
+        config["options"]["rows"] = self.arw["entry11"].get_text()
+        config["options"]["columns"] = self.arw["entry12"].get_text()
+        config["options"]["booklet"] = str(ini.booklet)
+        config["options"]["step"] = self.arw["entry15"].get_text()
+        config["options"]["numfolio"] = self.arw["entry13"].get_text()
+        config["options"]["prependPages"] = self.arw["entry32"].get_text()
+        config["options"]["appendPages"] = self.arw["entry33"].get_text()
+        config["options"]["referencePage"] = self.arw["entry31"].get_text()
+        config["options"]["pageSelection"] = self.selection_s
         buf = self.arw["user_layout"].get_buffer()
         start, end  = buf.get_bounds()
         layout_s = buf.get_text(start, end, True)
-        out_a["options"]["userLayout"] = layout_s
+        config["options"]["userLayout"] = layout_s
 
         temp1 = ""
         for key in inputFiles_a :
@@ -1708,28 +1754,30 @@ class gtkGui:
                 val = inputFiles_a[key]
                 temp1 += val + '|'
 
-        out_a["options"]["inputs"] = temp1
-        out_a["options"]["output"] = self.arw["entry2"].get_text()
-        out_a["options"]["repeat"] = str(self.arw["entry15"].get_text())
-        out_a["options"]["showPdf"] = str(self.arw["show"].get_active())
-        out_a["options"]["saveSettings"] = str(self.settings.get_active())
-        out_a["options"]["autoScale"] = str(self.autoscale.get_active())
-    ##    out_a["options"]["autoRotate"] = str(self.autorotate.get_active())
-        out_a["options"]["width"] = str(self.arw["outputWidth"].get_text())
-        out_a["options"]["height"] = str(self.arw["outputHeight"].get_text())
+        config["options"]["inputs"] = temp1
+        config["options"]["output"] = self.arw["entry2"].get_text()
+        config["options"]["repeat"] = str(self.arw["entry15"].get_text())
+        config["options"]["showPdf"] = str(self.arw["show"].get_active())
+        config["options"]["saveSettings"] = str(self.settings.get_active())
+        config["options"]["autoScale"] = str(self.autoscale.get_active())
+    ##    config["options"]["autoRotate"] = str(self.autorotate.get_active())
+        config["options"]["width"] = str(self.arw["outputWidth"].get_text())
+        config["options"]["height"] = str(self.arw["outputHeight"].get_text())
 
-        out_a["options"]["noCompress"] = str(self.noCompress.get_active())
-        out_a["options"]["righttoleft"] = str(self.righttoleft.get_active()) # Gaston - 14 Sep 2013
-        out_a["options"]["overwrite"] = str(self.overwrite.get_active())
+        config["options"]["noCompress"] = str(self.noCompress.get_active())
+        config["options"]["righttoleft"] = str(self.righttoleft.get_active()) # Gaston - 14 Sep 2013
+        config["options"]["overwrite"] = str(self.overwrite.get_active())
 
-        out_a["output"]["Htranslate"] = self.arw["Htranslate2"].get_text()
-        out_a["output"]["Vtranslate"] = self.arw["Vtranslate2"].get_text()
-        out_a["output"]["Scale"] = self.arw["scale2"].get_text()
-        out_a["output"]["Rotate"] = self.arw["rotation2"].get_text()
-        out_a["output"]["xScale"] = self.arw["xscale2"].get_text()
-        out_a["output"]["yScale"] = self.arw["yscale2"].get_text()
-        out_a["output"]["vflip"] = self.arw["vflip2"].get_active()
-        out_a["output"]["hflip"] = self.arw["vflip2"].get_active()
+        if not "output" in config :
+            config["output"] = OrderedDict()
+        config["output"]["htranslate"] = self.arw["htranslate2"].get_text()
+        config["output"]["vtranslate"] = self.arw["vtranslate2"].get_text()
+        config["output"]["scale"] = self.arw["scale2"].get_text()
+        config["output"]["rotate"] = self.arw["rotation2"].get_text()
+        config["output"]["xscale"] = self.arw["xscale2"].get_text()
+        config["output"]["yscale"] = self.arw["yscale2"].get_text()
+        config["output"]["vflip"] = self.arw["vflip2"].get_active()
+        config["output"]["hflip"] = self.arw["vflip2"].get_active()
 
 
         # radio buttons
@@ -1737,22 +1785,22 @@ class gtkGui:
         group = self.arw["radiopreset1"].get_group()
         for a in group :
             if a.get_active() == True :
-                out_a["options"]["presets"] = a.get_name()
+                config["options"]["presets"] = a.get_name()
 
         group = self.arw["radiosize1"].get_group()
         for a in group :
             if a.get_active() == True :
-                out_a["options"]["size"] = a.get_name()
+                config["options"]["size"] = a.get_name()
 
         group = self.arw["presetOrientation1"].get_group()
         for a in group :
             if a.get_active() == True :
-                out_a["options"]["presetorientation"] = a.get_name()
+                config["options"]["presetorientation"] = a.get_name()
 
         group = self.arw["globalRotation0"].get_group()
         for a in group :
             if a.get_active() == True :
-                out_a["options"]["globalrotation"] = a.get_name()
+                config["options"]["globalrotation"] = a.get_name()
 
         # most recently used
 
@@ -1761,13 +1809,13 @@ class gtkGui:
 
         if "mru" in configtemp :
             for option in configtemp["mru"] :
-                out_a["mru"][option] = configtemp["mru"][option]
+                config["mru"][option] = configtemp["mru"][option]
 
 
 
 
 
-        return out_a
+        return config
 
 
     def _______________________PRESETS() :
@@ -2423,7 +2471,7 @@ class gtkGui:
         if event.state != Gdk.ModifierType.CONTROL_MASK :       # but only if CONTROL is not pressed
 
             # defaults
-            self.arw["Htranslate1"].set_text("0")
+            self.arw["htranslate1"].set_text("0")
             self.Vtranslate1.set_text("0")
             self.scale1.set_text("100")
             self.rotation1.set_text("0")
@@ -2435,7 +2483,7 @@ class gtkGui:
 
             if Id in self.pagesTr :
                 if "htranslate" in self.pagesTr[Id] :
-                    self.arw["Htranslate1"].set_text(str(self.pagesTr[Id]["htranslate"]))
+                    self.arw["htranslate1"].set_text(str(self.pagesTr[Id]["htranslate"]))
                 if "vtranslate" in self.pagesTr[Id] :
                     self.Vtranslate1.set_text(str(self.pagesTr[Id]["vtranslate"]))
                 if "scale" in self.pagesTr[Id] :
@@ -2862,7 +2910,7 @@ class gtkGui:
 
             self.pagesTr[Id] = {}
 
-            self.pagesTr[Id]["htranslate"] = self.arw["Htranslate1"].get_text()     # data from the gui unmodified
+            self.pagesTr[Id]["htranslate"] = self.arw["htranslate1"].get_text()     # data from the gui unmodified
             self.pagesTr[Id]["vtranslate"] = self.Vtranslate1.get_text()
             self.pagesTr[Id]["scale"] = self.scale1.get_text()
             self.pagesTr[Id]["rotate"] = self.rotation1.get_text()
@@ -2888,8 +2936,8 @@ class gtkGui:
 
 
     def resetTransformations(self, event = 0) :
-        self.arw["Htranslate1"].set_value(0)
-        self.arw["Vtranslate1"].set_value(0)
+        self.arw["htranslate1"].set_value(0)
+        self.arw["vtranslate1"].set_value(0)
         self.arw["scale1"].set_value(100)
         self.arw["xscale1"].set_value(100)
         self.arw["yscale1"].set_value(100)
@@ -2902,8 +2950,8 @@ class gtkGui:
 
     def resetTransformations2(self, event = 0) :
         # reset default values for global transformations
-        self.arw["Htranslate2"].set_value(0)
-        self.arw["Vtranslate2"].set_value(0)
+        self.arw["htranslate2"].set_value(0)
+        self.arw["vtranslate2"].set_value(0)
         self.arw["scale2"].set_value(100)
         self.arw["xscale2"].set_value(100)
         self.arw["yscale2"].set_value(100)
@@ -2916,7 +2964,7 @@ class gtkGui:
         pass
 
     def copy_transformations(self, event) :          # called by context menu
-        self.clipboard["htranslate1"] = self.arw["Htranslate1"].get_text()     # data from the gui unmodified
+        self.clipboard["htranslate1"] = self.arw["htranslate1"].get_text()     # data from the gui unmodified
         self.clipboard["vtranslate1"] = self.Vtranslate1.get_text()
         self.clipboard["scale1"] = self.scale1.get_text()
         self.clipboard["rotate1"] = self.rotation1.get_text()
@@ -2927,7 +2975,7 @@ class gtkGui:
         self.clipboard["hflip1"]  = self.arw["hflip1"].get_active()
 
     def paste_transformations(self, event) :          # called by context menu
-         self.arw["Htranslate1"].set_text(self.clipboard["htranslate1"])
+         self.arw["htranslate1"].set_text(self.clipboard["htranslate1"])
          self.Vtranslate1.set_text(self.clipboard["vtranslate1"])
          self.scale1.set_text(self.clipboard["scale1"])
          self.rotation1.set_text(self.clipboard["rotate1"])
@@ -3081,7 +3129,7 @@ class pdfRender():
 
         # Transformations for page in position (row, col)
         section_s = str(rows_i - row) + "," + str(column + 1)
-        if section_s in app.pagesTr :
+        if section_s in config :
             transform_s += self.transform2(section_s)
 
         # Transformations for page #:#
@@ -3089,16 +3137,16 @@ class pdfRender():
         if pageId in app.pagesTr :
             transform_s += self.transform2(pageId)
 
-            ht = app.readmmEntry(app.pagesTr[pageId]["htranslate"])
-            vt = app.readmmEntry(app.pagesTr[pageId]["vtranslate"])
-            sc = app.readPercentEntry(app.pagesTr[pageId]["scale"])
-            ro = app.readNumEntry(app.pagesTr[pageId]["rotate"])
+            ht = ini.readmmEntry(app.pagesTr[pageId]["htranslate"])
+            vt = ini.readmmEntry(app.pagesTr[pageId]["vtranslate"])
+            sc = ini.readPercentEntry(app.pagesTr[pageId]["scale"])
+            ro = ini.readNumEntry(app.pagesTr[pageId]["rotate"])
             try :
-                pdfrotate = app.readNumEntry(app.pagesTr[pageId]["pdfrotate"])
+                pdfrotate = ini.readNumEntry(app.pagesTr[pageId]["pdfrotate"])
             except :
                 pdfrotate = 0
-            xs = app.readPercentEntry(app.pagesTr[pageId]["xscale"])
-            ys = app.readPercentEntry(app.pagesTr[pageId]["yscale"])
+            xs = ini.readPercentEntry(app.pagesTr[pageId]["xscale"])
+            ys = ini.readPercentEntry(app.pagesTr[pageId]["yscale"])
 
 
 
@@ -3168,7 +3216,7 @@ class pdfRender():
         for a in transformations :
 
             transform_s += self.calcMatrix(a)
-
+        print ("===>", transform_s)
         return (transform_s)
 
     def transform2(self, Id) :
@@ -3196,12 +3244,12 @@ class pdfRender():
                     htranslate = float(htranslate) + float(pix_w)
                     vtranslate = float(vtranslate) + float(pix_h)
 
-            ht = app.readmmEntry(app.pagesTr[Id]["htranslate"])
-            vt = app.readmmEntry(app.pagesTr[Id]["vtranslate"])
-            sc = app.readPercentEntry(app.pagesTr[Id]["scale"])
-            ro = app.readNumEntry(app.pagesTr[Id]["rotate"])
-            xs = app.readPercentEntry(app.pagesTr[Id]["xscale"])
-            ys = app.readPercentEntry(app.pagesTr[Id]["yscale"])
+            ht = ini.readmmEntry(app.pagesTr[Id]["htranslate"])
+            vt = ini.readmmEntry(app.pagesTr[Id]["vtranslate"])
+            sc = ini.readPercentEntry(app.pagesTr[Id]["scale"])
+            ro = ini.readNumEntry(app.pagesTr[Id]["rotate"])
+            xs = ini.readPercentEntry(app.pagesTr[Id]["xscale"])
+            ys = ini.readPercentEntry(app.pagesTr[Id]["yscale"])
 
 
 
@@ -3251,7 +3299,7 @@ class pdfRender():
 
 
             if config.has_option(trans, "Scale") :
-                Scale_f = app.readPercentEntry(config[trans]["Scale"])
+                Scale_f = ini.readPercentEntry(config[trans]["Scale"])
                 cos_l = cos_l * Scale_f
                 cos2_l = cos_l
 
@@ -3261,14 +3309,14 @@ class pdfRender():
                 Vtranslate -= VCorr
 
             if config.has_option(trans, "xscale") :
-                Scale_f = app.readPercentEntry(config[trans]["xscale"])
+                Scale_f = ini.readPercentEntry(config[trans]["xscale"])
                 cos_l = cos_l * Scale_f
 
                 HCorr = (urx_i * mycolumns_i * (Scale_f - 1)) / 2
                 Htranslate -= HCorr
 
             if config.has_option(trans, "yScale") :
-                Scale_f = app.readPercentEntry(config[trans]["yScale"])
+                Scale_f = ini.readPercentEntry(config[trans]["yScale"])
                 cos2_l = cos2_l * Scale_f
 
                 VCorr = (ury_i * myrows_i * (Scale_f - 1)) / 2
@@ -3289,12 +3337,12 @@ class pdfRender():
                     Htranslate += urx_i * mycolumns_i
 
 
-            if config.has_option(trans, "Htranslate") :
-                ht = app.readNumEntry(config[trans]["Htranslate"])
+            if config.has_option(trans, "htranslate") :
+                ht = ini.readNumEntry(config[trans]["htranslate"])
                 Htranslate += ht / adobe_l
 
-            if config.has_option(trans, "Vtranslate") :
-                vt = app.readNumEntry(config[trans]["Vtranslate"])
+            if config.has_option(trans, "vtranslate") :
+                vt = ini.readNumEntry(config[trans]["vtranslate"])
                 Vtranslate += vt / adobe_l
 
 
@@ -3836,6 +3884,9 @@ class pdfRender():
 
     def createNewPdf(self, ar_pages, ar_layout, outputFile, preview = -1) :
         global debug_b, inputFile_a, inputFiles_a, previewtempfile, result, pdftempfile
+        global mediabox_l
+
+        #mediabox_l = [1000, 1000]  # TODO !!!!
 
         if debug_b == 1 :
             logfile_f = open ("log.txt", "wb")
@@ -3886,41 +3937,27 @@ class pdfRender():
             i = 0
             ar_data = []
 
-
+            """
             if outputScale != 1 and app.autoscale.get_active() == 1 :
                 temp1 = "%s 0 0 %s 0 0 cm \n" % (str(outputScale), str(outputScale))
                 ar_data.append([temp1])
+            """
 
             #Output page transformations
-            if"output" in config :
+            if "output" in config :
                 OHShift = ini.readmmEntry(config["output"]["htranslate"])
                 OVShift = ini.readmmEntry(config["output"]["vtranslate"])
                 OScale = ini.readPercentEntry(config["output"]["scale"])
-                ORotate = ini.readPercentEntry(config["output"]["rotate"])
-##
-##                OHShift = app.readmmEntry(app.arw["Htranslate2"],
-##                                      _("Output page Horizontal Shift"))
-##                if OHShift == None : return False
-##                OVShift = app.readmmEntry(app.arw["Vtranslate2"],
-##                                      _("Output page Vertical Shift"))
-##                if OVShift == None : return False
-##                OScale  = app.readPercentEntry(app.arw["scale2"],
-##                                           _("Output page Scale"))
-##                if OScale == None : return False
-##
-##                ORotate = app.readNumEntry(app.arw["rotation2"],
-##                                       _("Output page Rotation"))
-##                if ORotate == None : return False
+                ORotate = ini.readNumEntry(config["output"]["rotate"])
 
-            Ovflip = app.arw["vflip2"].get_active()
-            Ohflip = app.arw["hflip2"].get_active()
 
-            Oxscale = app.readPercentEntry(app.arw["xscale2"],
-                                   _("Output page scale horizontally"))
+            Ovflip = ini.readBoolean(config["output"]["vflip"])
+            Ohflip = ini.readBoolean(config["output"]["hflip"])
+
+            Oxscale = ini.readPercentEntry(config["output"]["xscale"])
             if Oxscale == None : return False
 
-            Oyscale = app.readPercentEntry(app.arw["yscale2"],
-                                   _("Output page scale vertically"))
+            Oyscale = ini.readPercentEntry(config["output"]["yscale"])
             if Oyscale == None : return False
 
 
@@ -4003,10 +4040,11 @@ class pdfRender():
                 if matrix_s == False : return False
                 data_x.append(matrix_s)
 
-                if app.autoscale.get_active() == 1 :
-                    scaleFactor_f = self.autoScaleAndRotate(file_number, page_number)
-                    matrix1_s = self.calcMatrix2(0, 0, Scale = scaleFactor_f)
-                    data_x.append(matrix1_s)
+                if"autoscale" in config["options"]:
+                    if ini.readBoolean(config["options"]["autoscale"]) == True :
+                        scaleFactor_f = self.autoScaleAndRotate(file_number, page_number)
+                        matrix1_s = self.calcMatrix2(0, 0, Scale = scaleFactor_f)
+                        data_x.append(matrix1_s)
 
                 file_name = inputFiles_a[file_number]
                 newPage = inputFile_a[file_name].getPage(page_number)
@@ -4024,7 +4062,7 @@ class pdfRender():
                 datay += datax + ["\n"]
             newSheet.mergePage3(datay)
 
-
+            """
             if app.noCompress.get_active() == 0 :
                 newSheet.compressContentStreams()
 
@@ -4037,10 +4075,10 @@ class pdfRender():
             output_page_number += 1
             while Gtk.events_pending():
                             Gtk.main_iteration()
-
+            """
         time_e=time.time()
 
-        app.print2(_("Total length : %s ") % (time_e - time_s), 1)
+        #app.print2(_("Total length : %s ") % (time_e - time_s), 1)
 
         output.write(outputStream)
         #output.write(pdftempfile)
@@ -4056,10 +4094,11 @@ class pdfRender():
         if debug_b == 1 :
             logfile_f.close()
 
+        """
         if preview == -1 :      # if we are creating a real file (not a preview)
             if app.settings.get_active() == 1 :
                 app.saveProjectAs("",inputFile + ".ini")
-
+        """
         return True
 
 
@@ -4303,18 +4342,23 @@ def main() :
 
 
         # command line processing
-        if len(argv_a) > 2 :
+        if len(argv_a) > 2 and argv_a[2].strip() != "" :
             arg1 = argv_a[1]
             (name,ext) = os.path.splitext(arg1)     # determine file type from the extension
                                                     # TODO : determine from mimetype for Linux
             if ext == ".ini" :
                startup_b = False
+               app = dummy()
                ini.openProject2(arg1)
-               if render.parsePageSelection("1-10") :
+               ini.output_page_size(1,1)
+               app.pagesTr = config
+               if render.parsePageSelection("1-20") :
 ##                    self.readConditions()
                     ar_pages, ar_layout = render.createPageLayout()
                     if ar_pages != None :
                         render.createNewPdf(ar_pages, ar_layout, "test.pdf", -1)
+
+            return True
 
         app = gtkGui(render)
 
