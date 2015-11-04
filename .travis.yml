@@ -6,6 +6,8 @@ before_install:
   - sudo apt-get install -y python-poppler 
   - sudo apt-get install -y rpm
   - sudo apt-get install -y alien
+  - sudo apt-get install -y python-gi
+  - sudo apt-get install -y python3-gi
 install: 
   - pip install flake8 tox
 
