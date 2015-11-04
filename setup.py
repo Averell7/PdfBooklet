@@ -60,14 +60,14 @@ for name in os.listdir('po'):
         data_files.append((install_dir, [out_name]))
 """
 setup(name='pdfBooklet',
-      version='2.3.2',
+      version='3.0.0',
       author='GAF Software',
       author_email='Averell7 at sourceforge dot net',
       description='A simple application for creating booklets and other layouts from PDF files',
       url = 'https://sourceforge.net/projects/pdfbooklet',
       license='GNU GPL-3',
       scripts=['bin/pdfbooklet'],
-      packages=['pdfbooklet', 'pdfbooklet.pypdf113'],
+      packages=['pdfbooklet', 'pdfbooklet.pypdf113', 'pdfbooklet.PyPDF2'],
       data_files=data_files,
       #requires=['python-poppler'],          # for distutils
       #install_requires=['python-poppler']   # for setuptools

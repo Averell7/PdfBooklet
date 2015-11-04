@@ -27,7 +27,7 @@ import glob
 from ftplib import FTP
 
 
-version = "2.3.2"
+version = "3.0.0"
 print "\n\n ================ start bdist =============================\n\n"
 os.system('sudo python setup.py bdist')
 print "\n\n ================ end bdist - start sdist =================\n\n"
