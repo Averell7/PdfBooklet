@@ -12,7 +12,7 @@ except :
         from gi.repository import GTK3
     except :
         print ("GTK3 not accepted")        
-            from gi.repository import GTK3
+        from gi.repository import GTK3
        
 
 from gi.repository import Poppler
