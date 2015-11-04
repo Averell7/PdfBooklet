@@ -2,8 +2,7 @@ language: python
 sudo: required
 python:
   - "2.7"
-before_install:
-  - sudo apt-get update -qq
+before_install:  
   - sudo apt-get install -y python-poppler 
   - sudo apt-get install -y rpm
   - sudo apt-get install -y alien
