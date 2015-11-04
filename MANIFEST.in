@@ -1,4 +1,4 @@
-include runner README
-recursive-include package/things *
-recursive-include secondpackage/things *
-recursive-include thirdpackage/things *
+include README
+include data *
+include documentation *
+recursive-include locale *
