@@ -40,7 +40,7 @@ from distutils.core import setup
 data_files=[('share/pdfbooklet/data', glob.glob('data/*.*')),
             ('share/pdfbooklet/documentation', glob.glob('documentation/*.*')),          
             ('/usr/share/applications', ['data/pdfbooklet.desktop']),
-            ('/usr/share/locale/fr/LC_MESSAGES', glob.glob('locale/fr/LC_MESSAGES')),
+            ('/usr/share/locale/fr/LC_MESSAGES', glob.glob('locale/fr/LC_MESSAGES/*.*')),
             ('share/pixmaps', ['data/pdfbooklet.png']),
             ('share/pdfbooklet/icons/hicolor/scalable', ['data/pdfbooklet.svg'])]
 
