@@ -1,0 +1,29 @@
+# tools, IDEs
+/.idea/
+/*.geany
+
+# build files and folders
+/.cache/
+/.coverage
+/coverage.xml
+.sass-cache/
+/.tox/
+/build/
+/dist/
+/*.egg/
+/*.egg-info/
+/*.eggs/
+/docs/build/
+
+# test projects and data
+/manage.py
+/test_project_*/
+/unittests.xml
+
+# Django and Python
+/static/
+/media/
+*.py[cod]
+
+# Virtualenv magic, see https://gist.github.com/bittner/8830745
+.venv
