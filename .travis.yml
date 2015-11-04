@@ -1,0 +1,18 @@
+language: python
+sudo: required
+python:
+  - "2.7"
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y python-poppler 
+  - sudo apt-get install -y rpm
+  - sudo apt-get install -y alien
+install: 
+  - pip install flake8 tox
+
+script: 
+  - nosetests 
+after_success: 
+  - sudo python build.py
+  - pdfbooklet pdf/DossierMicrosoft2009.pdf.ini -r
+  

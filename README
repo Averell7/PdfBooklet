@@ -1,0 +1,30 @@
+
+PdfBookleet 2.2.2
+------------------
+
+This is first Linux version of PdfBooklet, a pyGTK utility to create booklets
+and other layouts from PDF documents. PdfBooklet can also merge files, 
+extract pages, rotate and scale pages.
+
+
+PdfBooklet requires python-poppler and version 2.16 or newer of python-gtk2 
+(also called pyGtk in some distributions).
+
+PdfBooklet is written in Python using PyGTK. It is released under the GNU GPL-3.
+
+In order to install run:
+
+ python setup.py install
+
+as superuser.
+
+You should find python-poppler in the package manager of your distribution, and
+if when install it, it will also install python-gtk2
+
+In case of problem to run the progrem, open a console and type :
+pdfbooklet
+
+Enjoy. 
+
+
+ 
