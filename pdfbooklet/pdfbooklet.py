@@ -98,12 +98,9 @@ import copy
 from optparse import OptionParser
 import traceback
 
-try :
+from gi.repository import Poppler, Pango, Gio
+from gi.repository import Gtk, Gdk
 
-    from gi.repository import Poppler, Pango, Gio
-    from gi.repository import Gtk, Gdk
-except :
-    pass            # May be not necessary for the command line operation
 import cairo
 
 
@@ -556,11 +553,13 @@ class TxtOnly :
 
 
         # store in dictionary
-
+        self.pagesTr = config
         if not "options" in config :
             config["options"] = OrderedDict()
 
-
+        for section in config :
+            if not section in self.pagesTr :
+                self.pagesTr[section] = OrderedDict()
 ##            for option, value in config.iteritems(section) :
 ##                if value == 'False' :
 ##                    value = False
@@ -798,7 +797,10 @@ class TxtOnly :
 
 
 
+class dummy:
+    def __init__(self) :
 
+        self.pagesTr = {}
 
 class gtkGui:
     # parameters :
@@ -903,7 +905,7 @@ class gtkGui:
 
 
         self.area.show()
-
+        self.pagesTr = {}
 
 
 
@@ -1121,6 +1123,10 @@ class gtkGui:
 
 
         openedProject_u = filename_u
+
+        for section in self.pagesTr :
+            if not section in config :
+                config[section] = self.pagesTr[section]
 
 
 
@@ -4344,10 +4350,10 @@ def main() :
                                                     # TODO : determine from mimetype for Linux
             if ext == ".ini" :
                startup_b = False
-
+               app = dummy()
                ini.openProject2(arg1)
                ini.output_page_size(1,1)
-
+               app.pagesTr = copy.deepcopy(config)
                if render.parsePageSelection("1-20") :
 ##                    self.readConditions()
                     ar_pages, ar_layout = render.createPageLayout()
