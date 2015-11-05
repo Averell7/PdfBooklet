@@ -89,6 +89,7 @@ from subprocess import Popen, PIPE
 from ctypes import *
 import threading
 import tempfile, io
+import copy
 ##import urllib
 ##from urllib.parse import urlparse
 ##from urllib.request import urljoin
@@ -97,9 +98,12 @@ import tempfile, io
 from optparse import OptionParser
 import traceback
 
-from gi.repository import Poppler, Pango, Gio
-from gi.repository import Gtk, Gdk
+try :
 
+    from gi.repository import Poppler, Pango, Gio
+    from gi.repository import Gtk, Gdk
+except :
+    pass            # May be not necessary for the command line operation
 import cairo
 
 
@@ -552,13 +556,11 @@ class TxtOnly :
 
 
         # store in dictionary
-        self.pagesTr = config
+
         if not "options" in config :
             config["options"] = OrderedDict()
 
-        for section in config :
-            if not section in self.pagesTr :
-                self.pagesTr[section] = OrderedDict()
+
 ##            for option, value in config.iteritems(section) :
 ##                if value == 'False' :
 ##                    value = False
@@ -796,10 +798,7 @@ class TxtOnly :
 
 
 
-class dummy:
-    def __init__(self) :
 
-        self.pagesTr = {}
 
 class gtkGui:
     # parameters :
@@ -835,6 +834,7 @@ class gtkGui:
 
         areaAllocationH_i = 400
         areaAllocationW_i = 400
+        self.freeze_b = False
 
         #previewtempfile = tempfile.SpooledTemporaryFile(max_size = 10000000)  # max
 
@@ -903,7 +903,7 @@ class gtkGui:
 
 
         self.area.show()
-        self.pagesTr = {}
+
 
 
 
@@ -1121,10 +1121,6 @@ class gtkGui:
 
 
         openedProject_u = filename_u
-
-        for section in self.pagesTr :
-            if not section in config :
-                config[section] = self.pagesTr[section]
 
 
 
@@ -1388,21 +1384,21 @@ class gtkGui:
 ##        if self.thispage.get_active() == 1 :
 ##            Id = pageId
 
-        if (Id in self.pagesTr) == False :
-            self.pagesTr[Id] = {}
-            self.pagesTr[Id]["htranslate"] = '0'
-            self.pagesTr[Id]["vtranslate"] = '0'
-            self.pagesTr[Id]["scale"] = '100'
-            self.pagesTr[Id]["xscale"] = '100'
-            self.pagesTr[Id]["yscale"] = '100'
-            self.pagesTr[Id]["vflip"] = False
-            self.pagesTr[Id]["hflip"] = False
+        if (Id in config) == False :
+            config[Id] = {}
+            config[Id]["htranslate"] = '0'
+            config[Id]["vtranslate"] = '0'
+            config[Id]["scale"] = '100'
+            config[Id]["xscale"] = '100'
+            config[Id]["yscale"] = '100'
+            config[Id]["vflip"] = False
+            config[Id]["hflip"] = False
 
 
 
 
 
-        self.pagesTr[Id]["rotate"] = str(value)
+        config[Id]["rotate"] = str(value)
 
         self.preview(self.previewPage, 0)
 
@@ -1555,7 +1551,8 @@ class gtkGui:
         global numPages, pagesSel, llx_i, lly_i, urx_i, ury_i, mediabox_l, outputScale, refPageSize_a
 
 
-
+        if self.freeze_b == True :
+            return
         outputFile = self.arw["entry2"].get_text()
         #iniFile = self.arw["entry3.get()
         outputScale = 1
@@ -1611,7 +1608,7 @@ class gtkGui:
         global config
 
         if section in config :
-            if option in section :
+            if option in config[section] :
                 z = widget.class_path()[1]
                 z2 = z.split(".")
                 z3 = z2[-1]
@@ -1640,7 +1637,7 @@ class gtkGui:
         global startup_b
 
 
-
+        self.freeze_b = True            # prevent update of the display, which would trigger readGui and corrupt the data
 
         self.setOption("rows", self.arw["entry11"])
         self.setOption("columns", self.arw["entry12"])
@@ -1716,7 +1713,7 @@ class gtkGui:
             if bool(config["options"]["righttoleft"]) == 1 : self.righttoleft.set_active(1)
             else : self.righttoleft.set_active(0)
 
-
+        self.freeze_b = False
 
 
     def makeIniFile(self, inifile = "") :
@@ -2481,29 +2478,29 @@ class gtkGui:
             self.arw["hflip1"].set_active(False)
 
 
-            if Id in self.pagesTr :
-                if "htranslate" in self.pagesTr[Id] :
-                    self.arw["htranslate1"].set_text(str(self.pagesTr[Id]["htranslate"]))
-                if "vtranslate" in self.pagesTr[Id] :
-                    self.Vtranslate1.set_text(str(self.pagesTr[Id]["vtranslate"]))
-                if "scale" in self.pagesTr[Id] :
-                    self.scale1.set_text(str(self.pagesTr[Id]["scale"]))
-                if "rotate" in self.pagesTr[Id] :
-                    self.rotation1.set_text(str(self.pagesTr[Id]["rotate"]))
-                if "xscale" in self.pagesTr[Id] :
-                    self.arw["xscale1"].set_text(str(self.pagesTr[Id]["xscale"]))
-                if "yscale" in self.pagesTr[Id] :
-                    self.arw["yscale1"].set_text(str(self.pagesTr[Id]["yscale"]))
+            if Id in config :
+                if "htranslate" in config[Id] :
+                    self.arw["htranslate1"].set_text(str(config[Id]["htranslate"]))
+                if "vtranslate" in config[Id] :
+                    self.Vtranslate1.set_text(str(config[Id]["vtranslate"]))
+                if "scale" in config[Id] :
+                    self.scale1.set_text(str(config[Id]["scale"]))
+                if "rotate" in config[Id] :
+                    self.rotation1.set_text(str(config[Id]["rotate"]))
+                if "xscale" in config[Id] :
+                    self.arw["xscale1"].set_text(str(config[Id]["xscale"]))
+                if "yscale" in config[Id] :
+                    self.arw["yscale1"].set_text(str(config[Id]["yscale"]))
 
-                if "vflip" in self.pagesTr[Id] :
-                    bool_b = self.pagesTr[Id]["vflip"]
+                if "vflip" in config[Id] :
+                    bool_b = config[Id]["vflip"]
                     if bool_b == "True" or bool_b == True or bool_b == "1" :           # when parameter comes from the ini file, it is a string
                         bool_b = 1
                     elif bool_b == "False" or bool_b == False or bool_b == "0" :
                         bool_b = 0
                     self.arw["vflip1"].set_active(bool_b)
-                if "hflip" in self.pagesTr[Id] :
-                    bool_b = self.pagesTr[Id]["hflip"]
+                if "hflip" in config[Id] :
+                    bool_b = config[Id]["hflip"]
                     if bool_b == "True" or bool_b == True or bool_b == "1" :           # when parameter comes from the ini file, it is a string
                         bool_b = 1
                     elif bool_b == "False" or bool_b == False or bool_b == "0" :
@@ -2849,20 +2846,20 @@ class gtkGui:
                     angle = 90
 
 
-            if not Id in self.pagesTr and angle != 0 :
-                self.pagesTr[Id] = {}
+            if not Id in config and angle != 0 :
+                config[Id] = {}
                 # defaults
-                self.pagesTr[Id]["htranslate"] = 0
-                self.pagesTr[Id]["vtranslate"] = 0
-                self.pagesTr[Id]["scale"] = 1
-                self.pagesTr[Id]["rotate"] = 0
+                config[Id]["htranslate"] = 0
+                config[Id]["vtranslate"] = 0
+                config[Id]["scale"] = 1
+                config[Id]["rotate"] = 0
 
             if angle != 0 :
-                self.pagesTr[Id]["shuffler_rotate"] = angle
+                config[Id]["shuffler_rotate"] = angle
 ##                if angle == 270 :
-##                    self.pagesTr[Id]["vtranslate"] = pix_w
+##                    config[Id]["vtranslate"] = pix_w
 ##                elif angle == 90 :
-##                    self.pagesTr[Id]["htranslate"] = pix_h
+##                    config[Id]["htranslate"] = pix_h
 
 
 
@@ -2908,20 +2905,20 @@ class gtkGui:
             if self.oddpages.get_active() == 1 :
                 Id = "odd"
 
-            self.pagesTr[Id] = {}
+            config[Id] = {}
 
-            self.pagesTr[Id]["htranslate"] = self.arw["htranslate1"].get_text()     # data from the gui unmodified
-            self.pagesTr[Id]["vtranslate"] = self.Vtranslate1.get_text()
-            self.pagesTr[Id]["scale"] = self.scale1.get_text()
-            self.pagesTr[Id]["rotate"] = self.rotation1.get_text()
-            self.pagesTr[Id]["xscale"] = self.arw["xscale1"].get_text()
-            self.pagesTr[Id]["yscale"] = self.arw["yscale1"].get_text()
-            self.pagesTr[Id]["vflip"] = self.arw["vflip1"].get_active()
-            self.pagesTr[Id]["hflip"] = self.arw["hflip1"].get_active()
+            config[Id]["htranslate"] = self.arw["htranslate1"].get_text()     # data from the gui unmodified
+            config[Id]["vtranslate"] = self.Vtranslate1.get_text()
+            config[Id]["scale"] = self.scale1.get_text()
+            config[Id]["rotate"] = self.rotation1.get_text()
+            config[Id]["xscale"] = self.arw["xscale1"].get_text()
+            config[Id]["yscale"] = self.arw["yscale1"].get_text()
+            config[Id]["vflip"] = self.arw["vflip1"].get_active()
+            config[Id]["hflip"] = self.arw["hflip1"].get_active()
         #if not force_update :
             # prevent useless update. If no change, return.
             # TODO : à débuguer
-##            a = repr(self.pagesTr[Id])
+##            a = repr(config[Id])
 ##            if not "memory1" in self :
 ##                memory1 = {}
 ##                b = self.memory1["memory1"]
@@ -3134,19 +3131,19 @@ class pdfRender():
 
         # Transformations for page #:#
         pageId = str(file_number) + ":" + str(page_number + 1)
-        if pageId in app.pagesTr :
+        if pageId in config :
             transform_s += self.transform2(pageId)
 
-            ht = ini.readmmEntry(app.pagesTr[pageId]["htranslate"])
-            vt = ini.readmmEntry(app.pagesTr[pageId]["vtranslate"])
-            sc = ini.readPercentEntry(app.pagesTr[pageId]["scale"])
-            ro = ini.readNumEntry(app.pagesTr[pageId]["rotate"])
+            ht = ini.readmmEntry(config[pageId]["htranslate"])
+            vt = ini.readmmEntry(config[pageId]["vtranslate"])
+            sc = ini.readPercentEntry(config[pageId]["scale"])
+            ro = ini.readNumEntry(config[pageId]["rotate"])
             try :
-                pdfrotate = ini.readNumEntry(app.pagesTr[pageId]["pdfrotate"])
+                pdfrotate = ini.readNumEntry(config[pageId]["pdfrotate"])
             except :
                 pdfrotate = 0
-            xs = ini.readPercentEntry(app.pagesTr[pageId]["xscale"])
-            ys = ini.readPercentEntry(app.pagesTr[pageId]["yscale"])
+            xs = ini.readPercentEntry(config[pageId]["xscale"])
+            ys = ini.readPercentEntry(config[pageId]["yscale"])
 
 
 
@@ -3156,18 +3153,18 @@ class pdfRender():
                                        yscale = ys,
                                        cRotate = ro,
                                        Rotate = pdfrotate,
-                                       vflip = app.pagesTr[pageId]["vflip"],
-                                       hflip = app.pagesTr[pageId]["hflip"])
+                                       vflip = config[pageId]["vflip"],
+                                       hflip = config[pageId]["hflip"])
 
 
 
-##            if "shuffler_rotate" in app.pagesTr[pageId] :
+##            if "shuffler_rotate" in config[pageId] :
 ##                # we need the page size
 ##                pdfDoc = app.shuffler.pdfqueue[file_number-1]
 ##                page = pdfDoc.document.get_page(page_number)
 ##                pix_w, pix_h = page.get_size()
 ##
-##                angle = int(app.pagesTr[pageId]["shuffler_rotate"])
+##                angle = int(config[pageId]["shuffler_rotate"])
 ##                pdfrotate +=   angle
 ##                if angle == 270 :
 ##                    vtranslate = float(vtranslate) + float(pix_w)
@@ -3222,19 +3219,19 @@ class pdfRender():
     def transform2(self, Id) :
         # Calculates matrix for a given section
         matrix_s = ""
-        if Id in app.pagesTr :
-            if not "pdfRotate" in app.pagesTr[Id] :
-                app.pagesTr[Id]["pdfRotate"] = 0
-            if not "rotate" in app.pagesTr[Id] :
-                app.pagesTr[Id]["rotate"] = 0
+        if Id in config :
+            if not "pdfRotate" in config[Id] :
+                config[Id]["pdfRotate"] = 0
+            if not "rotate" in config[Id] :
+                config[Id]["rotate"] = 0
 
-            if "shuffler_rotate" in app.pagesTr[Id] :
+            if "shuffler_rotate" in config[Id] :
                 # we need the page size
                 pdfDoc = app.shuffler.pdfqueue[file_number-1]
                 page = pdfDoc.document.get_page(page_number)
                 pix_w, pix_h = page.get_size()
 
-                angle = int(app.pagesTr[Id]["shuffler_rotate"])
+                angle = int(config[Id]["shuffler_rotate"])
                 pdfrotate += angle
                 if angle == 270 :
                     vtranslate = float(vtranslate) + float(pix_w)
@@ -3244,12 +3241,12 @@ class pdfRender():
                     htranslate = float(htranslate) + float(pix_w)
                     vtranslate = float(vtranslate) + float(pix_h)
 
-            ht = ini.readmmEntry(app.pagesTr[Id]["htranslate"])
-            vt = ini.readmmEntry(app.pagesTr[Id]["vtranslate"])
-            sc = ini.readPercentEntry(app.pagesTr[Id]["scale"])
-            ro = ini.readNumEntry(app.pagesTr[Id]["rotate"])
-            xs = ini.readPercentEntry(app.pagesTr[Id]["xscale"])
-            ys = ini.readPercentEntry(app.pagesTr[Id]["yscale"])
+            ht = ini.readmmEntry(config[Id]["htranslate"])
+            vt = ini.readmmEntry(config[Id]["vtranslate"])
+            sc = ini.readPercentEntry(config[Id]["scale"])
+            ro = ini.readNumEntry(config[Id]["rotate"])
+            xs = ini.readPercentEntry(config[Id]["xscale"])
+            ys = ini.readPercentEntry(config[Id]["yscale"])
 
 
 
@@ -3258,9 +3255,9 @@ class pdfRender():
                                        xscale = xs,
                                        yscale = ys,
                                        cRotate = ro,
-                                       Rotate = app.pagesTr[Id]["pdfRotate"],
-                                       vflip = app.pagesTr[Id]["vflip"],
-                                       hflip = app.pagesTr[Id]["hflip"])
+                                       Rotate = config[Id]["pdfRotate"],
+                                       vflip = config[Id]["vflip"],
+                                       hflip = config[Id]["hflip"])
 
 
 
@@ -3950,27 +3947,26 @@ class pdfRender():
                 OScale = ini.readPercentEntry(config["output"]["scale"])
                 ORotate = ini.readNumEntry(config["output"]["rotate"])
 
+                Ovflip = ini.readBoolean(config["output"]["vflip"])
+                Ohflip = ini.readBoolean(config["output"]["hflip"])
 
-            Ovflip = ini.readBoolean(config["output"]["vflip"])
-            Ohflip = ini.readBoolean(config["output"]["hflip"])
+                Oxscale = ini.readPercentEntry(config["output"]["xscale"])
+                if Oxscale == None : return False
 
-            Oxscale = ini.readPercentEntry(config["output"]["xscale"])
-            if Oxscale == None : return False
-
-            Oyscale = ini.readPercentEntry(config["output"]["yscale"])
-            if Oyscale == None : return False
-
+                Oyscale = ini.readPercentEntry(config["output"]["yscale"])
+                if Oyscale == None : return False
 
 
-            temp1 = self.calcMatrix2(OHShift, OVShift,
-                                     cScale = OScale,
-                                     cRotate = ORotate,
-                                     vflip = Ovflip,
-                                     hflip = Ohflip,
-                                     xscale = Oxscale,
-                                     yscale = Oyscale,
-                                     global_b = True)
-            ar_data.append([temp1])
+
+                temp1 = self.calcMatrix2(OHShift, OVShift,
+                                         cScale = OScale,
+                                         cRotate = ORotate,
+                                         vflip = Ovflip,
+                                         hflip = Ohflip,
+                                         xscale = Oxscale,
+                                         yscale = Oyscale,
+                                         global_b = True)
+                ar_data.append([temp1])
 
 
 
@@ -4348,10 +4344,10 @@ def main() :
                                                     # TODO : determine from mimetype for Linux
             if ext == ".ini" :
                startup_b = False
-               app = dummy()
+
                ini.openProject2(arg1)
                ini.output_page_size(1,1)
-               app.pagesTr = config
+
                if render.parsePageSelection("1-20") :
 ##                    self.readConditions()
                     ar_pages, ar_layout = render.createPageLayout()
