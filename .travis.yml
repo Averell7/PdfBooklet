@@ -13,8 +13,7 @@ before_install:
   - sudo apt-get install -y gir1.2-gtk-3.0
   
 install: 
-  - pip install flake8 tox
-  - pip install "git+git://github.com/jflesch/paperwork.git#egg=paperwork"
+  - pip install flake8 tox  
 
 script: 
   - nosetests 
