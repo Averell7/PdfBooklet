@@ -10,12 +10,13 @@ before_install:
   - sudo apt-get install -y alien
   - sudo apt-get install -y python-gi
   - sudo apt-get install -y python3-gi
-  
 install: 
   - pip install flake8 tox
-  - pip install "git+git://github.com/jflesch/paperwork.git#egg=paperwork"
 
 script: 
   - nosetests 
-
+after_success: 
+  - sudo python build.py
+  - sudo python test1.py
+  - pdfbooklet pdf/DossierMicrosoft2009.pdf.ini -r
   
