@@ -46,6 +46,7 @@ import string
 import math
 import struct
 import sys
+import uuid
 from sys import version_info
 if version_info < ( 3, 0 ):
     from cStringIO import StringIO
@@ -225,8 +226,22 @@ class PdfFileWriter(object):
                 NameObject("/S"): NameObject("/JavaScript"),
                 NameObject("/JS"): NameObject("(%s)" % javascript)
                 })
+        js_indirect_object = self._addObject(js)
+
+        # We need a name for parameterized javascript in the pdf file, but it can be anything.
+        js_string_name = str(uuid.uuid4())
+
+        js_name_tree = DictionaryObject()
+        js_name_tree.update({
+                NameObject("/JavaScript"): DictionaryObject({
+                  NameObject("/Names"): ArrayObject([createStringObject(js_string_name), js_indirect_object])
+                })
+              })
+        self._addObject(js_name_tree)
+
         self._root_object.update({
-                NameObject("/OpenAction"): self._addObject(js)
+                NameObject("/OpenAction"): js_indirect_object,
+                NameObject("/Names"): js_name_tree
                 })
 
     def addAttachment(self, fname, fdata):
@@ -2097,7 +2112,6 @@ class PageObject(DictionaryObject):
         page.__setitem__(NameObject('/Type'), NameObject('/Page'))
         page.__setitem__(NameObject('/Parent'), NullObject())
         page.__setitem__(NameObject('/Resources'), DictionaryObject())
-        page.__setitem__(NameObject('/Contents'), ArrayObject([]))
         if width is None or height is None:
             if pdf is not None and pdf.getNumPages() > 0:
                 lastpage = pdf.getPage(pdf.getNumPages() - 1)
@@ -2143,7 +2157,7 @@ class PageObject(DictionaryObject):
         page2Res = res2.get(resource, DictionaryObject()).getObject()
         renameRes = {}
         for key in list(page2Res.keys()):
-            if key in newRes and newRes[key] != page2Res[key]:
+            if key in newRes and newRes.raw_get(key) != page2Res.raw_get(key):
                 newname = NameObject(key + str(uuid.uuid4()))
                 renameRes[key] = newname
                 newRes[newname] = page2Res[key]
@@ -2345,7 +2359,8 @@ class PageObject(DictionaryObject):
                 else :
                     page_keys = data.keys()
                     if "/Contents" in page_keys :            # if page is not blank
-                        code_s += self.extractContent(data["/Contents"]) + b"\n"
+                        data1 =self.extractContent(data["/Contents"])
+                        code_s +=  data1 + b"\n"
 
 
             else :
@@ -2357,24 +2372,6 @@ class PageObject(DictionaryObject):
 
         self[NameObject('/Contents')] = outputContent
         self[NameObject('/Resources')] = originalResources
-
-
-    def setContent(self, data ):
-
-
-        newResources = DictionaryObject()
-        rename = {}
-        #originalResources = self["/Resources"].getObject()
-        originalContent = self["/Contents"].getObject()
-
-        stream = ContentStream(originalContent, self.pdf)
-        stream.operations = []
-        stream.operations.append([[], data])
-
-
-        self[NameObject('/Contents')] = stream
-        #self[NameObject('/Resources')] = originalResources
-
 
 
     def extractContent(self,data) :
@@ -2395,6 +2392,9 @@ class PageObject(DictionaryObject):
 
         return code_s
 
+    def mergeModifiedPage(self, page2, code, endCode = ""):
+        self._mergePage(page2, lambda page2Content:
+            PageObject._addCode(page2Content, page2.pdf, code, endCode), code)
 
 
     def mergeTransformedPage(self, page2, ctm, expand=False):

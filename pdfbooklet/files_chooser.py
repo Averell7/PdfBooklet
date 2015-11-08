@@ -163,9 +163,10 @@ class Chooser:
                 #filename = unicode(filename, "utf-8")
                 if os.path.isfile(filename):
                     # FIXME
-                    f = Gio.File(filename)
-                    f_info = f.query_info('standard::content-type')
-                    mime_type = f_info.get_content_type()
+##                    f = Gio.File(filename)
+##                    f_info = f.query_info('standard::content-type')
+##                    mime_type = f_info.get_content_type()
+                    mime_type = ".pdf"
                     if mime_type == 'application/pdf' or mime_type == '.pdf':
                         self.loadPdfFile(filename)
                     else :

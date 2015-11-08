@@ -4,7 +4,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# version 2.4.0  alpha;  19 / 08 / 2015
+# version 3.0.0  alpha;  11 / 11 / 2015
 # Revision 15
 # Add advanced transformations in the ini file
 # Add support for encrypted files
@@ -104,7 +104,7 @@ from gi.repository import Gtk, Gdk
 import cairo
 
 
-##Gtk.rc_parse("./gtkrc")
+Gtk.rc_parse("./gtkrc")
 
 if sys.version_info[0] == 2 :
     from pypdf113.pdf import PdfFileReader, PdfFileWriter
@@ -285,16 +285,25 @@ class myConfigParser() :
         myconfig = OrderedDict()
         if not os.path.isfile(iniFile_s) :
             return False
-        if sys.version_info[0] == 3 :
-            fileIni = open(iniFile_s, "r", encoding = "utf8")
-        else :
-            fileIni = open(iniFile_s, "r")
-        # If BOM present, skip the first three bytes
-        isBOM_s = fileIni.read(3)
-        if isBOM_s == chr(239) + chr(187) + chr(191) :  # There is a BOM, skips it
-            pass
-        else :
-            fileIni.seek(0)                          # No BOM, come back to beginning of file
+
+        try :                       # if pdfbooklet.cfg is invalid, don't block the program
+            if sys.version_info[0] == 3 :
+                fileIni = open(iniFile_s, "r", encoding = "utf8")
+            else :
+                fileIni = open(iniFile_s, "r")
+            # If BOM present, skip the first three bytes
+            isBOM_s = fileIni.read(3)
+            if isBOM_s == chr(239) + chr(187) + chr(191) :  # There is a BOM, skips it
+                pass
+            else :
+                fileIni.seek(0)                          # No BOM, come back to beginning of file
+
+        except :
+            myconfig = OrderedDict()
+            myconfig["mru"] = OrderedDict()
+            myconfig["mru2"] = OrderedDict()
+            myconfig["options"] = OrderedDict()
+            return myconfig
 
         section_s = ""
         while True :
@@ -857,7 +866,7 @@ class gtkGui:
 
         self.widgets = Gtk.Builder()
         #self.widgets.set_translation_domain('pdfbooklet')
-        self.widgets.add_from_file(sfp('data/pdfbooklet2new.glade'))
+        self.widgets.add_from_file(sfp('data/pdfbooklet3.glade'))
         arWidgets = self.widgets.get_objects()
         self.arw = {}
         for z in arWidgets :
@@ -891,6 +900,7 @@ class gtkGui:
         self.settings = self.arw["settings"]
         self.overwrite = self.arw["overwrite"]
         self.noCompress = self.arw["noCompress"]
+        self.slowmode = self.arw["slowMode"]
         self.righttoleft = self.arw["righttoleft"]
         self.status = self.arw["status"]
 
@@ -1019,6 +1029,7 @@ class gtkGui:
             filename_u = unicode2(filename, "utf-8")
             self.mru(filename)
             ini.openProject2(filename_u)
+            ini.loadPdfFiles()
             self.setupGui()
             self.arw["previewEntry"].set_text("1")
             self.previewUpdate()
@@ -1042,6 +1053,10 @@ class gtkGui:
         extension_s = os.path.splitext(filename_u)[1]
         if extension_s == ".ini" :
             ini.openProject2(filename_u)
+            ini.loadPdfFiles()
+            self.setupGui()
+            self.arw["previewEntry"].set_text("1")
+            self.previewUpdate()
             return
         else :
             ini.parseIniFile("pdfbooklet.cfg")     # reset transformations
@@ -1718,6 +1733,9 @@ class gtkGui:
         if "righttoleft"  in config["options"] :
             if bool(config["options"]["righttoleft"]) == 1 : self.righttoleft.set_active(1)
             else : self.righttoleft.set_active(0)
+        if "slowmode"  in config["options"] :
+            if bool(config["options"]["slowmode"]) == 1 : self.slowmode.set_active(1)
+            else : self.slowmode.set_active(0)
 
         self.freeze_b = False
 
@@ -1770,6 +1788,7 @@ class gtkGui:
         config["options"]["noCompress"] = str(self.noCompress.get_active())
         config["options"]["righttoleft"] = str(self.righttoleft.get_active()) # Gaston - 14 Sep 2013
         config["options"]["overwrite"] = str(self.overwrite.get_active())
+        config["options"]["slowmode"] = str(self.slowmode.get_active())
 
         if not "output" in config :
             config["output"] = OrderedDict()
@@ -2069,7 +2088,14 @@ class gtkGui:
 
         # TODO render document  (not necessary each time)
         try :
-            document = Poppler.Document.new_from_file("file:///" + os.path.join(temp_path_u, "preview.pdf"), None)
+            filepath = os.path.join(temp_path_u, "preview.pdf")
+            info = os.stat(filepath)
+            filesize = info.st_size
+            if filesize == 0 :
+                print ("=========> filesize is nul !!")
+                return
+            document = Poppler.Document.new_from_file("file:///" + filepath, None)
+
 ##            file_url = urllib.parse.urljoin('file:', urllib.request.pathname2url(pdftempfile.name))
 ##            print( file_url)
 ##            pdftempfile.seek(0)
@@ -3219,7 +3245,6 @@ class pdfRender():
         for a in transformations :
 
             transform_s += self.calcMatrix(a)
-        print ("===>", transform_s)
         return (transform_s)
 
     def transform2(self, Id) :
@@ -3903,10 +3928,9 @@ class pdfRender():
 
 
 
-        if preview >= 0 :
+        if preview >= 0 :           # if this is a preview
             outputStream = open(os.path.join(temp_path_u, "preview.pdf"), "wb")
-##            pdftempfile.flush()
-##            outputStream = pdftempfile
+
         else :
             try :
                 outputStream = open(outputFile, "wb")
@@ -3916,7 +3940,7 @@ class pdfRender():
                 "Close the file and start again"))
                 return
 
-        if preview >= 0 :
+        if preview >= 0 :           # if this is a preview
             output_page_number = preview + 1
         else :
             output_page_number = 1
@@ -3927,6 +3951,7 @@ class pdfRender():
             # create the output sheet
             page2 = output.addBlankPage(100,100)
             newSheet = page2.getObject()
+            newSheet[generic.NameObject("/Contents")] = generic.ArrayObject([])
             newSheet.mediaBox.upperRight = mediabox_l       # output page size
             newSheet.cropBox.upperRight = mediabox_l
             # global rotation
@@ -3940,11 +3965,11 @@ class pdfRender():
             i = 0
             ar_data = []
 
-            """
+
             if outputScale != 1 and app.autoscale.get_active() == 1 :
                 temp1 = "%s 0 0 %s 0 0 cm \n" % (str(outputScale), str(outputScale))
                 ar_data.append([temp1])
-            """
+
 
             #Output page transformations
             if "output" in config :
@@ -4062,9 +4087,38 @@ class pdfRender():
             datay = []
             for datax in ar_data :
                 datay += datax + ["\n"]
-            newSheet.mergePage3(datay)
+            #datay += " BT (azerty) Tj ET \n"
+            if preview > 0 :
+                newSheet.mergePage3(datay)                  # never use slow mode for preview
+            elif app.slowmode.get_active() == 0 :        # normal mode
+                newSheet.mergePage3(datay)
 
-            """
+            else :                                          # slow mode (uses mergePage instead of mergePage3)
+
+                dataz = ""
+                pages = []
+                end_code = ""
+                for data2 in datay :
+                    if not isinstance(data2, str) :
+
+                        pages.append([data2, dataz])
+                        dataz = ""
+                    else :
+                        dataz += data2
+                if not dataz == "" :
+                    i = len(pages)
+                    pages[i - 1].append(dataz)
+
+                for content in pages :
+                    if len(content) == 3 :
+                        end_code == content[2]
+                    else :
+                        end_code = ""
+                    newSheet.mergeModifiedPage(content[0], content[1], end_code)
+
+
+
+
             if app.noCompress.get_active() == 0 :
                 newSheet.compressContentStreams()
 
@@ -4077,7 +4131,7 @@ class pdfRender():
             output_page_number += 1
             while Gtk.events_pending():
                             Gtk.main_iteration()
-            """
+
         time_e=time.time()
 
         #app.print2(_("Total length : %s ") % (time_e - time_s), 1)
