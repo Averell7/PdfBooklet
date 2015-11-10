@@ -5,18 +5,15 @@ python:
   - "2.7"
   - "3.4"
 before_install:  
-  - sudo apt-get install -y python-poppler 
   - sudo apt-get install -y rpm
-  - sudo apt-get install -y alien
-  - sudo apt-get install -y python-gi
+  - sudo apt-get install -y pgi libgi cffi cairocffi
+    
 
+  
 install: 
-  - pip install flake8 tox
+  - pip install flake8 tox  
 
 script: 
   - nosetests 
-after_success: 
-  - sudo python build.py
-  - sudo python test1.py
-  - pdfbooklet pdf/DossierMicrosoft2009.pdf.ini -r
+
   
