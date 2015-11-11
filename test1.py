@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+
+
 f1 = open("toto", "w")
 try :
     import gi
@@ -11,7 +13,7 @@ try :
 except :    
     f1.write("echec repository")
     
-
+f1.close()
 
 
 #from gi.repository import Gtk
