@@ -14,12 +14,25 @@ except :
     f1.write("\nechec repository")
     
 
-gifile = "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/gi/repository"
+gifile = "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/"
 if os.path.isdir(gifile) :
-    f1.write("\ngifile exists")
+    f1.write("\nsite packages exists")
     temp = glob.glob(gifile +  "*.*")
     for data in temp :
         f1.write(repr(data) + "\n")
+        
+else :
+    f1.write("echec1 \n")
+        
+gifile2 = "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/gi/"
+if os.path.isdir(gifile) :
+    f1.write("\ngi exists")
+    temp = glob.glob(gifile +  "*.*")
+    for data in temp :
+        f1.write(repr(data) + "\n")
+
+else :
+    f1.write("echec2 \n")
 
 
 
