@@ -2,7 +2,7 @@
 
 
 
-f1 = open("toto", "w")
+f1 = open("log.txt", "w")
 try :
     import gi
 except :    

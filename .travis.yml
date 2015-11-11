@@ -16,5 +16,6 @@ install:
 script: 
   - nosetests 
   - cat toto
+  - sudo python log.py
 
   
