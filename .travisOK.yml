@@ -3,12 +3,15 @@ language: python
 sudo: required
 python:
   - "2.7"
-  - "3.4"
+#  - "3.4"
 before_install:  
   - sudo apt-get install -y python-poppler 
   - sudo apt-get install -y rpm
   - sudo apt-get install -y alien
-  - sudo apt-get install -y python-gi
+  - sudo apt-get install -y python-gi 
+#  - sudo apt-get install -y python3-gi
+  - sudo apt-get install -y gir1.2-gtk-3.0
+  - sudo apt-get install -y gir1.2-poppler-0.18
 
 install: 
   - pip install flake8 tox

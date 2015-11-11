@@ -11,7 +11,7 @@ except :
 try :
     from gi import repository
 except :    
-    f1.write("echec repository")
+    f1.write("\nechec repository")
     
 f1.close()
 

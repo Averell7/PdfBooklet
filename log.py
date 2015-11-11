@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from ftplib import FTP
 
 ftp = FTP('privftp.pro.proxad.net')     # connect to host, default port
