@@ -6,7 +6,7 @@ python:
   - "3.4"
 before_install:  
   - sudo apt-get install -y rpm
-  - sudo apt-get install -y pgi libgi cffi cairocffi
+
     
 
   
@@ -15,5 +15,6 @@ install:
 
 script: 
   - nosetests 
+  - cat toto
 
   
