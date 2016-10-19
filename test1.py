@@ -27,4 +27,14 @@ f1.close()
 
 
 #from gi.repository import Gtk
-from gi.repository import Poppler
+try :
+    from python-gi.repository import Poppler
+except :
+    print ("echec 1")
+    
+    
+try :
+    from gi.repository import Poppler
+except :
+    print ("echec 2")
+    
