@@ -27,7 +27,7 @@ else :
 gifile2 = "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/gi/"
 if os.path.isdir(gifile) :
     f1.write("\ngi exists")
-    temp = glob.glob(gifile +  "*.*")
+    temp = os.walk(gifile2)
     for data in temp :
         f1.write(repr(data) + "\n")
 

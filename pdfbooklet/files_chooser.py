@@ -13,6 +13,7 @@ import os, sys
 
 from gi.repository import Gtk, Gio
 #from pdf import PdfFileReader
+from PyPDF2 import PdfFileReader
 
 ### If gettext can't load, we must define the _(...) function
 ##if os.path.isfile("./locale/gui/LC_MESSAGES/pdfBooklet.mo") == False :
@@ -177,7 +178,7 @@ class Chooser:
 
     def loadPdfFile(self,filename) :
 
-        pdfFile = PdfFileReader(file(filename, "rb"))
+        pdfFile = PdfFileReader(open(filename, "rb"))
         numpages = pdfFile.getNumPages()
         self.treestore.append([filename, numpages])
 

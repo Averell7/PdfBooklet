@@ -635,7 +635,7 @@ class PdfShuffler:
                 #filename = str(filename,"utf-8")     Unsupported in python 3       # convert utf-8 to unicode for internal use
                 if os.path.isfile(filename):
                     # FIXME
-##                    f = Gio.File(filename)           # python 3
+##                    f = Gio.File(filename)           # ££ python 3
 ##                    f_info = f.query_info('standard::content-type')
 ##                    mime_type = f_info.get_content_type()
 ##                    expected_mime_type = pdf_mime_type

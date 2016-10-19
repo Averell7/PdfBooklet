@@ -4,8 +4,8 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# version 3.0.0  alpha;  11 / 11 / 2015
-# Revision 15
+# version 3.0.0  alpha;  19 / 10 / 2016
+# Revision 16
 # Add advanced transformations in the ini file
 # Add support for encrypted files
 # Add support for even and odd pages
@@ -98,20 +98,19 @@ import copy
 from optparse import OptionParser
 import traceback
 
-from gi.repository import Poppler, Pango, Gio
-from gi.repository import Gtk, Gdk
-
 import cairo
+from gi.repository import Gtk, Gdk
+from gi.repository import Poppler, Pango, Gio
 
 
 Gtk.rc_parse("./gtkrc")
 
-if sys.version_info[0] == 2 :
-    from pypdf113.pdf import PdfFileReader, PdfFileWriter
-    import pypdf113.generic as generic
-else :
-    from PyPDF2 import PdfFileReader, PdfFileWriter
-    import PyPDF2.generic as generic
+##if sys.version_info[0] == 2 :
+##    from pypdf113.pdf import PdfFileReader, PdfFileWriter
+##    import pypdf113.generic as generic
+##else :
+from PyPDF2 import PdfFileReader, PdfFileWriter
+import PyPDF2.generic as generic
 
 
 from files_chooser import Chooser
@@ -377,6 +376,7 @@ class TxtOnly :
         global numfolio, prependPages, appendPages, ref_page, selection, PSSelection
         global numPages, pagesSel, llx_i, lly_i, urx_i, ury_i, mediabox_l
         global ouputFile, optionsDict, selectedIndex_a, selected_page, deletedIndex_a, app
+        global arw
 ##        elib_intl.install("pdfbooklet", "share/locale")
 
         if None != pdfList :
@@ -722,7 +722,7 @@ class TxtOnly :
         if 1 in inputFiles_a :
             fileName = inputFiles_a[1]
             fileName = unicode2(fileName)
-            page0 = inputFile_a[fileName].getPage(1)   # TODO : ce devrait être ref_page  (page ref sur autres fichiers
+            page0 = inputFile_a[fileName].getPage(0)   # TODO : ce devrait être ref_page  (page ref sur autres fichiers
             llx_i=page0.mediaBox.getLowerLeft_x()
             lly_i=page0.mediaBox.getLowerLeft_y()
             urx_i=page0.mediaBox.getUpperRight_x()
@@ -745,7 +745,7 @@ class TxtOnly :
         if 1 in inputFiles_a :
             fileName = inputFiles_a[1]
             fileName = unicode2(fileName)
-            page0 = inputFile_a[fileName].getPage(1)   # TODO : £££  il y avait page_ref page ref sur autres fichiers
+            page0 = inputFile_a[fileName].getPage(0)   # TODO : £££  il y avait page_ref page ref sur autres fichiers
             llx_i=page0.mediaBox.getLowerLeft_x()
             lly_i=page0.mediaBox.getLowerLeft_y()
             urx_i=page0.mediaBox.getUpperRight_x()
@@ -781,9 +781,9 @@ class TxtOnly :
 
         elif radiosize == 3 :         # user defined
 
-                customX = self.readNumEntry(self.arw["outputWidth"], _("Width"))
+                customX = self.readNumEntry(app.arw["outputWidth"], _("Width"))
                 if customX == None : return False
-                customY = self.readNumEntry(self.arw["outputHeight"], _("Height"))
+                customY = self.readNumEntry(app.arw["outputHeight"], _("Height"))
                 if customY == None : return False
 
 
@@ -1614,7 +1614,7 @@ class gtkGui:
             radiosize = 1
         elif self.arw["radiosize2"].get_active() == 1 :
             radiosize = 2
-        if self.arw["radiosize1"].get_active() == 3 :
+        if self.arw["radiosize3"].get_active() == 1 :
             radiosize = 3
 
         ini.output_page_size(radiosize, logdata)
@@ -3166,6 +3166,9 @@ class pdfRender():
         if pageId in config :
             transform_s += self.transform2(pageId)
 
+            # Debug !!!
+            """  Je ne comprends pas le sens de ce bloc, qui refait une deuxième fois la transformation,
+                si bien que quand, par exemple, on demande une transformation de 45, on obtient 90 !
             ht = ini.readmmEntry(config[pageId]["htranslate"])
             vt = ini.readmmEntry(config[pageId]["vtranslate"])
             sc = ini.readPercentEntry(config[pageId]["scale"])
@@ -3211,7 +3214,7 @@ class pdfRender():
                                        cScale = sc,
                                        cRotate = ro,
                                        Rotate = pdfrotate)
-
+            """
         # Transformations for even and odd pages
         if page_number % 2 == 1 :
             transform_s += self.transform2("even")
