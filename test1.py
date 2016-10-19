@@ -14,7 +14,7 @@ except :
     f1.write("\nechec repository")
     
 
-gifile = "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/"
+gifile = "/home/travis/virtualenv/python3/lib/python3/site-packages/"
 if os.path.isdir(gifile) :
     f1.write("\nsite packages exists")
     temp = glob.glob(gifile +  "*.*")
@@ -24,7 +24,7 @@ if os.path.isdir(gifile) :
 else :
     f1.write("echec1 \n")
         
-gifile2 = "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/gi/"
+gifile2 = "/home/travis/virtualenv/python3/lib/python3/site-packages/gi/"
 if os.path.isdir(gifile) :
     f1.write("\ngi exists")
     temp = os.walk(gifile2)
