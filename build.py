@@ -70,8 +70,8 @@ print "\n\n ================ build.py terminated =============================\n
 
 
 
-ftp = FTP('privftp.pro.proxad.net')     # connect to host, default port
-x = ftp.login('webmaster@chartreux.org', '$$$')                     # user anonymous, passwd anonymous@
+ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
+x = ftp.login('dysmas1956@wanadoo.fr', '$$$')                     # user anonymous, passwd anonymous@
 print x
 ftp.cwd('transit')               # change into "debian" directory
 #ftp.retrlines('LIST')           # list directory contents

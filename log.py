@@ -2,8 +2,8 @@
 
 from ftplib import FTP
 
-ftp = FTP('privftp.pro.proxad.net')     # connect to host, default port
-x = ftp.login('webmaster@chartreux.org', 'esoJnaS')                     # user anonymous, passwd anonymous@
+ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
+x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')                     # user anonymous, passwd anonymous@
 print x
 ftp.cwd('transit')               # change into "debian" directory
 #ftp.retrlines('LIST')           # list directory contents
