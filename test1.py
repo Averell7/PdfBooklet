@@ -13,7 +13,7 @@ try :
 except :    
     f1.write("\nechec repository")
     
-for a in os.walk("/home/travis/virtualenv/python3.5/lib/python3.5/site-packages/") :
+for a in os.walk("/home/travis/virtualenv/python3.5.2/lib/python3.5.2/site-packages/") :
     f1.write(repr(a) + "\n")
     
 
