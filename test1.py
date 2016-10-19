@@ -13,13 +13,9 @@ try :
 except :    
     f1.write("\nechec repository")
     
-for a in os.walk("/home/travis/virtualenv/python3.5.2/lib/python3.5.2/site-packages/") :
+for a in os.walk("/home/travis/virtualenv/python3.5.2/lib/python3.5/site-packages/") :
     f1.write(repr(a) + "\n")
     
-
-
-
-
 
 f1.close()
 
@@ -27,14 +23,4 @@ f1.close()
 
 
 #from gi.repository import Gtk
-try :
-    from python-gi.repository import Poppler
-except :
-    print ("echec 1")
-    
-    
-try :
-    from gi.repository import Poppler
-except :
-    print ("echec 2")
-    
+from gi.repository import Poppler
