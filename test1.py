@@ -13,28 +13,10 @@ try :
 except :    
     f1.write("\nechec repository")
     
-for a in os.walk("/home/travis/virtualenv/python3.5/lib/") :
+for a in os.walk("/home/travis/virtualenv/python3.5/lib/python3.5/site-packages/") :
     f1.write(repr(a) + "\n")
     
-gifile = "/home/travis/virtualenv/python3.5/lib/python3/site-packages/"
-if os.path.isdir(gifile) :
-    f1.write("\nsite packages exists")
-    temp = glob.glob(gifile +  "*.*")
-    for data in temp :
-        f1.write(repr(data) + "\n")
-        
-else :
-    f1.write("echec1 \n")
-        
-gifile2 = "/home/travis/virtualenv/python3.5/lib/python3/site-packages/gi/"
-if os.path.isdir(gifile) :
-    f1.write("\ngi exists")
-    temp = os.walk(gifile2)
-    for data in temp :
-        f1.write(repr(data) + "\n")
 
-else :
-    f1.write("echec2 \n")
 
 
 
