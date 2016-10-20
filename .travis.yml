@@ -19,6 +19,6 @@ install:
 
 script: 
   - nosetests 
-  - sudo python log.py
+  - sudo pyinstaller ./pdfbooklet/pdfbooklet.py
 
   
