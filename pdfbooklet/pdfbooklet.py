@@ -1,5 +1,5 @@
-#!/usr/bin/python
-# coding: utf-8 -*-
+#!/usr/bin/env python3
+# -*- coding: utf8 -*-
 
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -11,8 +11,17 @@ from __future__ import unicode_literals
 # Add support for even and odd pages
 # This version is compatible with Linux
 
+"""
+comparer fichiers
 
-PB_version = "3.0.0"
+for i in range(0,129) :
+        print ("1:" + str(i) + ", 2:" + str(i))
+
+"""
+
+
+
+PB_version = "3.0.0.4"
 """
 TODO : enregistrer un projet  dans un répertoire avec caractères unicode
 vérifier menuAdd
@@ -99,6 +108,9 @@ from optparse import OptionParser
 import traceback
 
 import cairo
+gi.require_version('Gtk', '3.0')
+gi.require_version('Poppler', '0.18')
+
 from gi.repository import Gtk, Gdk
 from gi.repository import Poppler, Pango, Gio
 

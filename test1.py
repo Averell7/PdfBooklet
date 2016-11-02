@@ -2,7 +2,7 @@
 import os, glob
 
 
-f1 = open("log.txt", "w")
+f1 = open("./log.txt", "w")
 try :
     import gi
 except :    
