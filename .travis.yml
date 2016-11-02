@@ -22,5 +22,5 @@ script:
   - nosetests 
 #  - sudo pyinstaller ./pdfbooklet/pdfbooklet.py
   - sudo python build.py
-
+  - sudo python essai1.py
   

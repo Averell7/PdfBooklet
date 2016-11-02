@@ -102,7 +102,7 @@ else :
 f1 = open(control_file, "r")
 
 data1 = f1.read()
-data1 = data1.replace("${shlibs:Depends}", "pygtk2|python-gtk2, pypoppler|python-poppler")
+data1 = data1.replace("${shlibs:Depends}", "python-cairo python-gobject python-gobject-2 pypoppler|python-poppler")
 f1.close()
 f1 = open(control_file, "w")
 f1.write(data1)
@@ -128,17 +128,9 @@ print "\n\n ================ build.py terminated =============================\n
 
 x = ftp.storbinary('STOR ' + deb_file[2:], open(deb_file, 'rb'))
 print x
-ftp.cwd('transit')               # change into "debian" directory
-#ftp.retrlines('LIST')           # list directory contents
-#ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
+
 
 ftp.quit()
-
-
-
-  
-
-
 
 
 
