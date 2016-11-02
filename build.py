@@ -83,11 +83,21 @@ except :
 print "\n\n ================ Creating debian package =======================\n\n"
 
 
-
-os.system('sudo alien --generate --scripts ' + new_file)
+new_dir = "./pdfbooklet-" + version + "/"
+os.system('sudo alien --generate --scripts ' + rpm_file)
 control_file = new_dir + "debian/control"
 if os.path.isfile(control_file) :
   print "control found"
+else :
+    print "control NOT found. See log.txt"
+    # walkdirectory
+    f1 = open("./log.txt", "w")
+    for data in os.walk("./") :
+        f1.write(repr(data))
+    f1.close()
+    
+    command = 'STOR ' + "./log.txt"
+    x = ftp.storbinary(command, open("./log.txt", 'rb'))
 
 f1 = open(control_file, "r")
 
@@ -115,14 +125,13 @@ print "\n\n ================ build.py terminated =============================\n
 
 
 
-ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
-x = ftp.login('dysmas1956@wanadoo.fr', '$$$')                     # user anonymous, passwd anonymous@
+
+x = ftp.storbinary('STOR ' + deb_file[2:], open(deb_file, 'rb'))
 print x
 ftp.cwd('transit')               # change into "debian" directory
 #ftp.retrlines('LIST')           # list directory contents
 #ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
-x = ftp.storbinary('STOR ' + deb_file[2:], open(deb_file, 'rb'))
-print x
+
 ftp.quit()
 
 
