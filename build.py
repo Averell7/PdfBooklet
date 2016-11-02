@@ -102,7 +102,7 @@ else :
 f1 = open(control_file, "r")
 
 data1 = f1.read()
-data1 = data1.replace("${shlibs:Depends}", "python-cairo python-gobject python-gobject-2 pypoppler|python-poppler")
+data1 = data1.replace("${shlibs:Depends}", "python-cairo, python-gobject, python-gobject-2, pypoppler|python-poppler")
 f1.close()
 f1 = open(control_file, "w")
 f1.write(data1)
