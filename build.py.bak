@@ -35,55 +35,13 @@ os.system('sudo python setup.py sdist')
 print "\n\n ================ end sdist - start bdist_rpm =============\n\n"
 os.system('sudo python setup.py bdist_rpm')
 print "\n\n ================ end bdist_rpm ===========================\n\n"
-rpm_file = "./dist/pdfbooklet-" + version + "-1.noarch.rpm"
-tar_file = "./dist/pdfbooklet-" + version + ".tar.gz"
-tar64_file = "./dist/pdfbooklet-" + version + ".linux-x86_64.tar.gz"
-
-if os.path.isfile(rpm_file) :
-  print "found rpm", rpm_file
-else :
-    print "NOT found rpm", rpm_file
-  
-if os.path.isfile(tar_file) :
-  print "found tar", tar_file
-else :
-    print "NOT found tar", tar_file
-  
-os.system("ls ./dist")
-
-
-print "\n\n ================ Uploading tar.gz =======================\n\n"
-
-ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
-x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')                     # user anonymous, passwd anonymous@
-print "Connect to Ftp : " + x
-ftp.cwd('pdfbooklet')               # change into "debian" directory
-#ftp.retrlines('LIST')           # list directory contents
-#ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
-try :
-    command = 'STOR ' + tar_file[7:]
-    x = ftp.storbinary(command, open(tar_file, 'rb'))    
-except :    
-    print "tar file error :", command
-
-try :
-    command = 'STOR ' + tar64_file[7:] 
-    x = ftp.storbinary(command, open(tar64_file, 'rb'))
-except :
-    print "tar64 file error :", command
-    
-try :
-    command = 'STOR ' + rpm_file[7:]
-    x = ftp.storbinary(command, open(rpm_file, 'rb'))
-except :
-    print "rpm file error :", command
-
+new_file = "./dist/pdfBooklet-" + version + "-1.noarch.rpm"
+new_dir = "./pdfBooklet-" + version + "/"
+if os.path.isfile(new_file) :
+  print "found"
 
 # generate Debian package
 print "\n\n ================ Creating debian package =======================\n\n"
-
-
-
 os.system('sudo alien --generate --scripts ' + new_file)
 control_file = new_dir + "debian/control"
 if os.path.isfile(control_file) :
@@ -101,9 +59,6 @@ f1.close()
 os.system("cd " + new_dir + "; sudo dpkg-buildpackage")
 
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
-if not os.path.isfile(deb_file) :
-    deb_file = "./maggy2-" + version + "-2_all.deb"
-    print "=========> file is : ", deb_file
 
 # install package
 print "\n\n ================ Installing debian package =============================\n\n"
