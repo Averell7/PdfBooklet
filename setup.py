@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 #
 # PdfBooklet 3.0.0 - GTK+ based utility to create booklets and other layouts 
