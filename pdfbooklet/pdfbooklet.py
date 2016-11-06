@@ -4,31 +4,12 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# version 3.0.0  alpha;  19 / 10 / 2016
-# Revision 16
-# Add advanced transformations in the ini file
-# Add support for encrypted files
-# Add support for even and odd pages
-# This version is compatible with Linux
-
-"""
-comparer fichiers
-
-for i in range(0,129) :
-        print ("1:" + str(i) + ", 2:" + str(i))
-
-"""
-
-
-
-PB_version = "3.0.0.4"
-"""
-TODO : enregistrer un projet  dans un répertoire avec caractères unicode
-vérifier menuAdd
-"""
+# version 3.0.0  RC;  06 / 11 / 2016
+PB_version = "3.0.0 RC"
 
 
 """
+
 website : pdfbooklet.sourceforge.net
 
 This software is a computer program whose purpose is to manipulate pdf files.
@@ -62,7 +43,19 @@ knowledge of the CeCILL license and that you accept its terms.
 ==========================================================================
 """
 
+
 """
+TODO : enregistrer un projet  dans un répertoire avec caractères unicode
+vérifier menuAdd
+
+============
+comparer fichiers
+
+for i in range(0,129) :
+        print ("1:" + str(i) + ", 2:" + str(i))
+==============
+
+
 TODO :
 
 Autoscale : Distinguer les options : pour les pages et global ? Pas sûr que ce soit utile.
@@ -71,8 +64,10 @@ quand on ouvre un fichier, et puis ensuite un projet qui a plusieurs fichiers, p
 popumenu rotate : les valeurs de la fenêtre transformations ne sont pas mises à jour.
 
 bugs
-fichier ini : ouvrir un fichier, ouvrir le fichier ini correspondant. Ne rien changer, fermer, le fichier ini est mis à jour à un moment quelconque et souvent toutes les transformations sont remises à zéro.
-Dans la même manipulation , quand on ouvre, il arrive que les modifications d'une page soient conservées et pas celle de l'autre page (en cahier)
+fichier ini : ouvrir un fichier, ouvrir le fichier ini correspondant. Ne rien changer, fermer,
+le fichier ini est mis à jour à un moment quelconque et souvent toutes les transformations sont remises à zéro.
+Dans la même manipulation , quand on ouvre, il arrive que les modifications d'une page soient conservées
+et pas celle de l'autre page (en cahier)
 
 
 petits défauts
@@ -83,6 +78,70 @@ améliorations
 Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que donneront les différents paramètres
 
 """
+
+
+
+"""
+    EXPLANATIONS OF THE WORKFLOW
+
+    The structure of the program is easy to understand.
+    Everything runs around the "config" dictionary which defines how the source pdf files
+    must be palced in the output file.
+    The content of this dictionary may be viewd at any time by the command "Save project"
+    which builds an ini file from this dictionary.
+
+    The program has two parts :
+            1) The PdfRenderer class : It receives the config dictionary,
+                and from its content builds the output file, applying the necessary
+                transormations to the source pages. These transformations, in Pdf,
+                are always handled byt transformation matrices. See Pdf specifications
+                for details.
+            2) The gui, whose only purpose is to build the config dictionary in an easy way.
+
+    Workflow :
+        1) Normal process is : - the gui creates and updates the config dict.
+                               - When the Go button is pressed, the config dictiontary
+                                 is sent to PdfRenderer which builds the output file
+        2) Preview process : To create the preview, a similar process is used.
+                               - the config dictionary is sent to PdfRenderer, with an
+                                 additional parameter which indicates a page number
+                               - PdfRenderer creates a file named preview.pdf which contains a single page.
+                               - This page is displayed in the gui by Poppler.
+
+    Inside config, the pages are named in two different ways :
+        - Absolute : 2:25 designates a single page, page 25 of the second file.
+        - Positional : 2,1 (line, column) designates any page which is placed
+          on line 2, column 1
+
+    What renders things complicated is that pdf counts pages from the bottom
+    left, starting by 0, which is not user friendly. So the program has to convert
+    data in a readable format.
+
+    Another complication is that Pdf defines the center of rotation at the lower left corner,
+    which is not user friendly. The rotate function handles this and shifts the image to create
+    a centered rotation.
+
+    Transformations
+
+    1) When the user clicks on the preview, the selectPage function is launched.
+       a) From the mouse coordinates, it determines the page clicked, and builds a page identifier
+       which is a list of six values :
+           - row and column (Pdf format)
+           - file number and page number
+           - row and column if the output page is rotated
+       then it updates the selected pages list.
+       b) it launchs area_expose to update the display
+       c) it extracts from config the transformations already defined for this page
+          and fills in the gtkEntry widgets which contains the transformations
+
+    2) When the user changes a value in these widgets, the transformationApply function is launched.
+       It reads the values in the gui and updates the config dictionary
+       Then it launchs the preview function which will update the preview
+
+
+"""
+
+
 
 import time, math, string, os, sys, re, shutil
 print(sys.version)
@@ -108,19 +167,19 @@ from optparse import OptionParser
 import traceback
 
 import cairo
+import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Poppler', '0.18')
 
-from gi.repository import Gtk, Gdk
-from gi.repository import Poppler, Pango, Gio
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import Poppler
+from gi.repository import Pango
+from gi.repository import Gio
 
 
 Gtk.rc_parse("./gtkrc")
 
-##if sys.version_info[0] == 2 :
-##    from pypdf113.pdf import PdfFileReader, PdfFileWriter
-##    import pypdf113.generic as generic
-##else :
 from PyPDF2 import PdfFileReader, PdfFileWriter
 import PyPDF2.generic as generic
 
@@ -132,15 +191,6 @@ import gettext
 import elib_intl3
 
 
-##if os.path.isfile("./share/locale/fr/LC_MESSAGES/pdfbooklet.mo") == False :
-##     def _(mystring) :
-##         return mystring
-##
-###Another way to obtain the same result. We keep it here just in case.
-##
-##gettext.bindtextdomain('pdfbooklet', './locale/')
-##gettext.textdomain('pdfbooklet')
-##_ = gettext.gettext
 
 elib_intl3.install("pdfbooklet", "share/locale")
 
@@ -264,13 +314,13 @@ def get_text(parent, message, default=''):
     entry.set_text(default)
     entry.show()
     d.vbox.pack_end(entry)
-    entry.connect('activate', lambda _: d.response(Gtk.RESPONSE_OK))
-    d.set_default_response(Gtk.RESPONSE_OK)
+    entry.connect('activate', lambda _: d.response(Gtk.ResponseType.OK))
+    d.set_default_response(Gtk.ResponseType.OK)
 
     r = d.run()
     text = entry.get_text().decode('utf8')
     d.destroy()
-    if r == Gtk.RESPONSE_OK:
+    if r == Gtk.ResponseType.OK:
         return text
     else:
         return None
@@ -429,8 +479,8 @@ class TxtOnly :
 
     def readNumEntry(self, entry, widget_s = "") :
 
-        if sys.version_info[0] == 2 and isinstance(entry, unicode) :
-                value = entry
+        if isinstance(entry, int) :
+            return float(entry)
         elif isinstance(entry, str) :
             value = entry
         else :
@@ -450,9 +500,7 @@ class TxtOnly :
         global adobe_l
 
         value = ""
-        if sys.version_info[0] == 2 and isinstance(entry, unicode) :
-                value = entry
-        elif isinstance(entry, str) :
+        if isinstance(entry, str) :
             value = entry
         else :
             value = entry.get_text()
@@ -498,9 +546,7 @@ class TxtOnly :
         # type = 2 : optional. Don't warn if missing, but warn if invalid (not integer)
 
         value = ""
-        if sys.version_info[0] == 2 and isinstance(entry, unicode) :
-                value = entry
-        elif isinstance(entry, str) :
+        if isinstance(entry, str) :
             value = entry
         else :
             value = entry.get_text()
@@ -1811,7 +1857,7 @@ class gtkGui:
         config["output"]["xscale"] = self.arw["xscale2"].get_text()
         config["output"]["yscale"] = self.arw["yscale2"].get_text()
         config["output"]["vflip"] = self.arw["vflip2"].get_active()
-        config["output"]["hflip"] = self.arw["vflip2"].get_active()
+        config["output"]["hflip"] = self.arw["hflip2"].get_active()
 
 
         # radio buttons
@@ -2104,7 +2150,7 @@ class gtkGui:
             info = os.stat(filepath)
             filesize = info.st_size
             if filesize == 0 :
-                print ("=========> filesize is nul !!")
+                #print ("=========> filesize is nul !!")
                 return
             document = Poppler.Document.new_from_file("file:///" + filepath, None)
 
@@ -2385,6 +2431,11 @@ class gtkGui:
         #   - Select the appropriate Id
         #   - launch area_expose to update the display
         #   - fill in the gtkEntry widgets which contains the transformations
+        #
+        # The selected_page list contains a list of six values :
+        #   - row and column (Pdf format)
+        #   - file number and page number
+        #   - row and column if the output page is rotated
 
         global previewColPos_a, previewRowPos_a, canvasId20, pageContent_a
         global selectedIndex_a, selected_page, selected_pages_a, pageId
@@ -2468,8 +2519,7 @@ class gtkGui:
                 # Selection information
                 self.myselectedpage = str(selected_page[2]) + ":" + str(selected_page[3])
                 if self.thispage.get_active() == 1 :        # This page
-                    pageId = str(selected_page[2]) + ":" + str(selected_page[3])
-                    Id = pageId
+                    Id = self.myselectedpage
                 elif self.evenpages.get_active() == 1 :     # even pages
                     Id = "even"
                 elif self.oddpages.get_active() == 1 :      # odd pages
@@ -2728,7 +2778,7 @@ class gtkGui:
 
     def previewUpdate(self, Event = None, data = None) :
         global inputFiles_a
-        #print("previewUpdate")
+
         if len(inputFiles_a) == 0 :
             #showwarning(_("No file loaded"), _("Please select a file first"))
             shutil.copy(sfp("data/nofile.pdf"), os.path.join(temp_path_u, "preview.pdf"))
@@ -2927,8 +2977,10 @@ class gtkGui:
         self.transformationsApply("")
 
     def transformationsApply(self, widget, event="", force_update = False) :
+        # Reads the values in the gui and updates the config dictionary
+
         global selected_page, selected_pages_a, rows_i
-        #print "transformations apply"
+        print ("debug transformations apply")
 
         for this_selected_page in selected_pages_a :
 
@@ -3117,7 +3169,7 @@ class gtkGui:
 
     def readConditions(self) :
         global optionsDict, config
-        # TODO : non longer used
+        # Used by the go function above
         return
         if app.arw["entry3"].get() == "" :
             return
@@ -3301,9 +3353,9 @@ class pdfRender():
                                        xscale = xs,
                                        yscale = ys,
                                        cRotate = ro,
-                                       Rotate = config[Id]["pdfRotate"],
-                                       vflip = config[Id]["vflip"],
-                                       hflip = config[Id]["hflip"])
+                                       Rotate = ini.readNumEntry(config[Id]["pdfRotate"]),
+                                       vflip = ini.readBoolean(config[Id]["vflip"]),
+                                       hflip = ini.readBoolean(config[Id]["hflip"]))
 
 
 
@@ -4472,20 +4524,9 @@ def main() :
                     ini.loadPdfFiles()
                     app.selection_s = ""
                     app.arw["previewEntry"].set_text("1")
-                    while gtk.events_pending():
-                                gtk.main_iteration()
                     app.previewUpdate()
                 else :
                     print("Unknown file type in the command line")
-
-        ##if len(arg_a) > 0 :
-        ##    app.treestore.clear()
-        ##    app.treestore.append([arg_a[0], ""])
-
-
-##        if len(inputFiles_a) > 0 :
-##            app.preview(0)
-
 
 
         startup_b = False
@@ -4513,9 +4554,9 @@ def main() :
 ##        if app.shuffler != None :
 ##            app.shuffler.window.destroy()
         if Gtk.main_level():
-            Gtk.gdk.threads_enter()
+##            Gtk.gdk.threads_enter()
             Gtk.main_quit()
-            Gtk.gdk.threads_leave()
+##            Gtk.gdk.threads_leave()
             #os._exit(0)
             sys.exit(1)
         else:

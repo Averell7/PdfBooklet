@@ -554,7 +554,7 @@ Example :
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="menuAddFile">
-                        <property name="label" translatable="yes">_File manager</property>
+                        <property name="label" translatable="yes">_Files</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="image">image5</property>
@@ -1425,7 +1425,7 @@ Example : all top left pages, or all bottom right pages. </property>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkSpinButton" id="Htranslate1">
+                          <object class="GtkSpinButton" id="htranslate1">
                             <property name="width_request">70</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -1446,7 +1446,7 @@ Example : all top left pages, or all bottom right pages. </property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSpinButton" id="Vtranslate1">
+                          <object class="GtkSpinButton" id="vtranslate1">
                             <property name="width_request">70</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -1779,7 +1779,7 @@ Transformations</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkSpinButton" id="Htranslate2">
+                              <object class="GtkSpinButton" id="htranslate2">
                                 <property name="width_request">70</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -1799,7 +1799,7 @@ Transformations</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSpinButton" id="Vtranslate2">
+                              <object class="GtkSpinButton" id="vtranslate2">
                                 <property name="width_request">70</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -2342,7 +2342,7 @@ Transformations</property>
                                 <child>
                                   <object class="GtkTable" id="table4">
                                     <property name="visible">True</property>
-                                    <property name="n_rows">4</property>
+                                    <property name="n_rows">5</property>
                                     <property name="n_columns">2</property>
                                     <child>
                                       <object class="GtkCheckButton" id="show">
@@ -2392,6 +2392,22 @@ Transformations</property>
                                         <property name="top_attach">3</property>
                                         <property name="bottom_attach">4</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="slowMode">
+                                        <property name="label" translatable="yes">Slow mode</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="top_attach">4</property>
+                                        <property name="bottom_attach">5</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>
