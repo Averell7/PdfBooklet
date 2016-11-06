@@ -37,12 +37,12 @@ from distutils.core import setup
 
 
 
-data_files=[('share/pdfbooklet/data', glob.glob('data/*.*')),
+data_files=[('share/pdfbooklet/data', glob.glob('pdfbooklet/data/*.*')),
             ('share/pdfbooklet/documentation', glob.glob('documentation/*.*')),          
-            ('/usr/share/applications', ['data/pdfbooklet.desktop']),
+            ('/usr/share/applications', ['pdfbooklet/data/pdfbooklet.desktop']),
             ('/usr/share/locale/fr/LC_MESSAGES', glob.glob('locale/fr/LC_MESSAGES/*.*')),
-            ('share/pixmaps', ['data/pdfbooklet.png']),
-            ('share/pdfbooklet/icons/hicolor/scalable', ['data/pdfbooklet.svg'])]
+            ('share/pixmaps', ['pdfbooklet/data/pdfbooklet.png']),
+            ('share/pdfbooklet/icons/hicolor/scalable', ['pdfbooklet/data/pdfbooklet.svg'])]
 
 """
 # Freshly generate .mo from .po, add to data_files:
