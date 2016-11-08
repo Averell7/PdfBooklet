@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
+  <!-- interface-requires gtk+ 3.0 -->
+  <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkAboutDialog" id="Pdf-Booklet">
     <property name="border_width">5</property>
     <property name="resizable">False</property>
@@ -56,11 +56,30 @@ Averell 7 for Pdf-Booklet</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment_scale">
+  <object class="GtkAdjustment" id="adjustment11">
     <property name="value">100</property>
     <property name="upper">10000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment12">
+    <property name="value">100</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment13">
+    <property name="value">100</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment14">
+    <property name="value">100</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+    <property name="page_size">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment3">
     <property name="lower">-10000</property>
@@ -92,16 +111,51 @@ Averell 7 for Pdf-Booklet</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="adjustment9">
+    <property name="value">2</property>
+    <property name="lower">1</property>
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_hflip">
+    <property name="upper">1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+    <property name="page_size">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_leafs">
+    <property name="lower">0.01</property>
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_scale">
+    <property name="value">100</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_step">
+    <property name="lower">0.01</property>
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_vflip">
+    <property name="upper">1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+    <property name="page_size">10</property>
+  </object>
   <object class="GtkAdjustment" id="adjustment_xscale1">
     <property name="value">100</property>
     <property name="upper">10000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment9">
-    <property name="value">2</property>
-    <property name="lower">1</property>
-    <property name="upper">100</property>
+  <object class="GtkAdjustment" id="adjustment_yscale1">
+    <property name="upper">10000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -246,8 +300,6 @@ Examples :
                 <property name="height_request">0</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">automatic</property>
-                <property name="vscrollbar_policy">automatic</property>
                 <property name="shadow_type">in</property>
                 <child>
                   <object class="GtkTextView" id="textview1">
@@ -264,6 +316,7 @@ Examples :
             </child>
           </object>
           <packing>
+            <property name="expand">False</property>
             <property name="position">2</property>
           </packing>
         </child>
@@ -322,6 +375,50 @@ Examples :
       <action-widget response="0">button2010</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="pixbuf">stock_properties.png</property>
+  </object>
+  <object class="GtkImage" id="image10">
+    <property name="visible">True</property>
+    <property name="pixbuf">exit.png</property>
+  </object>
+  <object class="GtkImage" id="image11">
+    <property name="visible">True</property>
+    <property name="pixbuf">help.png</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="stock">gtk-open</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="pixbuf">filesave.png</property>
+  </object>
+  <object class="GtkImage" id="image4">
+    <property name="visible">True</property>
+    <property name="pixbuf">filesaveas.png</property>
+  </object>
+  <object class="GtkImage" id="image5">
+    <property name="visible">True</property>
+    <property name="pixbuf">filenew.jpg</property>
+  </object>
+  <object class="GtkImage" id="image6">
+    <property name="visible">True</property>
+    <property name="stock">gtk-new</property>
+  </object>
+  <object class="GtkImage" id="image7">
+    <property name="visible">True</property>
+    <property name="pixbuf">kedit.png</property>
+  </object>
+  <object class="GtkImage" id="image8">
+    <property name="visible">True</property>
+    <property name="pixbuf">pdfshuffler64.png</property>
+  </object>
+  <object class="GtkImage" id="image9">
+    <property name="visible">True</property>
+    <property name="pixbuf">about.png</property>
+  </object>
   <object class="GtkDialog" id="dialog2">
     <property name="border_width">5</property>
     <property name="type_hint">dialog</property>
@@ -345,6 +442,7 @@ Example :
 </property>
           </object>
           <packing>
+            <property name="expand">False</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -352,8 +450,6 @@ Example :
           <object class="GtkScrolledWindow" id="scrolledwindow3">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
             <property name="shadow_type">etched-in</property>
             <child>
               <object class="GtkTextView" id="user_layout">
@@ -364,6 +460,7 @@ Example :
             </child>
           </object>
           <packing>
+            <property name="expand">False</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -418,8 +515,6 @@ Example :
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">&#x25CF;</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <signal name="key_press_event" handler="select_step_value"/>
               </object>
               <packing>
@@ -430,6 +525,7 @@ Example :
             </child>
           </object>
           <packing>
+            <property name="expand">False</property>
             <property name="position">3</property>
           </packing>
         </child>
@@ -478,50 +574,6 @@ Example :
       <action-widget response="1">button11</action-widget>
       <action-widget response="0">button12</action-widget>
     </action-widgets>
-  </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="pixbuf">stock_properties.png</property>
-  </object>
-  <object class="GtkImage" id="image10">
-    <property name="visible">True</property>
-    <property name="pixbuf">exit.png</property>
-  </object>
-  <object class="GtkImage" id="image11">
-    <property name="visible">True</property>
-    <property name="pixbuf">help.png</property>
-  </object>
-  <object class="GtkImage" id="image2">
-    <property name="visible">True</property>
-    <property name="stock">gtk-open</property>
-  </object>
-  <object class="GtkImage" id="image3">
-    <property name="visible">True</property>
-    <property name="pixbuf">filesave.png</property>
-  </object>
-  <object class="GtkImage" id="image4">
-    <property name="visible">True</property>
-    <property name="pixbuf">filesaveas.png</property>
-  </object>
-  <object class="GtkImage" id="image5">
-    <property name="visible">True</property>
-    <property name="pixbuf">filenew.png</property>
-  </object>
-  <object class="GtkImage" id="image6">
-    <property name="visible">True</property>
-    <property name="pixbuf">fileopen.png</property>
-  </object>
-  <object class="GtkImage" id="image7">
-    <property name="visible">True</property>
-    <property name="pixbuf">kedit.png</property>
-  </object>
-  <object class="GtkImage" id="image8">
-    <property name="visible">True</property>
-    <property name="pixbuf">pdfshuffler64.png</property>
-  </object>
-  <object class="GtkImage" id="image9">
-    <property name="visible">True</property>
-    <property name="pixbuf">about.png</property>
   </object>
   <object class="GtkListStore" id="treestore">
     <columns>
@@ -729,6 +781,13 @@ Example :
                 </child>
               </object>
             </child>
+            <child>
+              <object class="GtkMenuItem" id="themes">
+                <property name="sensitive">False</property>
+                <property name="label" translatable="yes">Th&#xE8;mes</property>
+                <property name="use_underline">True</property>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -750,7 +809,6 @@ Example :
                     <child>
                       <object class="GtkVBox" id="vbox3">
                         <property name="visible">True</property>
-                        <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkHBox" id="hbox12">
                             <property name="visible">True</property>
@@ -1000,8 +1058,6 @@ Example :
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="invisible_char">&#x25CF;</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">adjustment10</property>
                                         <signal name="value_changed" handler="previewUpdate"/>
                                       </object>
@@ -1017,8 +1073,6 @@ Example :
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="invisible_char">&#x25CF;</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">adjustment9</property>
                                         <signal name="value_changed" handler="previewUpdate"/>
                                       </object>
@@ -1142,8 +1196,6 @@ Example :
                                         <property name="max_length">4</property>
                                         <property name="invisible_char">&#x25CF;</property>
                                         <property name="width_chars">5</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -1171,8 +1223,6 @@ Example :
                                         <property name="max_length">10</property>
                                         <property name="invisible_char">&#x25CF;</property>
                                         <property name="width_chars">5</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -1270,7 +1320,6 @@ Example :
                 <child>
                   <object class="GtkVBox" id="vbox2">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkHBox" id="hbox105">
                         <property name="visible">True</property>
@@ -1282,7 +1331,6 @@ Example :
                             <child>
                               <object class="GtkVBox" id="vbox105">
                                 <property name="visible">True</property>
-                                <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkRadioButton" id="thisposition">
                                     <property name="label" translatable="yes">All pages in this position</property>
@@ -1430,8 +1478,6 @@ Example : all top left pages, or all bottom right pages. </property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment4</property>
                             <property name="climb_rate">0.01</property>
                             <property name="digits">1</property>
@@ -1451,8 +1497,6 @@ Example : all top left pages, or all bottom right pages. </property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment3</property>
                             <property name="digits">1</property>
                             <signal name="focus_out_event" handler="transformationsApply"/>
@@ -1473,8 +1517,6 @@ Example : all top left pages, or all bottom right pages. </property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment_scale</property>
                             <signal name="focus_out_event" handler="transformationsApply"/>
                             <signal name="activate" handler="transformationsApply"/>
@@ -1494,8 +1536,6 @@ Example : all top left pages, or all bottom right pages. </property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment1</property>
                             <signal name="activate" handler="transformationsApply"/>
                             <signal name="button_release_event" handler="transformationsApply"/>
@@ -1558,8 +1598,6 @@ Example : all top left pages, or all bottom right pages. </property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment_xscale1</property>
                             <signal name="activate" handler="transformationsApply"/>
                             <signal name="button_release_event" handler="transformationsApply"/>
@@ -1578,8 +1616,6 @@ Example : all top left pages, or all bottom right pages. </property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment_yscale1</property>
                             <signal name="activate" handler="transformationsApply"/>
                             <signal name="button_release_event" handler="transformationsApply"/>
@@ -1703,7 +1739,6 @@ Transformations</property>
                 <child>
                   <object class="GtkVBox" id="vbox8">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="frame1">
                         <property name="visible">True</property>
@@ -1753,8 +1788,6 @@ Transformations</property>
                                 <property name="can_focus">True</property>
                                 <property name="max_length">3</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment7</property>
                                 <property name="snap_to_ticks">True</property>
                                 <property name="numeric">True</property>
@@ -1784,8 +1817,6 @@ Transformations</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment6</property>
                                 <property name="digits">1</property>
                                 <signal name="focus_out_event" handler="previewUpdate"/>
@@ -1804,8 +1835,6 @@ Transformations</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment5</property>
                                 <property name="digits">1</property>
                                 <signal name="backspace" handler="previewUpdate"/>
@@ -1826,8 +1855,6 @@ Transformations</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment11</property>
                                 <signal name="focus_out_event" handler="previewUpdate"/>
                                 <signal name="activate" handler="previewUpdate"/>
@@ -1891,8 +1918,6 @@ Transformations</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment12</property>
                                 <signal name="activate" handler="previewUpdate"/>
                                 <signal name="button_release_event" handler="previewUpdate"/>
@@ -1911,11 +1936,9 @@ Transformations</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment13</property>
-                                <signal name="button_release_event" handler="previewUpdate"/>
                                 <signal name="activate" handler="previewUpdate"/>
+                                <signal name="button_release_event" handler="previewUpdate"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -2166,8 +2189,6 @@ Transformations</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="text">0</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -2184,8 +2205,6 @@ Transformations</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="text">0</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -2264,8 +2283,6 @@ Transformations</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
                             <property name="text">1</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -2312,8 +2329,6 @@ Transformations</property>
 %E : Extension</property>
                                         <property name="invisible_char">&#x25CF;</property>
                                         <property name="text">%F-bklt.pdf</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                       </object>
                                       <packing>
                                         <property name="position">1</property>
@@ -2520,8 +2535,6 @@ Transformations</property>
                         <property name="can_focus">True</property>
                         <property name="invisible_char">&#x25CF;</property>
                         <property name="width_chars">4</property>
-                        <property name="primary_icon_sensitive">True</property>
-                        <property name="secondary_icon_sensitive">True</property>
                         <signal name="activate" handler="preview2"/>
                       </object>
                       <packing>
@@ -2674,65 +2687,5 @@ Transformations</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkAdjustment" id="adjustment14">
-    <property name="value">100</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment13">
-    <property name="value">100</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment12">
-    <property name="value">100</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment11">
-    <property name="value">100</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment_vflip">
-    <property name="upper">1</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment_hflip">
-    <property name="upper">1</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment_yscale1">
-    <property name="upper">10000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment_leafs">
-    <property name="lower">0.01</property>
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment_step">
-    <property name="lower">0.01</property>
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
   </object>
 </interface>

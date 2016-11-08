@@ -102,7 +102,7 @@ else :
 f1 = open(control_file, "r")
 
 data1 = f1.read()
-data1 = data1.replace("${shlibs:Depends}", "python-cairo, python-gobject, python-gobject-2, pypoppler|python-poppler")
+data1 = data1.replace("${shlibs:Depends}", "python-cairo, python-gobject, python-gobject-2, pypoppler|python-poppler\nX-Python3-Version: >= 3.3")
 f1.close()
 f1 = open(control_file, "w")
 f1.write(data1)
@@ -137,10 +137,4 @@ ftp.quit()
 #os.system('rpmrebuild -b -R --change-spec-requires rebuild.py -p ' + new_file )
 
 
-"""
-# Clean up temporary files
-if os.path.isdir('mo/'):
-    os.system ('rm -r mo/')
-if os.path.isdir('build/'):
-    os.system ('rm -r build/')
-"""
+

@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import print_function
+from __future__ import unicode_literals
+
 #
 # Copyright � 2007-2010 Dieter Verfaillie <dieterv@optionexplicit.be>
 #
@@ -425,6 +429,7 @@ def _install(domain, localedir, asglobal=False):
         if sys.platform == 'win32' or sys.platform == 'nt':
             _putenv('LANGUAGE', _getscreenlanguage())
         #print "=========2>", os.getenv('LANGUAGE')
+        #print ("=========2>",_getscreenlanguage())
 
 
     # The locale module on Max OS X lacks bindtextdomain so we specifically
@@ -442,6 +447,8 @@ def _install(domain, localedir, asglobal=False):
         gettext.textdomain(domain)
 
     # on windows systems, initialize libintl
+    domain = domain.encode("cp1252")
+    localedir = localedir.encode("cp1252")
     if sys.platform == 'win32' or sys.platform == 'nt':
         from ctypes import cdll
         libintl = cdll.LoadLibrary("libintl-8.dll")
@@ -478,6 +485,7 @@ def install(domain, localedir, code = ""):
     namespace, localized modules should never install _(). Instead, you should
     use :func:`elib.intl.install_module` to make _() available to your module.
     '''
+
     global language_code
     language_code = code
 

@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+from __future__ import unicode_literals
+
 # PdfShuffler 0.6.0 Rev 82, modified for Windows compatibility
 # See the Class PdfShuffler_Windows_cod" / class PdfShuffler_Linux_code :
 
@@ -41,11 +44,15 @@ import threading
 import tempfile
 import glob
 from copy import copy
-
+print(sys.version)
 import locale       #for multilanguage support
 import gettext
 import elib_intl3
-elib_intl3.install("pdfshuffler", "share/locale")
+# elib_intl does not work if the strings are unicode
+domain = "pdfshuffler"     # these lines have no effect in python 3
+locale = "share/locale"
+
+elib_intl3.install(domain, locale)
 
 APPNAME = 'PdfShuffler' # PDF-Shuffler, PDFShuffler, pdfshuffler
 VERSION = '0.6.0'
@@ -136,8 +143,13 @@ class PdfShuffler:
         if not os.path.exists(ui_path):
             ui_path = '/usr/local/share/pdfbooklet/data/pdfshuffler_g.glade'
 
-        if not os.path.exists(ui_path): # Windows standard path
-            ui_path = './data/pdfshuffler_g.glade'
+        # Windows standard path
+        if not os.path.exists(ui_path):
+            if getattr( sys, 'frozen', False ) :    # running in a bundle (pyinstaller)
+                ui_path = os.path.join(sys._MEIPASS, "data/pdfshuffler_g.glade")
+            else :                                  # running live
+                ui_path = './data/pdfshuffler_g.glade'
+                print (ui_path), "  debug"
 
         if not os.path.exists(ui_path):
             parent_dir = os.path.dirname( \
@@ -303,6 +315,9 @@ class PdfShuffler:
         # Importing documents passed as command line arguments
         for filename in sys.argv[1:]:
             self.add_pdf_pages(filename)
+
+
+
 
     def render(self):
         if self.rendering_thread:
@@ -544,7 +559,7 @@ class PdfShuffler:
         pdf_output = PdfFileWriter()
         pdf_input = []
         for pdfdoc in self.pdfqueue:
-            pdfdoc_inp = PdfFileReader(file(pdfdoc.copyname, 'rb'))
+            pdfdoc_inp = PdfFileReader(open(pdfdoc.copyname, 'rb'))
             if pdfdoc_inp.getIsEncrypted():
                 try: # Workaround for lp:#355479
                     stat = pdfdoc_inp.decrypt('')
@@ -602,7 +617,7 @@ class PdfShuffler:
             pdf_output.addPage(current_page)
 
         # finally, write "output" to document-output.pdf
-        pdf_output.write(file(file_out, 'wb'))
+        pdf_output.write(open(file_out, 'wb'))
 
     def on_action_add_doc_activate(self, widget, data=None):
         """Import doc"""
@@ -1043,7 +1058,7 @@ class PdfShuffler:
 
                 crop = [0.,0.,0.,0.]
                 perm = [0,2,1,3]
-                for it in range(rotate_times):
+                for it in range(int(rotate_times)):
                     perm.append(perm.pop(0))
                 perm.insert(1,perm.pop(2))
                 crop = [model.get_value(iter, 7 + perm[side]) for side in range(4)]
@@ -1194,7 +1209,7 @@ class PDF_Doc:
 class PDF_Renderer(threading.Thread, GObject.GObject):
 
     def __init__(self, model, pdfqueue, resample=1.):
-        print("resample", resample)
+        # print("resample", resample)
         threading.Thread.__init__(self)
         GObject.GObject.__init__(self)
         self.model = model

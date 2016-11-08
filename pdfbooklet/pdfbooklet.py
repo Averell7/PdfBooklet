@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # -*- coding: utf8 -*-
 
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# version 3.0.0  RC;  06 / 11 / 2016
-PB_version = "3.0.0 RC"
+# version 3.0.0;  08 / 11 / 2016
+PB_version = "3.0.0"
 
 
 """
@@ -143,7 +143,7 @@ Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que don
 
 
 
-import time, math, string, os, sys, re, shutil
+import time, math, string, os, sys, re, shutil, site
 print(sys.version)
 try :
     import configparser     # Python 3
@@ -189,9 +189,6 @@ from files_chooser import Chooser
 import locale       #for multilanguage support
 import gettext
 import elib_intl3
-
-
-
 elib_intl3.install("pdfbooklet", "share/locale")
 
 debug_b = 0
@@ -974,6 +971,89 @@ class gtkGui:
 
         self.area.show()
         self.pagesTr = {}
+
+
+
+# ##################### Themes #################################
+
+
+        menu_themes = Gtk.Menu()
+        mem_menu_name = ""
+        # Get the list of gtkrc-xxx files in "data", extract the name, and add items to menu
+        themes_dict = {}
+
+        for a in os.listdir(os.path.join(prog_path_u, "share/themes")) :   # ££ TODO
+
+                    rcpath = os.path.join(prog_path_u,a)
+
+                    themes_dict[a] = rcpath
+        themes_list = themes_dict.keys()
+##        themes_list.sort()
+
+        # Extract similar short names to build submenus
+        mem_short_name = ""
+        submenus = []
+        for menu_name in themes_list :
+            short_name = menu_name.split("-")[0]
+            if short_name == mem_short_name :
+                if short_name not in submenus :
+                    submenus.append(short_name)
+            mem_short_name = short_name
+
+        # Build first level menu
+        sub_dict = {}
+        to_del = []
+        keys = themes_dict.keys()
+##        keys.sort()
+        for menu_name in submenus :
+            if len(menu_name.strip()) == 0 :
+                continue
+            sub_dict[menu_name] = Gtk.MenuItem(menu_name)
+            menu_themes.append(sub_dict[menu_name])
+            sub_dict[menu_name].show()
+
+
+            submenu = Gtk.Menu()
+            submenu.show()
+            for key in keys :
+                rcpath = themes_dict[key]
+                short_name = key.split("-")[0]
+                if short_name == menu_name :
+                    commandes = Gtk.MenuItem(key)
+                    submenu.append(commandes)
+                    commandes.connect("activate", self.gtkrc_activate, rcpath, key)
+                    commandes.show()
+                    to_del.append(key)
+
+            sub_dict[menu_name].set_submenu(submenu)
+
+        # delete used keys and add the remaining to main menu
+
+        for key in to_del :
+            del themes_dict[key]
+        keys = themes_dict.keys()
+##        keys.sort()
+
+        for menu_name in keys :
+            if len(menu_name.strip()) == 0 :
+                continue
+            rcpath = themes_dict[menu_name]
+            commandes = Gtk.MenuItem(menu_name)
+            menu_themes.append(commandes)
+            commandes.connect("activate", self.gtkrc_activate, rcpath, menu_name)
+            commandes.show()
+
+##        self.arw["themes"].set_submenu(menu_themes)
+        # Thèmes désactivés
+
+    def gtkrc_activate(self, widget, path, theme) :
+
+        f1 = open(os.path.join(site.getsitepackages()[1], "gnome/etc/gtk-3.0/settings.ini"), "w")
+        f1.write("[Settings]\n")
+        f1.write("gtk-theme-name = " + theme)
+        f1.close()
+
+
 
 
 
@@ -1889,7 +1969,8 @@ class gtkGui:
 
         if "mru" in configtemp :
             for option in configtemp["mru"] :
-                config["mru"][option] = configtemp["mru"][option]
+                if "mru" in config :
+                    config["mru"][option] = configtemp["mru"][option]
 
 
 
