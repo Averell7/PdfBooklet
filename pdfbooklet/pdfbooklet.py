@@ -888,69 +888,71 @@ class gtkGui:
         # Get the list of gtkrc-xxx files in "data", extract the name, and add items to menu
         themes_dict = {}
 
-        for a in os.listdir(os.path.join(prog_path_u, "share/themes")) :   # TODO ££
-
-                    rcpath = os.path.join(prog_path_u,a)
-
-                    themes_dict[a] = rcpath
-        themes_list = themes_dict.keys()
-##        themes_list.sort()
-
-        # Extract similar short names to build submenus
-        mem_short_name = ""
-        submenus = []
-        for menu_name in themes_list :
-            short_name = menu_name.split("-")[0]
-            if short_name == mem_short_name :
-                if short_name not in submenus :
-                    submenus.append(short_name)
-            mem_short_name = short_name
-
-        # Build first level menu
-        sub_dict = {}
-        to_del = []
-        keys = themes_dict.keys()
-##        keys.sort()
-        for menu_name in submenus :
-            if len(menu_name.strip()) == 0 :
-                continue
-            sub_dict[menu_name] = Gtk.MenuItem(menu_name)
-            menu_themes.append(sub_dict[menu_name])
-            sub_dict[menu_name].show()
+        themes_dir = os.path.join(prog_path_u, "share/themes")
+        if os.path.isdir(themes_dir) :
 
 
-            submenu = Gtk.Menu()
-            submenu.show()
-            for key in keys :
-                rcpath = themes_dict[key]
-                short_name = key.split("-")[0]
-                if short_name == menu_name :
-                    commandes = Gtk.MenuItem(key)
-                    submenu.append(commandes)
-                    commandes.connect("activate", self.gtkrc_activate, rcpath, key)
-                    commandes.show()
-                    to_del.append(key)
+            for a in os.listdir(themes_dir) :   # TODO ££
+                        rcpath = os.path.join(prog_path_u,a)
+                        themes_dict[a] = rcpath
+            themes_list = themes_dict.keys()
+    ##        themes_list.sort()
 
-            sub_dict[menu_name].set_submenu(submenu)
+            # Extract similar short names to build submenus
+            mem_short_name = ""
+            submenus = []
+            for menu_name in themes_list :
+                short_name = menu_name.split("-")[0]
+                if short_name == mem_short_name :
+                    if short_name not in submenus :
+                        submenus.append(short_name)
+                mem_short_name = short_name
 
-        # delete used keys and add the remaining to main menu
+            # Build first level menu
+            sub_dict = {}
+            to_del = []
+            keys = themes_dict.keys()
+    ##        keys.sort()
+            for menu_name in submenus :
+                if len(menu_name.strip()) == 0 :
+                    continue
+                sub_dict[menu_name] = Gtk.MenuItem(menu_name)
+                menu_themes.append(sub_dict[menu_name])
+                sub_dict[menu_name].show()
 
-        for key in to_del :
-            del themes_dict[key]
-        keys = themes_dict.keys()
-##        keys.sort()
 
-        for menu_name in keys :
-            if len(menu_name.strip()) == 0 :
-                continue
-            rcpath = themes_dict[menu_name]
-            commandes = Gtk.MenuItem(menu_name)
-            menu_themes.append(commandes)
-            commandes.connect("activate", self.gtkrc_activate, rcpath, menu_name)
-            commandes.show()
+                submenu = Gtk.Menu()
+                submenu.show()
+                for key in keys :
+                    rcpath = themes_dict[key]
+                    short_name = key.split("-")[0]
+                    if short_name == menu_name :
+                        commandes = Gtk.MenuItem(key)
+                        submenu.append(commandes)
+                        commandes.connect("activate", self.gtkrc_activate, rcpath, key)
+                        commandes.show()
+                        to_del.append(key)
 
-##        self.arw["themes"].set_submenu(menu_themes)
-        # Thèmes désactivés
+                sub_dict[menu_name].set_submenu(submenu)
+
+            # delete used keys and add the remaining to main menu
+
+            for key in to_del :
+                del themes_dict[key]
+            keys = themes_dict.keys()
+    ##        keys.sort()
+
+            for menu_name in keys :
+                if len(menu_name.strip()) == 0 :
+                    continue
+                rcpath = themes_dict[menu_name]
+                commandes = Gtk.MenuItem(menu_name)
+                menu_themes.append(commandes)
+                commandes.connect("activate", self.gtkrc_activate, rcpath, menu_name)
+                commandes.show()
+
+    ##        self.arw["themes"].set_submenu(menu_themes)
+
 
     def gtkrc_activate(self, widget, path, theme) :
 
@@ -4564,7 +4566,7 @@ def main() :
         (excType, excValue, excTb) = sys.exc_info()
         tb_a = traceback.format_exception(excType, excValue, excTb)
         for a in tb_a :
-            print(a)
+            print(a.encode("cp1252", 'ignore'))
 
     # handle eventual exception
     if isExcept :
