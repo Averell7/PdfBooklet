@@ -5,7 +5,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 # version 3.0.0;  Rev 2 , 09 / 11 / 2016
-PB_version = "3.0.0"
+PB_version = "3.0.1"
 
 
 """
@@ -140,7 +140,18 @@ Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que don
 
 """
 
+"""
+Ubuntu 2016 - dépendences
 
+python3-gilinu
+python3-cairo
+gir1.2-gtk-3.0
+gir1.2-poppler-0.18
+
+
+
+
+"""
 
 import time, math, string, os, sys, re, shutil, site
 print(sys.version)
@@ -183,12 +194,13 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 import PyPDF2.generic as generic
 
 
-from files_chooser import Chooser
+# from pdfbooklet import *
+from pdfbooklet.files_chooser import Chooser
 
 import locale       #for multilanguage support
 import gettext
-import elib_intl3
-elib_intl3.install("pdfbooklet", "share/locale")
+import pdfbooklet.elib_intl3
+pdfbooklet.elib_intl3.install("pdfbooklet", "share/locale")
 
 debug_b = 0
 
@@ -788,7 +800,7 @@ class gtkGui:
         global numPages, pagesSel, llx_i, lly_i, urx_i, ury_i, mediabox_l
         global ouputFile, optionsDict, selectedIndex_a, selected_page, selected_pages_a, selectedeletedIndex_a, app
 
-        elib_intl3.install("pdfbooklet", "share/locale")
+        pdfbooklet.elib_intl3.install("pdfbooklet", "share/locale")
 
         if None != pdfList :
             inputFiles_a = pdfList
@@ -1421,7 +1433,7 @@ class gtkGui:
     def pdfBooklet_doc(self, widget) :
 
         userGuide_s = "documentation/" + _("Pdf-Booklet_User's_Guide.pdf")
-        if sys.platform == 'linux2':
+        if 'linux' in sys.platform :
             subprocess.call(["xdg-open", userGuide_s])
         else:
             os.startfile(sfp(userGuide_s))
@@ -3181,7 +3193,7 @@ class gtkGui:
                         if self.render.createNewPdf(ar_pages, ar_layout, outputFile, preview) :
                             if self.arw["show"].get_active() == 1 :
 
-                                if sys.platform == 'linux2':
+                                if 'linux' in sys.platform :
                                     subprocess.call(["xdg-open", outputFile])
                                 else:
                                     os.startfile(outputFile)
@@ -4398,7 +4410,7 @@ def main() :
 
     global PdfShuffler, PDF_Doc
 
-    from pdfshuffler_g3 import PdfShuffler, PDF_Doc
+    from pdfbooklet.pdfshuffler_g3 import PdfShuffler, PDF_Doc
 
     global isExcept
     global startup_b
@@ -4439,9 +4451,10 @@ def main() :
 
     # set directories for Linux and Windows
 
-    if sys.platform == 'linux2':
+    if 'linux' in sys.platform :
         if os.path.isdir("/var/tmp/pdfbooklet") == False :
             os.mkdir("/var/tmp/pdfbooklet")
+            os.chmod("/var/tmp/pdfbooklet", 777)
         temp_path_u = "/var/tmp/pdfbooklet"
         cfg_path_u = temp_path_u
         if prog_path_u[-4:] == "/bin" :
@@ -4449,11 +4462,11 @@ def main() :
         else :
             temp_u = prog_path_u
         if os.path.isdir(os.path.join(temp_u,"share/pdfbooklet/data")) :
-            prog_path_u = os.path.join(temp_u, "share/pdfbooklet")
+            cfg_path_u = os.path.join(temp_u, "share/pdfbooklet")
         elif os.path.isdir("/usr/share/pdfbooklet/data") :
-            prog_path_u = "/usr/share/pdfbooklet"
+            cfg_path_u = "/usr/share/pdfbooklet"
         elif os.path.isdir("/usr/local/share/pdfbooklet/data") :
-            prog_path_u  = "/usr/local/share/pdfbooklet"
+            cfg_path_u  = "/usr/local/share/pdfbooklet"
 
         if os.path.isfile(sfp("data/nofile.pdf")) :
             shutil.copy(sfp("data/nofile.pdf"), "/var/tmp/pdfbooklet/preview.pdf")
@@ -4566,7 +4579,7 @@ def main() :
         (excType, excValue, excTb) = sys.exc_info()
         tb_a = traceback.format_exception(excType, excValue, excTb)
         for a in tb_a :
-            print(a.encode("cp1252", 'ignore'))
+            print(a)
 
     # handle eventual exception
     if isExcept :
