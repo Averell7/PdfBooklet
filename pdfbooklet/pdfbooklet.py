@@ -1010,7 +1010,7 @@ class gtkGui:
         mrudir = self.read_mru2()
         if mrudir == "" :
             mrudir = prog_path_u
-        self.chooser = Chooser(inputFiles_a, prog_path_u, mrudir)
+        self.chooser = Chooser(inputFiles_a, cfg_path_u, mrudir)
         inputFiles_a = self.chooser.inputFiles_a
         if len(inputFiles_a) == 0 :
             return
@@ -4388,7 +4388,11 @@ def sfp(path) :
 
 def sfp2(file) :
     # sfp2 = set full path, used for temporary directory
-    return os.path.join(cfg_path_u, file)
+    try:
+        return os.path.join(cfg_path_u, file)
+    except :
+      time.sleep(1)                 # Sometimes there was a sort of conflict with another thread
+      return os.path.join(cfg_path_u, file1)
 
 
 
