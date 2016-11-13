@@ -195,12 +195,12 @@ import PyPDF2.generic as generic
 
 
 # from pdfbooklet import *
-from pdfbooklet.files_chooser import Chooser
+from files_chooser import Chooser
 
 import locale       #for multilanguage support
 import gettext
-import pdfbooklet.elib_intl3
-pdfbooklet.elib_intl3.install("pdfbooklet", "share/locale")
+import elib_intl3
+elib_intl3.install("pdfbooklet", "share/locale")
 
 debug_b = 0
 
@@ -800,7 +800,7 @@ class gtkGui:
         global numPages, pagesSel, llx_i, lly_i, urx_i, ury_i, mediabox_l
         global ouputFile, optionsDict, selectedIndex_a, selected_page, selected_pages_a, selectedeletedIndex_a, app
 
-        pdfbooklet.elib_intl3.install("pdfbooklet", "share/locale")
+        elib_intl3.install("pdfbooklet", "share/locale")
 
         if None != pdfList :
             inputFiles_a = pdfList
@@ -840,7 +840,7 @@ class gtkGui:
 
         self.widgets = Gtk.Builder()
         #self.widgets.set_translation_domain('pdfbooklet')
-        self.widgets.add_from_file(sfp('data/pdfbooklet3.glade'))
+        self.widgets.add_from_file(sfp2('data/pdfbooklet3.glade'))
         arWidgets = self.widgets.get_objects()
         self.arw = {}
         for z in arWidgets :
@@ -2817,7 +2817,7 @@ class gtkGui:
 
         if len(inputFiles_a) == 0 :
             #showwarning(_("No file loaded"), _("Please select a file first"))
-            shutil.copy(sfp("data/nofile.pdf"), os.path.join(temp_path_u, "preview.pdf"))
+            shutil.copy(sfp2("data/nofile.pdf"), os.path.join(temp_path_u, "preview.pdf"))
             return False
         if Event != None :
             value_s = self.arw["entry11"].get_text()
@@ -4410,7 +4410,7 @@ def main() :
 
     global PdfShuffler, PDF_Doc
 
-    from pdfbooklet.pdfshuffler_g3 import PdfShuffler, PDF_Doc
+    from pdfshuffler_g3 import PdfShuffler, PDF_Doc
 
     global isExcept
     global startup_b
@@ -4454,22 +4454,12 @@ def main() :
     if 'linux' in sys.platform :
         if os.path.isdir("/var/tmp/pdfbooklet") == False :
             os.mkdir("/var/tmp/pdfbooklet")
-            os.chmod("/var/tmp/pdfbooklet", 777)
-        temp_path_u = "/var/tmp/pdfbooklet"
-        cfg_path_u = temp_path_u
-        if prog_path_u[-4:] == "/bin" :
-            temp_u = prog_path_u[0:-4]
-        else :
-            temp_u = prog_path_u
-        if os.path.isdir(os.path.join(temp_u,"share/pdfbooklet/data")) :
-            cfg_path_u = os.path.join(temp_u, "share/pdfbooklet")
-        elif os.path.isdir("/usr/share/pdfbooklet/data") :
-            cfg_path_u = "/usr/share/pdfbooklet"
-        elif os.path.isdir("/usr/local/share/pdfbooklet/data") :
-            cfg_path_u  = "/usr/local/share/pdfbooklet"
 
-        if os.path.isfile(sfp("data/nofile.pdf")) :
-            shutil.copy(sfp("data/nofile.pdf"), "/var/tmp/pdfbooklet/preview.pdf")
+        temp_path_u = "/var/tmp/pdfbooklet"
+        cfg_path_u = "/usr/share/pdfbooklet"
+
+        if os.path.isfile(cfg_path_u + "/data/nofile.pdf") :
+            shutil.copy(cfg_path_u + "/data/nofile.pdf", "/var/tmp/pdfbooklet/preview.pdf")
 
 
 
