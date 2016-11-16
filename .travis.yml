@@ -7,8 +7,8 @@ python:
 before_install:  
   - sudo apt-get install -y rpm
   - sudo apt-get install -y alien
-  - sudo apt-get install -y python-gi 
-#  - sudo apt-get install -y python3-gi
+  - sudo apt-get install -y python3-gi
+  - sudo apt-get install -y python3-gi-cairo
   - sudo apt-get install -y gir1.2-gtk-3.0
   - sudo apt-get install -y gir1.2-poppler-0.18
     
@@ -16,11 +16,16 @@ before_install:
   
 install: 
   - pip install flake8 tox  
-  - pip install pyinstaller
+  - pip3 install pyinstaller
 
 script: 
   - nosetests 
-#  - sudo pyinstaller ./pdfbooklet/pdfbooklet.py
+  - ls
+  - cd pdfbooklet
+  - sudo pyinstaller pdfbooklet.py
+  - ls
+  - cd ..
+  - ls
   - sudo python build.py
   - sudo python essai1.py
   

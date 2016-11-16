@@ -85,7 +85,7 @@ Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que don
 
     The structure of the program is easy to understand.
     Everything runs around the "config" dictionary which defines how the source pdf files
-    must be palced in the output file.
+    must be placed in the output file.
     The content of this dictionary may be viewd at any time by the command "Save project"
     which builds an ini file from this dictionary.
 
@@ -143,12 +143,15 @@ Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que don
 """
 Ubuntu 2016 - dépendences
 
-python3-gilinu
-python3-cairo
+python3-gi
+python3-gi-cairo
 gir1.2-gtk-3.0
 gir1.2-poppler-0.18
 
+Installation de pyinstaller
 
+sudo pip3 install pyinstaller
+le paquet python-dev est aussi nécessaire (mais pip le trouve)
 
 
 """
@@ -176,7 +179,7 @@ import copy
 from optparse import OptionParser
 import traceback
 
-import cairo
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Poppler', '0.18')
@@ -186,12 +189,13 @@ from gi.repository import Gdk
 from gi.repository import Poppler
 from gi.repository import Pango
 from gi.repository import Gio
+from gi.repository import cairo
 
 
 Gtk.rc_parse("./gtkrc")
 
-from PyPDF2 import PdfFileReader, PdfFileWriter
-import PyPDF2.generic as generic
+from PyPDF2_G import PdfFileReader, PdfFileWriter
+import PyPDF2_G.generic as generic
 
 
 # from pdfbooklet import *
@@ -218,20 +222,20 @@ debug_b = 0
 
 
 def join_list(my_list, separator) :
-    data = ""
+    mydata = ""
     if isinstance(my_list, list) :
         for s in my_list :
-            data += s + separator
+            mydata += s + separator
     elif isinstance(my_list, dict) :
         for s in my_list :
             try :
                 item1 = unicode(my_list[s], "utf-8")
             except :
                 item1 = my_list[s]
-            data += item1 + separator
+            mydata += item1 + separator
     crop = len(separator) * -1
-    data = data[0:crop]
-    return data
+    mydata = mydata[0:crop]
+    return mydata
 
 def get_value(dictionary, key, default = 0) :
 
@@ -991,7 +995,7 @@ class gtkGui:
     def gtk_delete(self, source=None, event=None):
         Gtk.main_quit()
 
-    def close_application(self, widget, event=None, data=None):
+    def close_application(self, widget, event=None, mydata=None):
         """Termination"""
         if self.shuffler != None :
             self.shuffler.close_application("")
@@ -1703,10 +1707,10 @@ class gtkGui:
                 z2 = z.split(".")
                 z3 = z2[-1]
                 if z3 == "GtkSpinButton" :
-                    data = config[section][option]
-                    data = data.replace(",",".")
-                    if data.strip() != "" :
-                        widget.set_value(float(data))
+                    mydata = config[section][option]
+                    mydata = mydata.replace(",",".")
+                    if mydata.strip() != "" :
+                        widget.set_value(float(mydata))
                 elif z3 == "GtkTextView" :
                     widget.get_buffer().set_text(config[section][option])
                 elif z3 == "GtkCheckButton" :
@@ -2812,7 +2816,7 @@ class gtkGui:
         self.previewPage = 1000000    # CreatePageLayout will substitute the right number
         self.preview(self.previewPage)
 
-    def previewUpdate(self, Event = None, data = None) :
+    def previewUpdate(self, Event = None, mydata = None) :
         global inputFiles_a
 
         if len(inputFiles_a) == 0 :
@@ -3398,11 +3402,11 @@ class pdfRender():
         return matrix_s
 
 
-    def calcMatrix(self, data, myrows_i = 1, mycolumns_i = 1) :
+    def calcMatrix(self, mydata, myrows_i = 1, mycolumns_i = 1) :
             # Calculate matrix for transformations defined in the configuration
             global config
 
-            trans = data.strip()
+            trans = mydata.strip()
             cos_l = 1
             cos2_l = 1
             sin_l = 0
@@ -4386,17 +4390,17 @@ def sfp(path) :
     # sfp = set full path
     return os.path.join(prog_path_u, path)
 
-def sfp2(file) :
+def sfp2(file1) :
     # sfp2 = set full path, used for temporary directory
     try:
-        return os.path.join(cfg_path_u, file)
+        return os.path.join(cfg_path_u, file1)
     except :
       time.sleep(1)                 # Sometimes there was a sort of conflict with another thread
       return os.path.join(cfg_path_u, file1)
 
 
 
-def close_applicationx(self, widget, event=None, data=None):
+def close_applicationx(self, widget, event=None, mydata=None):
 
     if Gtk.main_level():
         app.arw["window1"].destroy()
@@ -4455,7 +4459,7 @@ def main() :
 
     # set directories for Linux and Windows
 
-    if 'linux' in sys.platform :
+    if 'linuxx' in sys.platform :
         if os.path.isdir("/var/tmp/pdfbooklet") == False :
             os.mkdir("/var/tmp/pdfbooklet")
 

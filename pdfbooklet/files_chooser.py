@@ -13,7 +13,7 @@ import os, sys
 
 from gi.repository import Gtk, Gio
 #from pdf import PdfFileReader
-from PyPDF2 import PdfFileReader
+from PyPDF2_G import PdfFileReader
 
 ### If gettext can't load, we must define the _(...) function
 ##if os.path.isfile("./locale/gui/LC_MESSAGES/pdfBooklet.mo") == False :

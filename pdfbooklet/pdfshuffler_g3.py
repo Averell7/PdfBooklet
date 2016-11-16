@@ -87,7 +87,7 @@ from gi.repository import GObject      # for using custom signals
 import cairo
 
 
-from PyPDF2.pdf import PdfFileWriter, PdfFileReader
+from PyPDF2_G.pdf import PdfFileWriter, PdfFileReader
 
 from pdfshuffler_iconview3 import CellRendererImage
 GObject.type_register(CellRendererImage)
