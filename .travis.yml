@@ -16,19 +16,19 @@ before_install:
   
 install: 
   - pip install flake8 tox  
-  - sudo pip3 install pyinstaller
+  - sudo pip install pyinstaller
   - whereis pyinstaller
   - ls /usr/share
   
 
 script: 
   - nosetests 
+  - sudo python build.py
   - ls
   - cd pdfbooklet
   - sudo pyinstaller pdfbooklet.py
   - ls
   - cd ..
   - ls
-  - sudo python build.py
   - sudo python essai1.py
   
