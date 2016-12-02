@@ -25,9 +25,6 @@ script:
   - nosetests 
   - sudo python build.py
   - ls
-  - cd pdfbooklet
-  - sudo pyinstaller pdfbooklet.py
-  - ls
   - cd dist 
   - ls
   
