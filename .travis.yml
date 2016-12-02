@@ -28,7 +28,6 @@ script:
   - cd pdfbooklet
   - sudo pyinstaller pdfbooklet.py
   - ls
-  - cd ..
+  - cd dist 
   - ls
-  - sudo python essai1.py
   

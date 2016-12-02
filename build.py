@@ -49,7 +49,6 @@ if os.path.isfile(tar_file) :
 else :
     print "NOT found tar", tar_file
   
-os.system("ls ./dist")
 
 
 print "\n\n ================ Uploading tar.gz =======================\n\n"
@@ -77,6 +76,22 @@ try :
     x = ftp.storbinary(command, open(rpm_file, 'rb'))
 except :
     print "rpm file error :", command
+
+
+# generate pyinstaller file
+print "\n\n ================ Generate pyinstaller file =======================\n\n"
+
+os.system('cd pdfbooklet')
+os.system('sudo pyinstaller pdfbooklet.py')
+
+print "\n\n ================ Uploading pyintaller files =======================\n\n"
+
+os.system('ls -l')
+for mydir in os.walk("./dist/") :
+    for myfile in mydir[1] :
+        path = os.path.join(mydir[0], myfile)
+        command = 'STOR ' + path
+        x = ftp.storbinary(command, open(path, 'rb'))
 
 
 # generate Debian package
