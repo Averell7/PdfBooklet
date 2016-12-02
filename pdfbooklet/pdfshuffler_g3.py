@@ -7,9 +7,11 @@ from __future__ import unicode_literals
 # PdfShuffler 0.6.0 Rev 82, modified for Windows compatibility
 # See the Class PdfShuffler_Windows_cod" / class PdfShuffler_Linux_code :
 
-# Version inside pdfBooklet : 2.2.2.1
-#
-# 2.2.2 : better support for drag and drop multiple files
+# updated for python 3 and Gtk 3
+
+# Version inside pdfBooklet : 3.0.1
+
+
 """
 
  PdfShuffler 0.6.0 - GTK+ based utility for splitting, rearrangement and
@@ -44,7 +46,6 @@ import threading
 import tempfile
 import glob
 from copy import copy
-print(sys.version)
 import locale       #for multilanguage support
 import gettext
 import elib_intl3
@@ -59,33 +60,15 @@ VERSION = '0.6.0'
 WEBSITE = 'http://pdfshuffler.sourceforge.net/'
 LICENSE = 'GNU General Public License (GPL) Version 3.'
 
-##try:
-##    import pygtk
-##    pyGtk.require('2.0')
-##    import gtk
-##    assert Gtk.gtk_version >= (2, 10, 0)
-##    assert Gtk.pygtk_version >= (2, 10, 0)
-##except AssertionError:
-##    print(('You do not have the required versions of GTK+ and PyGTK ' +
-##          'installed.\n\n' +
-##          'Installed GTK+ version is ' +
-##          '.'.join([str(n) for n in Gtk.gtk_version]) + '\n' +
-##          'Required GTK+ version is 2.10.0 or higher\n\n'
-##          'Installed PyGTK version is ' +
-##          '.'.join([str(n) for n in Gtk.pygtk_version]) + '\n' +
-##          'Required PyGTK version is 2.10.0 or higher'))
-##    sys.exit(1)
-##except:
-##    print('PyGTK version 2.10.0 or higher is required to run this program.')
-##    print('No version of PyGTK was found on your system.')
-##    sys.exit(1)
-
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Poppler', '0.18')
 from gi.repository import Gtk, Gdk, Poppler
 from gi.repository import Pango        # for adjusting the text alignment in CellRendererText
 from gi.repository import Gio          # for inquiring mime types information
 from gi.repository import GObject      # for using custom signals
+##from gi.repository import cairo        # Raises the error : 'gi.repository.cairo' object has no attribute 'ImageSurface'
 import cairo
-
 
 from PyPDF2_G.pdf import PdfFileWriter, PdfFileReader
 
@@ -761,7 +744,9 @@ class PdfShuffler:
                                        str(angle)] +
                                        [str(side) for side in crop]))
         if data:
-            data = '\n;\n'.join(data)
+            print (repr(data))
+            data = bytes('\n;\n'.join(data), "utf-8")
+            print (repr(data))
             selection_data.set(selection_data.get_target(), 8, data)
 
     def iv_dnd_received_data(self, iconview, context, x, y,
@@ -769,7 +754,7 @@ class PdfShuffler:
         """Handles received data by drag and drop in iconview"""
 
         model = iconview.get_model()
-        data = selection_data.get_data()
+        data = selection_data.get_data().decode("utf-8")
         if data:
             data = data.split('\n;\n')
             drop_info = iconview.get_dest_item_at_pos(x, y)
@@ -803,17 +788,15 @@ class PdfShuffler:
                         path = ref_from.get_path()
                         iter_from = model.get_iter(path)
                         row = model[iter_from]
+                        row_data = []
+                        for a in row :
+                            row_data.append(a)
 
                         if before:
-                            iter_new = model.insert_before(iter_to, row)
+                            iter_new = model.insert_before(iter_to, row_data)
                         else:
-                            iter_new = model.insert_after(iter_to, row)
+                            iter_new = model.insert_after(iter_to, row_data)
 
-                        # fill in the new row (it was automatic in Gtk2 )
-                        i = 0
-                        for a in row :
-                                model.set(iter_new, i, a)
-                                i += 1
 
                     if context.get_selected_action() == Gdk.DragAction.MOVE:
                         for ref_from in ref_from_list:
@@ -939,8 +922,9 @@ class PdfShuffler:
                 last_selection -= 1
             for a in range(first_selection,last_selection, step) :
                 iconview.select_path(str(a))
-                # TODO : File "pdfshuffler_g3.pyc", line 928, in iv_button_press_event
-                #TypeError: argument path: Expected Gtk.TreePath, but got int
+                # TODO : File "D:\Mes Documents\en cours\PdfBooklet3\pdfshuffler_g3.py", line 923, in iv_button_press_event
+                #  iconview.select_path(str(a))
+                # TypeError: argument path: Expected Gtk.TreePath, but got str
 
             return True
         else :
@@ -1231,6 +1215,12 @@ class PDF_Renderer(threading.Thread, GObject.GObject):
                     thumbnail = cairo.ImageSurface(cairo.FORMAT_ARGB32,
                                                    int(w/self.resample),
                                                    int(h/self.resample))
+##                    thumbnail1 = cairo.image_surface_create()
+##                    thumbnail = thumbnail1(1,
+##                                                   int(w/self.resample),
+##                                                   int(h/self.resample))
+
+
                     cr = cairo.Context(thumbnail)
                     if self.resample != 1.:
                         cr.scale(1./self.resample, 1./self.resample)
@@ -1310,9 +1300,9 @@ class PdfShuffler_Windows_code :
 
 def main():
     """This function starts PdfShuffler"""
-    Gdk.threads_init()
-    GObject.threads_init()
-    Gdk.threads_enter()     # This line is necessary in Windows
+##    Gdk.threads_init()
+##    GObject.threads_init()
+##    Gdk.threads_enter()     # This line is necessary in Windows
     PdfShuffler()
     Gtk.main()
 

@@ -4,7 +4,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# version 3.0.0;  Rev 2 , 09 / 11 / 2016
+# version 3.0.1;  Rev 2 , 09 / 11 / 2016
 PB_version = "3.0.1"
 
 
@@ -138,6 +138,16 @@ Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que don
        Then it launchs the preview function which will update the preview
 
 
+
+    HOWTO
+
+    to add a parameter, three steps are necessary :
+        1) add teh code which will use the parameter
+        2) add a control in Glade
+        3) add a line in makeinifile to write the parameter in the project file
+        4) add a line in setupGui to setup the gui from the ini file.
+
+
 """
 
 """
@@ -157,7 +167,7 @@ le paquet python-dev est aussi nécessaire (mais pip le trouve)
 """
 
 import time, math, string, os, sys, re, shutil, site
-print(sys.version)
+#print(sys.version)
 try :
     import configparser     # Python 3
     from configparser import ConfigParser, RawConfigParser
@@ -1759,6 +1769,7 @@ class gtkGui:
         self.setOption("prependPages", self.arw["entry32"])
         self.setOption("appendPages", self.arw["entry33"])
         self.setOption("referencePage", self.arw["entry31"])
+        self.setOption("creep", self.arw["creep"])
         self.setOption("output", self.arw["entry2"])
         self.setOption("width", self.arw["outputWidth"])
         self.setOption("height", self.arw["outputHeight"])
@@ -1830,6 +1841,7 @@ class gtkGui:
         config["options"]["prependPages"] = self.arw["entry32"].get_text()
         config["options"]["appendPages"] = self.arw["entry33"].get_text()
         config["options"]["referencePage"] = self.arw["entry31"].get_text()
+        config["options"]["creep"] = self.arw["creep"].get_text()
         config["options"]["pageSelection"] = self.selection_s
         buf = self.arw["user_layout"].get_buffer()
         start, end  = buf.get_bounds()
@@ -2285,8 +2297,10 @@ class gtkGui:
             x1,x2 = colpos_i,rowpos_i
 
             # draw page number
-            cr.select_font_face("Georgia",
-                cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+            # TODO cr.select_font_face("Georgia",
+##                cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+##            AttributeError: 'gi.repository.cairo' object has no attribute 'FONT_SLANT_NORMAL'
+            cr.select_font_face("Georgia")
             cr.set_font_size(fontsize_i)
             x_bearing, y_bearing, txtWidth, txtHeight = cr.text_extents(pageNumber)[:4]
 
@@ -2366,8 +2380,8 @@ class gtkGui:
 
 
         # Show page size and total pages number
-        cr.select_font_face("Arial",
-            cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.select_font_face("Arial")
+            # TODO cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(12)
         try :
             message = str(refPageSize_a[0]) + " x " + str(refPageSize_a[1]) + " - " + str(numPages) + " pages"
@@ -3825,42 +3839,34 @@ class pdfRender():
 
 
             folios =  pgcount / 4
-            if numfolio == 0 :
+            if numfolio == 0 :                  # single booklet
                 numcahiers = 1
-            else :
+            else :                              # multiple booklets
                 numcahiers = int(folios / numfolio)
-
-                # equilibrate booklets size
-
                 if (folios % numfolio > 0) :
                     numcahiers = numcahiers + 1
 
+            # equilibrate booklets size
             minfolios = int(folios / numcahiers)
             restefolios = folios - (minfolios * numcahiers)
-
-
             ar_cahiers = {}
 
-
             for k in range(numcahiers) :
-
-                if (k < restefolios) :
+                if (k < restefolios) :              # number of folios in each booklet
                     ar_cahiers[k] = minfolios + 1
                 else :
                     ar_cahiers[k] = minfolios
 
-                first = last + 1
-                last = first + (ar_cahiers[k] * 4) - 1
+                first = last + 1                            # num of first page of the booklet
+                last = first + (ar_cahiers[k] * 4) - 1      # num of the last page of the booklet
 
                 if logdata == 1 :
                     #app.print2(_( "Booklet %s : pages %s - %s") % (k + 1, first, last), 1)
                     pass
 
-                bkltPages = (last - first) + 1
-                for i in range (bkltPages // 2) :
-
-
-                    if ((i % 2) == 0) :   # Page paire à gauche
+                bkltPages = (last - first) + 1              # number of pages in the booklet
+                for i in range (bkltPages // 2) :           # page nums for each sheet
+                    if ((i % 2) == 0) :                     # Page paire à gauche
                         pg2 = (i + first)
                         pg1 = (last - i)
                     else :
@@ -4153,7 +4159,8 @@ class pdfRender():
 
             oString = ""
 
-            for r, c in ar_layout :
+            # Ready to create the page
+            for r, c in ar_layout :         # We are creating the page in row r and column c
                 data_x = []
                 if ar_pages[0] == [] :      # system not yet initialised
                     return
@@ -4166,10 +4173,24 @@ class pdfRender():
 
 
                 data_x.append("q\n")
+                # Create the transformation matrix for the page
                 matrix_s = self.transform(r, c, page_number, output_page_number, file_number)
-                if matrix_s == False : return False
+                if matrix_s == False :
+                    return False
                 data_x.append(matrix_s)
 
+                # Booklets : option "creep"
+                if ini.booklet > 0 :                # This option makes sense only for booklets
+                    creep_f = app.readmmEntry(app.arw["creep"])
+                    if creep_f > 0 :
+                        Htrans = creep_f * (int(output_page_number/2))      # increment every two pages
+                        if c == 0 :
+                            data_x.append(self.calcMatrix2((Htrans * -1) , 0))  # shift left
+                        else :
+                            data_x.append(self.calcMatrix2(Htrans , 0))         # shift right
+
+
+                # scale the page to fit the output sheet, if required
                 if"autoscale" in config["options"]:
                     if ini.readBoolean(config["options"]["autoscale"]) == True :
                         scaleFactor_f = self.autoScaleAndRotate(file_number, page_number)
