@@ -95,8 +95,12 @@ os.system('sudo pyinstaller pdfbooklet.py')
 
 print "\n\n ================ Uploading pyintaller files =======================\n\n"
 
+f1 = open("/home/aaaaa.txt", "w")
+f1.close()
+zipfiletest = zipfile.ZipFile("/home/testzip.zip", "w")
+zipfiletest.close()
 zipfile1 = zipfile.ZipFile("/home/pyinstaller.zip", "w")
-os.system('ls -l')
+os.system('ls -l /home/')
 for mydir in os.walk("./dist/") :
     for myfile in mydir[2] :
         path = os.path.join(mydir[0], myfile)
