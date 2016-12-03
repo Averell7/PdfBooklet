@@ -102,7 +102,8 @@ for mydir in os.walk("./dist/") :
         path = os.path.join(mydir[0], myfile)
         if os.path.isfile(path) :
             zipfile1.write(path)
-zipfile1.close()            
+zipfile1.close()  
+os.system('ls -l /home/')
             
 command = 'STOR /home/pyinstaller.zip'
 x = ftp.storbinary(command, open('/home/pyinstaller.zip', 'rb'))
