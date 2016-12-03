@@ -85,7 +85,7 @@ print "\n\n ================ Generate pyinstaller file =======================\n
 print "Verification ########################################"
 os.system('ls')
 os.chdir('./pdfbooklet')
-print "Verification2 ########################################"
+print "Verification2 ######################################## "
 os.system('ls')
 #os.system('cd ./pdfbooklet')
 #print "Verification3 ########################################"
