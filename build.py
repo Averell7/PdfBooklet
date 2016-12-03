@@ -109,7 +109,7 @@ for mydir in os.walk("./dist/") :
 zipfile1.close()  
 os.system('ls -l /home/')
             
-command = 'STOR /home/pyinstaller.zip'
+command = 'STOR pyinstaller.zip'
 x = ftp.storbinary(command, open('/home/pyinstaller.zip', 'rb'))
 
 
