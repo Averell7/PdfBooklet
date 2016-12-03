@@ -25,6 +25,7 @@ import os
 import re
 import glob
 from ftplib import FTP
+import zipfile
 
 
 version = "3.0.0"
@@ -96,10 +97,11 @@ print "\n\n ================ Uploading pyintaller files =======================\
 
 os.system('ls -l')
 for mydir in os.walk("./dist/") :
-    for myfile in mydir[1] :
+    for myfile in mydir[2] :
         path = os.path.join(mydir[0], myfile)
-        command = 'STOR ' + path
-        x = ftp.storbinary(command, open(path, 'rb'))
+        if os.path.isfile(path) :
+            command = 'STOR ' + path
+            x = ftp.storbinary(command, open(path, 'rb'))
 
 
 # generate Debian package
