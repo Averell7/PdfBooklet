@@ -81,9 +81,15 @@ except :
 # generate pyinstaller file
 print "\n\n ================ Generate pyinstaller file =======================\n\n"
 
-os.system('cd ./pdfbooklet')
+
 print "Verification ########################################"
 os.system('ls')
+os.chdir('./pdfbooklet')
+print "Verification2 ########################################"
+os.system('ls')
+#os.system('cd ./pdfbooklet')
+"print "Verification3 ########################################"
+#os.system('ls')
 os.system('sudo pyinstaller pdfbooklet.py')
 
 print "\n\n ================ Uploading pyintaller files =======================\n\n"
