@@ -88,7 +88,7 @@ os.chdir('./pdfbooklet')
 print "Verification2 ########################################"
 os.system('ls')
 #os.system('cd ./pdfbooklet')
-"print "Verification3 ########################################"
+#print "Verification3 ########################################"
 #os.system('ls')
 os.system('sudo pyinstaller pdfbooklet.py')
 
