@@ -5,8 +5,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
-# version 1.2
-# Bug fix : Files with accent in the path were not opened
+# version 3.0.1
+
 
 import os, sys
 
@@ -37,6 +37,13 @@ def unicode2(string, dummy = "") :
                 return string       # Is this the good option ? Return False or an empty string ?
                 return "inconnu"
 
+
+def alert(message, type = 0) :
+
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING,
+                                     Gtk.ButtonsType.CLOSE , message)
+        dialog.run()
+        dialog.destroy()
 
 class Chooser:
     def __init__(self,
@@ -105,25 +112,7 @@ class Chooser:
         chooser.set_filter(filter_pdf)
 
         response = chooser.run()
-        if response == Gtk.ResponseType.OK :
-##        print ( "response ===", response)
-##        if response == 1 :              # must be set in the glade file
-            for filename in chooser.get_filenames():
-                filename = unicode(filename, "utf-8")
-                if os.path.isfile(filename):
-                    # FIXME
-                    f = gio.File(filename)
-                    f_info = f.query_info('standard::content-type')
-                    mime_type = f_info.get_content_type()
-                    if mime_type == 'application/pdf' or mime_type == '.pdf':
-                        self.loadPdfFile(filename)
-                    else :
-                        print(_('File type not supported!'))
-                else:
-                    print(_('File %s does not exist') % filename)
-##        elif response == Gtk.RESPONSE_CANCEL:   python 3
-        else :
-            print(_('Closed, no files selected'))
+
 
     def chooserClose(self, widget) :
         self.chooser.destroy()
@@ -186,14 +175,27 @@ class Chooser:
     def genFilesArray(self, dummy = "") :
         inputFiles_a = {}
         selectedFiles1 = self.chooser.get_filenames()
+
         # eliminate directories
         selectedFiles = []
         for file_s in selectedFiles1 :
             file_u = unicode2(file_s)
             if os.path.isdir(file_u) :
-                pass
+                alert(_("You have chosen a directory, it is not supported"))
             else :
+                 # FIXME
+##                f = gio.File(filename)
+##                f_info = f.query_info('standard::content-type')
+##                mime_type = f_info.get_content_type()
+##                if mime_type == 'application/pdf' or mime_type == '.pdf':
+##                    self.loadPdfFile(filename)
+##                else :
+##                    print(_('File type not supported!'))
                 selectedFiles.append(file_u)
+
+        if len(selectedFiles) == 0 :
+            print(_('Closed, no files selected'))
+            return
 
         size_i = len(self.treestore)
 

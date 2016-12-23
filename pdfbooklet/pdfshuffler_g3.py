@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 
 # updated for python 3 and Gtk 3
 
-# Version inside pdfBooklet : 3.0.1
+# Version inside pdfBooklet : 3.0.2
 
 
 """
@@ -116,10 +116,11 @@ class PdfShuffler:
         self.selection_start = 0
         os.chmod(self.tmp_dir, stat.S_IRWXO)        # TODO il y avait 0700. RWXO est plutôt 777 ?
         icon_theme = Gtk.IconTheme.get_default()
-        try:
-            Gtk.window_set_default_icon(icon_theme.load_icon("pdfshuffler", 64, 0))
-        except:
-            print(_("Can't load icon. Application is not installed correctly."))
+        # TODO : icontheme
+##        try:
+##            Gtk.window_set_default_icon(icon_theme.load_icon("pdfshuffler", 64, 0))
+##        except:
+##            print(_("Can't load icon. Application is not installed correctly."))
 
         # Import the user interface file, trying different possible locations
         ui_path = '/usr/share/pdfbooklet/data/pdfshuffler_g.glade'
@@ -132,7 +133,6 @@ class PdfShuffler:
                 ui_path = os.path.join(sys._MEIPASS, "data/pdfshuffler_g.glade")
             else :                                  # running live
                 ui_path = './data/pdfshuffler_g.glade'
-                print (ui_path), "  debug"
 
         if not os.path.exists(ui_path):
             parent_dir = os.path.dirname( \
@@ -196,7 +196,11 @@ class PdfShuffler:
                                    float)       # 13.Resampling factor
 
         self.zoom_set(self.prefs['initial zoom level'])
+        bar = self.uiXML.get_object('hscale1')
+        bar.set_value(self.prefs['initial zoom level'])
         self.iv_col_width = self.prefs['initial thumbnail size']
+
+
 
         self.iconview = Gtk.IconView(self.model)
         self.iconview.set_item_width(self.iv_col_width + 12)
@@ -420,9 +424,12 @@ class PdfShuffler:
     def close_application(self, widget, event=None, data=None):
         """Termination"""
 
-        if self.rendering_thread:
-            self.rendering_thread.quit = True
-            self.rendering_thread.join()
+        try :
+            if self.rendering_thread:
+                self.rendering_thread.quit = True
+                self.rendering_thread.join()
+        except :
+            pass    # PdfShuffler may be already closed
 
         if os.path.isdir(self.tmp_dir):
             self.winux.remove_temp_dir(self.tmp_dir)
@@ -744,9 +751,7 @@ class PdfShuffler:
                                        str(angle)] +
                                        [str(side) for side in crop]))
         if data:
-            print (repr(data))
             data = bytes('\n;\n'.join(data), "utf-8")
-            print (repr(data))
             selection_data.set(selection_data.get_target(), 8, data)
 
     def iv_dnd_received_data(self, iconview, context, x, y,
@@ -921,10 +926,8 @@ class PdfShuffler:
                 step = -1
                 last_selection -= 1
             for a in range(first_selection,last_selection, step) :
-                iconview.select_path(str(a))
-                # TODO : File "D:\Mes Documents\en cours\PdfBooklet3\pdfshuffler_g3.py", line 923, in iv_button_press_event
-                #  iconview.select_path(str(a))
-                # TypeError: argument path: Expected Gtk.TreePath, but got str
+                iconview.select_path(Gtk.TreePath(a))
+
 
             return True
         else :
@@ -1159,8 +1162,6 @@ class PdfShuffler:
         about_dialog.connect('delete_event', lambda w, *args: w.destroy())
         about_dialog.show_all()
 
-    def toto(self) :
-        print ("toto")
 
 
 class PDF_Doc:
@@ -1193,7 +1194,7 @@ class PDF_Doc:
 class PDF_Renderer(threading.Thread, GObject.GObject):
 
     def __init__(self, model, pdfqueue, resample=1.):
-        # print("resample", resample)
+
         threading.Thread.__init__(self)
         GObject.GObject.__init__(self)
         self.model = model
@@ -1300,11 +1301,13 @@ class PdfShuffler_Windows_code :
 
 def main():
     """This function starts PdfShuffler"""
-##    Gdk.threads_init()
-##    GObject.threads_init()
-##    Gdk.threads_enter()     # This line is necessary in Windows
+    #Gdk.threads_init()         # This line hangs the program when the user tries to move the window
+    GObject.threads_init()
+    #Gdk.threads_enter()     # This line was is necessary in Windows. Does not seem to be now
     PdfShuffler()
+    Gtk.init()
     Gtk.main()
+
 
 if __name__ == '__main__':
 

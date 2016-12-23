@@ -4,8 +4,8 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# version 3.0.1;  Rev 2 , 09 / 11 / 2016
-PB_version = "3.0.1"
+# version 3.0.3;  Rev 1 , 17 / 12 / 2016
+PB_version = "3.0.3"
 
 
 """
@@ -48,7 +48,14 @@ knowledge of the CeCILL license and that you accept its terms.
 TODO : enregistrer un projet  dans un répertoire avec caractères unicode
 vérifier menuAdd
 
-
+selection_s : L'usage de cette variable serait à vérifier. Est-ce que cela ne crée pas de la confusion ?
+Pourquoi ne pas utiliser directement config["options"]["pageSelection"] qu'elle remplace ? Un peu plus long, mais plus facile à déboguer.
+Problème surtout à mettre au point :
+    Supposons une liste de fichiers ouverts dans lesquels on a fait une sélection.
+    Si on ouvre le gestionnaire de fichier a ajoute un fichier à la liste, la sélection est remise à zéro.
+    Ce n'est pas bon, il faudrait seulement ajouter les pages du nouveau fichier.
+    C'est assez compliqué à gérer si des fichiers ont été supprimés. Une routine de comparaison
+    avant et après avoir ouvert le gesionnaire devrait faire le travail.
 
 TODO :
 
@@ -70,7 +77,7 @@ slow mode : si la première feuille est faite entièrement de pages blanches gé
         IndexError: list index out of range
 
 petits défauts
-A propos : le lien vers le site ne marche pas
+
 quand on clique sur les boutons de global rotation, double update du preview (problème des boutons radio)
 
 améliorations
@@ -167,7 +174,7 @@ le paquet python-dev est aussi nécessaire (mais pip le trouve)
 """
 
 import time, math, string, os, sys, re, shutil, site
-#print(sys.version)
+print(sys.version)
 try :
     import configparser     # Python 3
     from configparser import ConfigParser, RawConfigParser
@@ -276,6 +283,18 @@ def printExcept() :
     a,b,c = sys.exc_info()
     for d in traceback.format_exception(a,b,c) :
         print(d, end=' ')
+
+def bool_test(value) :
+    if isinstance(value, str) :
+        try :
+            value = int(value)
+        except :
+            if value.strip().lower() == "true" :
+                return True
+            else :
+                return False
+
+    return bool(value)
 
 def alert(message, type = 0) :
 
@@ -649,7 +668,6 @@ class TxtOnly :
             if not section in self.pagesTr :
                 self.pagesTr[section] = OrderedDict()
 
-
         # inputs
 
         if startup_b == 0 :
@@ -720,7 +738,7 @@ class TxtOnly :
 
 
 
-    def output_page_size(self, radiosize, ref_file = 1, ref_page = 1, logdata = 1) :
+    def output_page_size(self, radiosize, ref_file = 1, ref_page = 0, logdata = 1) :
 
 
         global config, rows_i, columns_i, sections, output, adobe_l, inputFiles_a, inputFile_a
@@ -730,7 +748,12 @@ class TxtOnly :
         if ref_file in inputFiles_a :
             fileName = inputFiles_a[ref_file]
             fileName = unicode2(fileName)
-            page0 = inputFile_a[fileName].getPage(ref_page)
+            try :
+                page0 = inputFile_a[fileName].getPage(ref_page)
+            except :
+                print(_("The reference page is invalid. We use the first page"))
+                page0 = inputFile_a[fileName].getPage(0)
+
             llx_i=page0.mediaBox.getLowerLeft_x()
             lly_i=page0.mediaBox.getLowerLeft_y()
             urx_i=page0.mediaBox.getUpperRight_x()
@@ -798,6 +821,8 @@ class dummy:
     def __init__(self) :
 
         self.pagesTr = {}
+        self.arw = {}
+
 
 class gtkGui:
     # parameters :
@@ -826,10 +851,12 @@ class gtkGui:
         self.password_s = ""
         rows_i = 1
         columns_i = 2
+        step_i = 1
         urx_i = 200
         ury_i = 200
         optionsDict = {}
         adobe_l = 0.3527
+
 
         areaAllocationH_i = 400
         areaAllocationW_i = 400
@@ -955,7 +982,7 @@ class gtkGui:
                     if short_name == menu_name :
                         commandes = Gtk.MenuItem(key)
                         submenu.append(commandes)
-                        commandes.connect("activate", self.gtkrc_activate, rcpath, key)
+                        commandes.connect("activate", self.change_theme, rcpath, key)
                         commandes.show()
                         to_del.append(key)
 
@@ -974,18 +1001,24 @@ class gtkGui:
                 rcpath = themes_dict[menu_name]
                 commandes = Gtk.MenuItem(menu_name)
                 menu_themes.append(commandes)
-                commandes.connect("activate", self.gtkrc_activate, rcpath, menu_name)
+                commandes.connect("activate", self.change_theme, rcpath, menu_name)
                 commandes.show()
 
-    ##        self.arw["themes"].set_submenu(menu_themes)
+            self.arw["themes"].set_submenu(menu_themes)
+            aaa = 1
 
 
-    def gtkrc_activate(self, widget, path, theme) :
+    def change_theme(self, widget, path, theme) :
 
-        f1 = open(os.path.join(site.getsitepackages()[1], "gnome/etc/gtk-3.0/settings.ini"), "w")
+        try:
+            settings_location = os.path.join(site.getsitepackages()[1], "gnome/etc/gtk-3.0/settings.ini")
+        except :
+            settings_location = os.path.join(prog_path_u, "etc/gtk-3.0/settings.ini")
+        f1 = open(settings_location, "w")
         f1.write("[Settings]\n")
         f1.write("gtk-theme-name = " + theme)
         f1.close()
+        alert(_("You must restart the program to apply the new theme."))
 
 
 
@@ -1040,8 +1073,7 @@ class gtkGui:
                 self.shuffler.add_pdf_pages(inputFiles_a[key])
             # TODO : N'est à faire que si la liste des fichiers a changé
             self.shuffler.rendering_thread.pdfqueue = self.shuffler.pdfqueue
-            self.closePS()
-            self.runPS()
+
         ini.loadPdfFiles()
         app.selection_s = ""
         self.previewUpdate()
@@ -1126,6 +1158,7 @@ class gtkGui:
         extension_s = os.path.splitext(filename_u)[1]
         if extension_s == ".ini" :
             ini.openProject2(filename_u)
+            self.selection_s = config["options"]["pageSelection"]
             ini.loadPdfFiles()
             self.setupGui()
             self.arw["previewEntry"].set_text("1")
@@ -1435,10 +1468,11 @@ class gtkGui:
                         path_s,filename_s = os.path.split(filepath_s)
                         temp1 += [filename_s]
                     menu_entry_s = join_list(temp1, ", ")
+                    if len(menu_entry_s) > 40 :
+                        menu_entry_s = menu_entry_s[0:40] + "..."
 
-
-                    self.mru_items[item] = [menu_entry_s, filepath_list]
-                    self.arw[item].set_label(menu_entry_s)
+                    self.mru_items[item] = [menu_entry_s, filepath_list]        # contains real path, used to open files
+                    self.arw[item].set_label(menu_entry_s)                      # displayed menu text
 
 
 
@@ -1506,6 +1540,8 @@ class gtkGui:
         out_a = self.makeIniFile()
         iniFile = open(sfp2("pdfbooklet.cfg"), "w")
         for a in out_a :
+            if not a in ["mru", "mru2", "options"] :
+                continue
             iniFile.write("[" + a + "]\n")
             for b in out_a[a] :
                 value = out_a[a][b]
@@ -1638,6 +1674,10 @@ class gtkGui:
             showwarning(_("Invalid data"), _("Invalid data for %s - must be 0 or 1. Aborting \n") % widget_s)
 
 
+
+
+
+
     def readGui(self, logdata = 1) :
 
         global config, rows_i, columns_i, step_i, sections, output, input1, input2, adobe_l, inputFiles_a, inputFile_a
@@ -1702,7 +1742,9 @@ class gtkGui:
         except :
             alert(_("Invalid value for reference page, please correct and try again"))
             return False
-        ini.output_page_size(radiosize, ref_file, ref_page, logdata)
+        if ref_page > 0 :
+            system_ref_page = ref_page - 1          # system numbering start from 0 and not 1
+        ini.output_page_size(radiosize, ref_file, system_ref_page, logdata)
 
         return True
 
@@ -1713,22 +1755,27 @@ class gtkGui:
 
         if section in config :
             if option in config[section] :
+                value = config[section][option]
                 z = widget.class_path()[1]
                 z2 = z.split(".")
                 z3 = z2[-1]
                 if z3 == "GtkSpinButton" :
-                    mydata = config[section][option]
+                    mydata = value
                     mydata = mydata.replace(",",".")
                     if mydata.strip() != "" :
                         widget.set_value(float(mydata))
                 elif z3 == "GtkTextView" :
-                    widget.get_buffer().set_text(config[section][option])
+                    widget.get_buffer().set_text(value)
                 elif z3 == "GtkCheckButton" :
-                    if bool(config[section][option]) == 1 :
+                    try :
+                        value = int(value)
+                    except :
+                        pass
+                    if bool_test(value) == True :
                         widget.set_active(True)
 
                 else :
-                    widget.set_text(config[section][option])
+                    widget.set_text(value)
 
 
 
@@ -1791,7 +1838,7 @@ class gtkGui:
             else : self.advanced.set_active(0)
             self.guiAdvanced()
         if "autoScale"  in config["options"] :
-            if bool(config["options"]["autoScale"]) == True :
+            if bool_test(config["options"]["autoScale"]) == True :
                 self.autoscale.set_active(1)
             else :
                 self.autoscale.set_active(0)
@@ -1800,24 +1847,24 @@ class gtkGui:
             else : self.autorotate.set_active(0)
 
         if "showPdf"  in config["options"] :
-            if bool(config["options"]["showPdf"]) == 1 : self.arw["show"].set_active(1)
+            if bool_test(config["options"]["showPdf"]) == True : self.arw["show"].set_active(1)
             else : self.arw["show"].set_active(0)
         if "saveSettings"  in config["options"] :
-            if bool(config["options"]["saveSettings"]) == 1 : self.settings.set_active(1)
+            if bool_test(config["options"]["saveSettings"]) == True : self.settings.set_active(1)
             else : self.settings.set_active(0)
 
         if "noCompress"  in config["options"] :
-            if bool(config["options"]["noCompress"]) == 1 : self.noCompress.set_active(1)
+            if bool_test(config["options"]["noCompress"]) == True : self.noCompress.set_active(1)
             else : self.noCompress.set_active(0)
         if "overwrite"  in config["options"] :
-            if bool(config["options"]["overwrite"]) == 1 : self.overwrite.set_active(1)
+            if bool_test(config["options"]["overwrite"]) == True : self.overwrite.set_active(1)
             else : self.overwrite.set_active(0)
 
         if "righttoleft"  in config["options"] :
-            if bool(config["options"]["righttoleft"]) == 1 : self.righttoleft.set_active(1)
+            if bool_test(config["options"]["righttoleft"]) == True : self.righttoleft.set_active(1)
             else : self.righttoleft.set_active(0)
         if "slowmode"  in config["options"] :
-            if bool(config["options"]["slowmode"]) == 1 : self.slowmode.set_active(1)
+            if bool_test(config["options"]["slowmode"]) == True : self.slowmode.set_active(1)
             else : self.slowmode.set_active(0)
 
         self.freeze_b = False
@@ -1842,7 +1889,7 @@ class gtkGui:
         config["options"]["appendPages"] = self.arw["entry33"].get_text()
         config["options"]["referencePage"] = self.arw["entry31"].get_text()
         config["options"]["creep"] = self.arw["creep"].get_text()
-        config["options"]["pageSelection"] = self.selection_s
+        config["options"]["pageSelection"] = self.selection_s    # TODO : is this a good idea ?
         buf = self.arw["user_layout"].get_buffer()
         start, end  = buf.get_bounds()
         layout_s = buf.get_text(start, end, True)
@@ -2300,7 +2347,8 @@ class gtkGui:
             # TODO cr.select_font_face("Georgia",
 ##                cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
 ##            AttributeError: 'gi.repository.cairo' object has no attribute 'FONT_SLANT_NORMAL'
-            cr.select_font_face("Georgia")
+##            Remplacé par 0 et 1 ci-dessous
+            cr.select_font_face("Georgia", 0, 1)
             cr.set_font_size(fontsize_i)
             x_bearing, y_bearing, txtWidth, txtHeight = cr.text_extents(pageNumber)[:4]
 
@@ -2371,7 +2419,6 @@ class gtkGui:
 
                 coord = [left, top]
                 cr.set_line_width(3)
-                cr.set_line_cap(cairo.LINE_CAP_ROUND)
                 cr.rectangle(coord[0], coord[1],  columnWidth, rowHeight)
                 cr.stroke()
 
@@ -2380,8 +2427,9 @@ class gtkGui:
 
 
         # Show page size and total pages number
-        cr.select_font_face("Arial")
-            # TODO cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.select_font_face("Arial", 0, 1)
+            # TODO Anciennement cr.select_font_face("Arial", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+            # mais les attributs ne marche plus.
         cr.set_font_size(12)
         try :
             message = str(refPageSize_a[0]) + " x " + str(refPageSize_a[1]) + " - " + str(numPages) + " pages"
@@ -2398,6 +2446,13 @@ class gtkGui:
         rotated_layout= []
         for i in range (len(self.ar_layout)) :
             r, c = self.ar_layout[i]
+
+            # Flip columns or rows if vertical or horizontal flip is selected
+            if app.arw["vflip2"].get_active() == 1 :
+                r = (rows_i - 1) - r
+            if app.arw["hflip2"].get_active() == 1 :
+                c = (columns_i - 1) - c
+
             # if output page is rotated (global rotation)
             if app.arw["globalRotation270"].get_active() == 1 :
                 # invert row; We use columns_i because when rotated 90°,
@@ -2415,6 +2470,7 @@ class gtkGui:
                 # invert row and column
                 r = (rows_i - 1) - r
                 c = (columns_i - 1) - c
+
 
             rotated_layout.append([r,c])
         return rotated_layout
@@ -2515,23 +2571,31 @@ class gtkGui:
                 r1 = r
                 c1 = c
 
+                # it should be possible to use rotate_layout
+
+                # Flip columns or rows if vertical or horizontal flip is selected
+##                if app.arw["vflip2"].get_active() == 1 :
+##                    r1 = (rows_i - 1) - r
+##                if app.arw["hflip2"].get_active() == 1 :
+##                    c1 = (columns_i - 1) - c
+
                 # if output page is rotated (global rotation)
                 if app.arw["globalRotation90"].get_active() == 1 :
                     # invert row; We use columns_i because when rotated 90°,
                     # the numbers of rows of the preview is the number of columns of the page
-                    r1 = (columns_i - 1) - r
-                    r1,c1 = c,r1       # swap
+                    r1 = (columns_i - 1) - r1
+                    r1,c1 = c1,r1       # swap
 
                 elif app.arw["globalRotation270"].get_active() == 1 :
                     # invert column; ; We use rows_i because when rotated 90°,
                     # the numbers of columns of the preview is the number of rows of the page
-                    c1 = (rows_i - 1) - c
-                    r1,c1 = c1,r       # swap
+                    c1 = (rows_i - 1) - c1
+                    r1,c1 = c1,r1       # swap
 
                 elif app.arw["globalRotation180"].get_active() == 1 :
                     # invert row and column
-                    r1 = (rows_i - 1) - r
-                    c1 = (columns_i - 1) - c
+                    r1 = (rows_i - 1) - r1
+                    c1 = (columns_i - 1) - c1
 
                 selected_page = [r, c]
                 selected_page += pageContent_a[str(r)  + ":"  + str(c)]
@@ -2777,7 +2841,7 @@ class gtkGui:
         if self.readGui(0) :
             if self.render.parsePageSelection() :
                 #self.readConditions()
-                ar_pages, ar_layout = self.render.createPageLayout(0)
+                ar_pages, ar_layout, ar_cahiers = self.render.createPageLayout(0)
                 if ar_pages != None :
                     if previewPage > len(ar_pages) - 1 :
                         previewPage = len(ar_pages) - 1
@@ -2789,7 +2853,7 @@ class gtkGui:
                     self.ar_pages = ar_pages
                     self.ar_layout = ar_layout
 
-                    if self.render.createNewPdf(ar_pages, ar_layout, "", previewPage) :
+                    if self.render.createNewPdf(ar_pages, ar_layout, ar_cahiers, "", previewPage) :
 
                         # force the "draw" signal to update the display
                         self.arw["drawingarea1"].hide()
@@ -2797,6 +2861,8 @@ class gtkGui:
 
 
 
+    def preview_keys(self, widget, event = None) :
+        print ( "==========>>", event)
 
     def previewNext(self, dummy, event=None) :
         global selected_page, selectedIndex_a
@@ -2804,7 +2870,9 @@ class gtkGui:
             selected_page = None
             selectedIndex_a = {}
         self.previewPage += 1
-        self.preview(self.previewPage)
+        self.arw["previewEntry"].set_text(str(self.previewPage + 1))
+        if self.arw["automaticUpdate"].get_active() == 0 :  # If automatic update is not disabled
+            self.preview(self.previewPage)                # update the preview
 
     def previewPrevious(self, dummy, event = None) :
         global selected_page, selectedIndex_a
@@ -2814,21 +2882,27 @@ class gtkGui:
         self.previewPage -= 1
         if self.previewPage < 0 :
             self.previewPage = 0
-        self.preview(self.previewPage)
+        self.arw["previewEntry"].set_text(str(self.previewPage + 1))
+        if self.arw["automaticUpdate"].get_active() == 0 :  # If automatic update is not disabled
+            self.preview(self.previewPage)                # update the preview
 
     def previewFirst(self, widget) :
         global selected_page, selectedIndex_a
         selected_page = None
         selectedIndex_a = {}
         self.previewPage = 0
-        self.preview(self.previewPage)
+        self.arw["previewEntry"].set_text(str(self.previewPage + 1))
+        if self.arw["automaticUpdate"].get_active() == 0 :  # If automatic update is not disabled
+            self.preview(self.previewPage)                # update the preview
 
     def previewLast(self, widget) :
         global selected_page, selectedIndex_a
         selected_page = None
         selectedIndex_a = {}
         self.previewPage = 1000000    # CreatePageLayout will substitute the right number
-        self.preview(self.previewPage)
+        self.arw["previewEntry"].set_text(str(self.previewPage + 1))
+        if self.arw["automaticUpdate"].get_active() == 0 :  # If automatic update is not disabled
+            self.preview(self.previewPage)                # update the preview
 
     def previewUpdate(self, Event = None, mydata = None) :
         global inputFiles_a
@@ -2865,8 +2939,10 @@ class gtkGui:
         global selected_page
         selected_page = None
         previewPage = int(widget.get_text())
-        self.preview(previewPage - 1)
         self.previewPage = previewPage - 1
+        self.arw["previewEntry"].set_text(str(self.previewPage + 1))
+        if self.arw["automaticUpdate"].get_active() == 0 :  # If automatic update is not disabled
+            self.preview(self.previewPage)                # update the preview
 
     def _____________________SHUFFLER() :
         pass
@@ -2968,11 +3044,11 @@ class gtkGui:
     def closePS(self) :
         if self.shuffler :
             self.shuffler.rendering_thread.quit = True
-            #Gtk.gdk.threads_enter()
-
-            if self.shuffler.rendering_thread.paused == True:
-                 self.shuffler.rendering_thread.evnt.set()
-                 self.shuffler.rendering_thread.evnt.clear()
+            Gdk.threads_enter()
+            # TODO ££
+##            if self.shuffler.rendering_thread.paused == True:
+##                 self.shuffler.rendering_thread.evnt.set()
+##                 self.shuffler.rendering_thread.evnt.clear()
             self.shuffler_window.destroy()
             self.shuffler= None
             self.shuffler
@@ -3034,7 +3110,6 @@ class gtkGui:
         # Reads the values in the gui and updates the config dictionary
 
         global selected_page, selected_pages_a, rows_i
-        print ("debug transformations apply")
 
         for this_selected_page in selected_pages_a :
 
@@ -3079,7 +3154,8 @@ class gtkGui:
 ##            self.memory1["memory1"] = a
 ##            self.memory1["memory2"] += 1
 
-        self.preview(self.previewPage, 0)
+        if self.arw["automaticUpdate"].get_active() == 0 :  # If automatic update is not disabled
+            self.preview(self.previewPage)                # update the preview
 
 
     def resetTransformations(self, event = 0) :
@@ -3175,7 +3251,7 @@ class gtkGui:
         if self.readGui() :
             if self.render.parsePageSelection() :
                 self.readConditions()
-                ar_pages, ar_layout = self.render.createPageLayout()
+                ar_pages, ar_layout, ar_cahiers = self.render.createPageLayout()
                 if ar_pages != None :
                     # Verify that the output file may be written to
 
@@ -3208,7 +3284,7 @@ class gtkGui:
                                     return False
 
 
-                        if self.render.createNewPdf(ar_pages, ar_layout, outputFile, preview) :
+                        if self.render.createNewPdf(ar_pages, ar_layout, ar_cahiers, outputFile, preview) :
                             if self.arw["show"].get_active() == 1 :
 
                                 if 'linux' in sys.platform :
@@ -3216,7 +3292,7 @@ class gtkGui:
                                 else:
                                     os.startfile(outputFile)
 
-        return [ar_pages, ar_layout]
+        return [ar_pages, ar_layout, ar_cahiers]
 
 
 
@@ -3734,7 +3810,8 @@ class pdfRender():
         if selection == "" :
             selection = app.selection_s
 
-        if selection.strip() == "" :
+        if selection.strip() == "" :        # if there is no selection, then we create the default selection
+                                            # which contains all pages of all documents
             i = 1
             for f in inputFiles_a :
                 fileName = inputFiles_a[f]
@@ -3743,13 +3820,14 @@ class pdfRender():
                 i += 1
             app.selection_s = selection
 
-        if selection == "" :
+        if selection == "" :                # This should not happen...
             showwarning(_("No selection"), _("There is no selection"))
             return False
 
-        syntax_s = re.sub("[0-9,;:b\-\s]*", "", selection)    # TODO s'il y a deux virgules (ou ;) successifs, l'erreur n'est pas détectée
+        selection = re.sub("[;,]{2,}", ";", selection)          # we replace successive ; or , by a single ;
+        syntax_s = re.sub("[0-9,;:b\-\s]*", "", selection)      # To verify all characters are valid, we remove all them and there should remain nothing
         syntax_s = syntax_s.strip()
-        if syntax_s != "" :
+        if syntax_s != "" :                                     # If something remains, it is not valid
             showwarning(_("Invalid data"), _("Invalid data for Selection : %s. Aborting \n") % syntax_s)
             return False
 
@@ -3821,6 +3899,7 @@ class pdfRender():
         global numPages, blankPages, pagesSel, llx_i, lly_i, urx_i, ury_i, mediabox_l, pgcount
 
         ar_pages = {}
+        ar_cahiers = {}
         index=0
         last=0
         cells_i = columns_i * rows_i
@@ -3828,11 +3907,6 @@ class pdfRender():
 
         # Create booklets
         if ini.booklet > 0 :
-
-    ##        if cells_i % 2 == 1 :             # booklets must have a total layout multiple of 2
-    ##            showwarning(_("Invalid data"), _("Columns and rows are incoherent for booklets. \ncolumns x rows must be a multiple of 2"))
-    ##            return [None, None]
-
 
             multiple_bkt = int(cells_i / 2)
             ini.radioDisp= 1
@@ -3849,7 +3923,6 @@ class pdfRender():
             # equilibrate booklets size
             minfolios = int(folios / numcahiers)
             restefolios = folios - (minfolios * numcahiers)
-            ar_cahiers = {}
 
             for k in range(numcahiers) :
                 if (k < restefolios) :              # number of folios in each booklet
@@ -3927,7 +4000,7 @@ class pdfRender():
 
 
         # User defined layout
-        if app.arw["radiopreset8"].get_active() == 1 :
+        if "radiopreset8" in app.arw and app.arw["radiopreset8"].get_active() == 1 :
 
             # number of sheets of this layout
             sheets = len(app.imposition)
@@ -4016,14 +4089,14 @@ class pdfRender():
                     ar_pages[key] = pagesA
                     ar_pages[key + 1] = pagesB
 
-
-        return (ar_pages, ar_layout)
-
+        return (ar_pages, ar_layout, ar_cahiers)
 
 
-    def createNewPdf(self, ar_pages, ar_layout, outputFile, preview = -1) :
+
+    def createNewPdf(self, ar_pages, ar_layout, ar_cahiers, outputFile, preview = -1) :
         global debug_b, inputFile_a, inputFiles_a, previewtempfile, result, pdftempfile
         global mediabox_l
+
 
         if debug_b == 1 :
             logfile_f = open ("log.txt", "wb")
@@ -4183,11 +4256,30 @@ class pdfRender():
                 if ini.booklet > 0 :                # This option makes sense only for booklets
                     creep_f = app.readmmEntry(app.arw["creep"])
                     if creep_f > 0 :
-                        Htrans = creep_f * (int(output_page_number/2))      # increment every two pages
-                        if c == 0 :
-                            data_x.append(self.calcMatrix2((Htrans * -1) , 0))  # shift left
-                        else :
-                            data_x.append(self.calcMatrix2(Htrans , 0))         # shift right
+                        # reset to 0 for each booklet
+                        # Starting page of each booklet
+                        start_pages = [0]
+                        mem = 0
+                        for key, value in ar_cahiers.items() :
+                            page_value = value * 2              # ar_cahiers gives the number of folios, not pages
+                            start_pages.append(page_value + mem)
+                            mem += page_value
+
+                        # Calculate creep for a given page
+
+                        for start_page in start_pages :
+                            if output_page_number <= start_page :
+                                page_in_booklet = output_page_number - start_page   # page number inside a given booklet
+                                Htrans = creep_f * (int(page_in_booklet/2))         # increment every two pages
+##                                # Scale the page to prevent inner margin to become too small
+##                                page_width = mediabox_l[0] / 2
+##                                page_reduction = (Htrans / page_width)
+##                                scale = 1 + (page_reduction / 2)
+                                if c == 0 :
+                                    data_x.append(self.calcMatrix2(Htrans , 0))     # shift left
+                                else :
+                                    data_x.append(self.calcMatrix2((Htrans * -1), 0))  # shift right
+                                break
 
 
                 # scale the page to fit the output sheet, if required
@@ -4214,8 +4306,9 @@ class pdfRender():
             #datay += " BT (azerty) Tj ET \n"
             if preview > 0 :
                 newSheet.mergePage3(datay)                  # never use slow mode for preview
-            elif app.slowmode.get_active() == 0 :        # normal mode
-                newSheet.mergePage3(datay)
+            elif ("slowMode" in app.arw
+                   and app.arw["slowMode"].get_active() == 0) :        # normal mode
+                        newSheet.mergePage3(datay)
 
             else :                                          # slow mode (uses mergePage instead of mergePage3)
 
@@ -4229,7 +4322,8 @@ class pdfRender():
                         dataz = ""
                     else :
                         dataz += data2
-                if not dataz == "" :
+                if not (dataz == "" or len(pages) == 0) :    # skip blank pages
+
                     i = len(pages)
                     pages[i - 1].append(dataz)
 
@@ -4243,8 +4337,9 @@ class pdfRender():
 
 
 
-            if app.noCompress.get_active() == 0 :
-                newSheet.compressContentStreams()
+            if ( "noCompress" in app.arw
+                  and app.arw["noCompress"].get_active() == 0) :
+                        newSheet.compressContentStreams()
 
 
             if preview == -1 :      # if we are creating a real file (not a preview)
@@ -4456,6 +4551,10 @@ def main() :
     global pdftempfile
     pdftempfile = tempfile.NamedTemporaryFile()
 
+    global rows_i
+    global columns_i
+    global step_i
+    global outputScale
 
     isExcept = False
     startup_b = True
@@ -4464,6 +4563,10 @@ def main() :
     openedProject_u = ""
     areaAllocationW_i = 1
     areaAllocationH_i = 1
+    rows_i = 1
+    columns_i = 2
+    step_i = 1
+    outputScale = 1
 
     base_a = extractBase()
     prog_path_u = unicode2(base_a[2])
@@ -4525,16 +4628,19 @@ def main() :
                startup_b = False
                app = dummy()
                ini.openProject2(arg1)
-               ini.output_page_size(1,1,1)
+               ini.output_page_size(1)
                app.pagesTr = copy.deepcopy(config)
-               if render.parsePageSelection("1-20") :
+               if render.parsePageSelection("1-20", 0) :
+
 ##                    self.readConditions()
-                    ar_pages, ar_layout = render.createPageLayout()
+                    ar_pages, ar_layout, ar_cahiers = render.createPageLayout()
                     if ar_pages != None :
-                        render.createNewPdf(ar_pages, ar_layout, "test.pdf", -1)
+                        render.createNewPdf(ar_pages, ar_layout, ar_cahiers, "test.pdf", -1)
 
             return True
 
+        settings = Gtk.Settings.get_default()
+        settings.props.gtk_button_images = True
         app = gtkGui(render)
 
         app.guiPresetsShow("booklet")

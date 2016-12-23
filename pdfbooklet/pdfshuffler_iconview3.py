@@ -27,7 +27,7 @@
 """
 
 from gi.repository import Gtk, GObject
-import cairo
+from gi.repository import cairo
 
 from math import pi as M_PI
 

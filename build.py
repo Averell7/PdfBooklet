@@ -82,23 +82,11 @@ except :
 # generate pyinstaller file
 print "\n\n ================ Generate pyinstaller file =======================\n\n"
 
-
-print "Verification ########################################"
-os.system('ls')
 os.chdir('./pdfbooklet')
-print "Verification2 ######################################## "
-os.system('ls')
-#os.system('cd ./pdfbooklet')
-#print "Verification3 ########################################"
-#os.system('ls')
 os.system('sudo pyinstaller pdfbooklet.py')
 
 print "\n\n ================ Uploading pyintaller files =======================\n\n"
 
-f1 = open("/home/aaaaa.txt", "w")
-f1.close()
-zipfiletest = zipfile.ZipFile("/home/testzip.zip", "w")
-zipfiletest.close()
 zipfile1 = zipfile.ZipFile("/home/pyinstaller.zip", "w")
 os.system('ls -l /home/')
 for mydir in os.walk("./dist/") :
@@ -116,6 +104,7 @@ x = ftp.storbinary(command, open('/home/pyinstaller.zip', 'rb'))
 # generate Debian package
 print "\n\n ================ Creating debian package =======================\n\n"
 
+os.chdir('..')
 
 new_dir = "./pdfbooklet-" + version + "/"
 os.system('sudo alien --generate --scripts ' + rpm_file)
