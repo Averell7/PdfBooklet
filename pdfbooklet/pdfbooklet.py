@@ -4,8 +4,8 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# version 3.0.3;  Rev 1 , 17 / 12 / 2016
-PB_version = "3.0.3"
+# version 3.0.4;  Rev 1 , 17 / 03 / 2017
+PB_version = "3.0.4"
 
 
 """
@@ -106,7 +106,7 @@ Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que don
 
     Workflow :
         1) Normal process is : - the gui creates and updates the config dict.
-                               - When the Go button is pressed, the config dictiontary
+                               - When the Go button is pressed, the config dictionary
                                  is sent to PdfRenderer which builds the output file
         2) Preview process : To create the preview, a similar process is used.
                                - the config dictionary is sent to PdfRenderer, with an
@@ -149,7 +149,7 @@ Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que don
     HOWTO
 
     to add a parameter, three steps are necessary :
-        1) add teh code which will use the parameter
+        1) add the code which will use the parameter
         2) add a control in Glade
         3) add a line in makeinifile to write the parameter in the project file
         4) add a line in setupGui to setup the gui from the ini file.
@@ -580,7 +580,7 @@ class TxtOnly :
                 return None
         return value
 
-    def readIntEntry(self, entry, widget_s = "", type_i = 0) :
+    def readIntEntry(self, entry, widget_s = "", type_i = 0, default = 0) :
         # type = 0 : accepts all values >= 0
         # type = 1 : accepts all values > 0
         # type = -1 : accepts any integer, positive or negative
@@ -614,6 +614,10 @@ class TxtOnly :
             else :
                 showwarning(_("Invalid data"), _("Invalid data for %s - must be numeric. Aborting \n") % widget_s)
                 return None
+        if value == "" :
+            return default
+        elif value == 0 and default > 0 :
+            return default
         return value
 
     def readBoolean(self, entry) :
@@ -1617,16 +1621,14 @@ class gtkGui:
                 return None
         return value
 
-    def readIntEntry(self, entry, widget_s = "", type_i = 0) :
+    def readIntEntry(self, entry, widget_s = "", type_i = 0, default = "") :
         # type = 0 : accepts all values >= 0
         # type = 1 : accepts all values > 0
         # type = -1 : accepts any integer, positive or negative
         # type = 2 : optional. Don't warn if missing, but warn if invalid (not integer)
 
         value = ""
-        if sys.version_info[0] == 2 and isinstance(entry, unicode) :
-                value = entry
-        elif isinstance(entry, str) :
+        if isinstance(entry, str) :
             value = entry
         else :
             value = entry.get_text()
@@ -1653,6 +1655,8 @@ class gtkGui:
             else :
                 showwarning(_("Invalid data"), _("Invalid data for %s - must be numeric. Aborting \n") % widget_s)
                 return None
+        if value == "" :
+            return default
         return value
 
     def readBoolean(self, entry) :
@@ -1831,6 +1835,11 @@ class gtkGui:
         self.setOption("vflip", self.arw["vflip2"], "output")
         self.setOption("hflip", self.arw["hflip2"], "output")
 
+        self.setOption("font_size", self.arw["numbers_font_size"], "page_numbers")
+        self.setOption("start_from", self.arw["numbers_start_from"], "page_numbers")
+        self.setOption("bottom_margin", self.arw["numbers_bottom_margin"], "page_numbers")
+
+
         # set check boxes
 
         if "advanced"  in config["options"] :
@@ -1866,6 +1875,15 @@ class gtkGui:
         if "slowmode"  in config["options"] :
             if bool_test(config["options"]["slowmode"]) == True : self.slowmode.set_active(1)
             else : self.slowmode.set_active(0)
+
+        if "page_numbers" in config :
+            if "page_numbers"  in config["page_numbers"] :
+                if bool_test(config["page_numbers"]["page_numbers"]) == True :
+                    self.arw["page_numbers"].set_active(1)
+                else :
+                    self.arw["page_numbers"].set_active(0)
+
+
 
         self.freeze_b = False
 
@@ -1925,6 +1943,13 @@ class gtkGui:
         config["output"]["vflip"] = self.arw["vflip2"].get_active()
         config["output"]["hflip"] = self.arw["hflip2"].get_active()
 
+        if not "page_numbers" in config :
+            config["page_numbers"] = OrderedDict()
+        config["page_numbers"]["page_numbers"] = self.arw["page_numbers"].get_active()
+        config["page_numbers"]["font_size"] = self.arw["numbers_font_size"].get_text()
+        config["page_numbers"]["start_from"] = self.arw["numbers_start_from"].get_text()
+        config["page_numbers"]["bottom_margin"] = self.arw["numbers_bottom_margin"].get_text()
+##        config["output"]["yscale"] = self.arw["yscale2"].get_text()
 
         # radio buttons
 
@@ -4270,11 +4295,17 @@ class pdfRender():
                         for start_page in start_pages :
                             if output_page_number <= start_page :
                                 page_in_booklet = output_page_number - start_page   # page number inside a given booklet
-                                Htrans = creep_f * (int(page_in_booklet/2))         # increment every two pages
-##                                # Scale the page to prevent inner margin to become too small
-##                                page_width = mediabox_l[0] / 2
-##                                page_reduction = (Htrans / page_width)
-##                                scale = 1 + (page_reduction / 2)
+                                Htrans = creep_f * (int(page_in_booklet/2) - (page_in_booklet % 2))         # increment every two pages.
+                                                        # It is a bit difficult to explain...
+                                                        # We must get this :
+                                                        #       page -5 => -3       External page
+                                                        #       page -4 => -2
+                                                        #       page -3 => -2
+                                                        #       page -2 => -1
+                                                        #       page -1 => -1
+                                                        #       page 0  => 0        Internal page
+                                print (page_in_booklet, (int(page_in_booklet/2) - (page_in_booklet % 2)), Htrans)
+
                                 if c == 0 :
                                     data_x.append(self.calcMatrix2(Htrans , 0))     # shift left
                                 else :
@@ -4293,17 +4324,46 @@ class pdfRender():
                 newPage = inputFile_a[file_name].getPage(page_number)
 
                 data_x.append(newPage)
+
+                try:
+                    temp1 = newPage['/Resources'].getObject()
+                    if isinstance(temp1, dict) :
+                        temp2 = temp1['/Font'].getObject()
+                        temp3 = temp2.keys()
+                        if '/F1' in temp3 :
+                            font = '/F1'
+                        else :          # we get the first font in the list
+                            for k in temp3 :
+                                font = k
+                                break
+                except :
+                    pass            # Not critical. Default font will be used, but it does not show in the preview, that's why it is better to have an available font number.
+
+
+                # Add page numpber if required
+                if app.arw["page_numbers"].get_active() == True :
+                    font_size = ini.readIntEntry(app.arw["numbers_font_size"], default = 18)
+                    bottom_margin = ini.readIntEntry(app.arw["numbers_bottom_margin"], default = 20)
+                    start_from = ini.readIntEntry(app.arw["numbers_start_from"])
+                    position = urx_i / 2
+                    if start_from <= page_number + 1 :
+                        data_x.append(" q BT %s %d Tf  1 0 0 1 %d %d Tm (%d) Tj ET Q\n" % (font, font_size, position, bottom_margin, page_number + 1))
                 data_x.append("Q\n")
                 ar_data.append(data_x)
 
                 i += 1
 
+            aa = urx_i
+            bb = ury_i
 
 
             datay = []
             for datax in ar_data :
                 datay += datax + ["\n"]
-            #datay += " BT (azerty) Tj ET \n"
+
+##            datay += ["q n 10 10 m 10 122 l S \n"]
+##            datay += ["  n 10 10 m 72 10  l S \n"]
+##            datay += ["Q\n"]
             if preview > 0 :
                 newSheet.mergePage3(datay)                  # never use slow mode for preview
             elif ("slowMode" in app.arw
@@ -4357,7 +4417,7 @@ class pdfRender():
 
         output.write(outputStream)
         #output.write(pdftempfile)
-        if preview == 0 :
+        if preview >= 0 :
             outputStream.close()
             pass
 ##        pdftempfile.seek(0)
@@ -4379,9 +4439,9 @@ class pdfRender():
 
 
 
-def printTree(source,page,out) :
+def printTree(curPage,out) :
 
-        curPage = source.getPage(page)
+        #curPage = source.getPage(page)
         keys_a = list(curPage.keys())
         #temp1 = curPage["/Parent"].getObject()
         for j in keys_a :

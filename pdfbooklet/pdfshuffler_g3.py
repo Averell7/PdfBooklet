@@ -87,8 +87,8 @@ class PdfShuffler:
 
         'window x': 0,
         'window y': 0,
-        'initial thumbnail size': 300,
-        'initial zoom level': -14,
+        'initial thumbnail size': 800,
+        'initial zoom level': -3,
     }
 
     MODEL_ROW_INTERN = 1001

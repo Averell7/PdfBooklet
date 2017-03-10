@@ -1,41 +1,15 @@
 #!/usr/bin/python
 # coding: utf-8 -*-
 
-from __future__ import print_function
-from __future__ import unicode_literals
 
-
-# version 3.0.1
+# version 3.0.3
 
 
 import os, sys
 
 
 from gi.repository import Gtk, Gio
-#from pdf import PdfFileReader
 from PyPDF2_G import PdfFileReader
-
-### If gettext can't load, we must define the _(...) function
-##if os.path.isfile("./locale/gui/LC_MESSAGES/pdfBooklet.mo") == False :
-##    def _(string) :
-##        return string
-
-def unicode2(string, dummy = "") :
-
-    if sys.version_info[0] == 3 :                                   # this function does not work in python 3
-        return string
-    if isinstance(string,unicode) :
-        return string
-    else :
-        try :
-            return unicode(string,"utf_8")
-        except :
-            try :
-#               print string, " est ecrit en cp1252"
-                return unicode(string,"cp1252")
-            except :
-                return string       # Is this the good option ? Return False or an empty string ?
-                return "inconnu"
 
 
 def alert(message, type = 0) :
@@ -150,7 +124,6 @@ class Chooser:
     def add_file(self, widget):
 
         for filename in self.chooser.get_filenames():
-                #filename = unicode(filename, "utf-8")
                 if os.path.isfile(filename):
                     # FIXME
 ##                    f = Gio.File(filename)
@@ -178,8 +151,7 @@ class Chooser:
 
         # eliminate directories
         selectedFiles = []
-        for file_s in selectedFiles1 :
-            file_u = unicode2(file_s)
+        for file_u in selectedFiles1 :
             if os.path.isdir(file_u) :
                 alert(_("You have chosen a directory, it is not supported"))
             else :
