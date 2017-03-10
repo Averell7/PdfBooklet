@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #
-# PdfBooklet 2.3.0 - GTK+ based utility to create booklets and other layouts 
+# PdfBooklet 3.0.4 - GTK+ based utility to create booklets and other layouts 
 # from PDF documents.
 # Copyright (C) 2008-2012 GAF Software
 # <https://sourceforge.net/projects/pdfbooklet>
@@ -28,7 +28,7 @@ from ftplib import FTP
 import zipfile
 
 
-version = "3.0.0"
+version = "3.0.4"
 print "\n\n ================ start bdist =============================\n\n"
 os.system('sudo python setup.py bdist')
 print "\n\n ================ end bdist - start sdist =================\n\n"
@@ -44,16 +44,19 @@ if os.path.isfile(rpm_file) :
   print "found rpm", rpm_file
 else :
     print "NOT found rpm", rpm_file
+    os.system('ls')
   
 if os.path.isfile(tar_file) :
   print "found tar", tar_file
 else :
     print "NOT found tar", tar_file
+    os.system('ls')
     
 if os.path.isfile(tar64_file) :
   print "found tar", tar64_file
 else :
     print "NOT found tar", tar64_file
+    os.system('ls')
   
 
 
@@ -110,6 +113,7 @@ x = ftp.storbinary(command, open('/home/pyinstaller.zip', 'rb'))
 print "\n\n ================ Creating debian package =======================\n\n"
 
 os.chdir('..')
+os.system('ls')
 
 new_dir = "./pdfbooklet-" + version + "/"
 os.system('sudo alien --generate --scripts ' + rpm_file)
