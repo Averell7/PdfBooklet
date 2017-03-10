@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=2.0
+Name=PDF-Booklet
+Comment=PDF Merging, Rearranging, Splitting, Rotating and Cropping
+Type=Application
+Exec=pdfbooklet
+Icon=pdfbooklet
+Categories=Office;
+Terminal=false
+StartupNotify=false
