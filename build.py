@@ -49,6 +49,11 @@ if os.path.isfile(tar_file) :
   print "found tar", tar_file
 else :
     print "NOT found tar", tar_file
+    
+if os.path.isfile(tar64_file) :
+  print "found tar", tar64_file
+else :
+    print "NOT found tar", tar64_file
   
 
 
