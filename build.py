@@ -30,11 +30,11 @@ import zipfile
 
 version = "3.0.4"
 print "\n\n ================ start bdist =============================\n\n"
-os.system('sudo python setup.py bdist')
+os.system('sudo python3 setup.py bdist')
 print "\n\n ================ end bdist - start sdist =================\n\n"
-os.system('sudo python setup.py sdist')
+os.system('sudo python3 setup.py sdist')
 print "\n\n ================ end sdist - start bdist_rpm =============\n\n"
-os.system('sudo python setup.py bdist_rpm')
+os.system('sudo python3 setup.py bdist_rpm')
 print "\n\n ================ end bdist_rpm ===========================\n\n"
 rpm_file = "./dist/pdfbooklet-" + version + "-1.noarch.rpm"
 tar_file = "./dist/pdfbooklet-" + version + ".tar.gz"
