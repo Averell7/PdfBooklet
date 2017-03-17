@@ -4,7 +4,11 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# version 3.0.4;  Rev 1 , 17 / 03 / 2017
+# version 3.0.4 Rev 2, 14 / 03 / 2017
+# New feature : add page numbers
+# Gui : dotted line in the middle of a booklet
+# No longer uses the tempfiles/preview.pdf temporary file. The temporary directory defined by the system is used instead
+# Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 PB_version = "3.0.4"
 
 
@@ -111,7 +115,8 @@ Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que don
         2) Preview process : To create the preview, a similar process is used.
                                - the config dictionary is sent to PdfRenderer, with an
                                  additional parameter which indicates a page number
-                               - PdfRenderer creates a file named preview.pdf which contains a single page.
+                               - PdfRenderer creates a file named preview.pdf
+                                  which contains a single page, in the tempdir directory.
                                - This page is displayed in the gui by Poppler.
 
     Inside config, the pages are named in two different ways :
@@ -187,6 +192,7 @@ from subprocess import Popen, PIPE
 from ctypes import *
 import threading
 import tempfile, io
+tempfile.tempdir = tempfile.gettempdir()
 import copy
 ##import urllib
 ##from urllib.parse import urlparse
@@ -225,18 +231,12 @@ elib_intl3.install("pdfbooklet", "share/locale")
 
 debug_b = 0
 
-##class pageSelector(PdfShuffler):
-##class pageSelector():
-##
-##    def __init__(self):
-##        pass
-##
-##    def getSelection(self):
-##        selection = []
-##        for row in self.model:
-##            selection += [str(row[2]) + ":" + str(row[3])]
-##        return selection
+# ######### Python Version ############################
 
+if sys.version_info[0] == 2 :
+    message = _("PdfBooklet 3 will NOT run in Python 2. \nPlease, start it with Python 3")
+    print (message)
+    alert(message)
 
 def join_list(my_list, separator) :
     mydata = ""
@@ -701,6 +701,16 @@ class TxtOnly :
                 self.booklet = int(config["options"]["booklet"])
 
 
+        # multi-line entries
+
+        if "options" in config:
+            if "userLayout" in config["options"] :
+                layout_s = config["options"]["userLayout"]
+                config["options"]["userLayout"] = layout_s.replace("/", "\n")
+                (a,b,c,d) = self.parse_user_layout(layout_s)
+                self.imposition = a
+
+
 
     def setOption(self, option, default = "") :
         if option in config["options"] :
@@ -712,6 +722,47 @@ class TxtOnly :
                 return int(result)
             except :
                 return default
+    def parse_user_layout(self, layout_s) :
+
+            if layout_s.strip() == "" :
+                return ([], 0 , 0 , [])
+
+            layout_s = layout_s.replace("/", "\n")
+            lines = layout_s.split("\n")
+            imposition = []
+            lines2 = []
+            for line in lines :
+                if line.strip() == "" :     # correct errors : ignore blank lines
+                    continue
+                if line[0:1] == "#" :       # ignore comments
+                    continue
+                if line[0:4] == "====" :    # New sheet
+                    imposition.append(lines2)
+                    lines2 = []
+                else :
+                    lines2.append(line)
+            if len(lines2) > 0 :
+                imposition.append(lines2)
+
+            numrows = len(lines2)
+            cols = lines2[0].split(",")
+            numcols = 0
+            for a in cols :
+                if a.strip() != "" :
+                    numcols += 1
+
+            imposition2 = []
+            for lines2 in imposition :
+                pages = []
+                for line in lines2 :
+                    line = line.split(",")
+                    for a in line :
+                        if a.strip() != "" :         # correct errors : ignore trailing comma
+                            pages.append(a.strip())
+                imposition2.append(pages)
+            self.imposition = imposition2
+
+            return (imposition2, numrows, numcols, pages)
 
     def loadPdfFiles(self) :
         global inputFile_a, inputFiles_a, pagesIndex_a, refPageSize_a
@@ -865,6 +916,8 @@ class gtkGui:
         areaAllocationH_i = 400
         areaAllocationW_i = 400
         self.freeze_b = False
+        self.preview_scale = 1
+        self.dev1 = ""  # for development needs
 
         #previewtempfile = tempfile.SpooledTemporaryFile(max_size = 10000000)  # max
 
@@ -881,6 +934,10 @@ class gtkGui:
         self.previewPage = 0
         self.clipboard= {}
         self.shuffler = None
+        self.imposition = []
+
+        self.initdrag = []
+        self.enddrag = []
 
 
         self.widgets = Gtk.Builder()
@@ -901,6 +958,16 @@ class gtkGui:
         self.widgets.connect_signals(self)
         self.arw["drawingarea1"].connect('draw', self.OnDraw)
 
+        self.autoscale = self.arw["autoscale"]
+        self.area = self.arw["drawingarea1"]
+        self.settings = self.arw["settings"]
+        self.overwrite = self.arw["overwrite"]
+        self.noCompress = self.arw["noCompress"]
+        self.slowmode = self.arw["slowMode"]
+        self.righttoleft = self.arw["righttoleft"]
+        self.status = self.arw["status"]
+
+
         window1 = self.arw["window1"]
         window1.show_all()
         window1.set_title("Pdf-Booklet  [ " + PB_version + " ]")
@@ -911,16 +978,6 @@ class gtkGui:
         self.menuAdd()
 
         self.selection_s = ""
-
-
-        self.autoscale = self.arw["autoscale"]
-        self.area = self.arw["drawingarea1"]
-        self.settings = self.arw["settings"]
-        self.overwrite = self.arw["overwrite"]
-        self.noCompress = self.arw["noCompress"]
-        self.slowmode = self.arw["slowMode"]
-        self.righttoleft = self.arw["righttoleft"]
-        self.status = self.arw["status"]
 
         # Global transformations
         self.Vtranslate1 = self.arw["vtranslate1"]
@@ -934,6 +991,22 @@ class gtkGui:
 
         self.area.show()
         self.pagesTr = {}
+
+# ############ Setup drag motion for drawingarea1 ##############
+
+
+        # setup drag
+##        targets = Gtk.TargetList.new([])
+##        targets.add_text_targets(0)
+##
+##        self.area.drag_source_set(Gdk.ModifierType.BUTTON1_MASK, [],
+##            Gdk.DragAction.COPY)
+##        self.area.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.COPY)
+##        self.area.drag_source_set_target_list(targets)
+##        self.area.drag_dest_set_target_list(targets)
+
+        # self.area is connected to drag_motion in glade
+
 
 
 
@@ -1080,6 +1153,7 @@ class gtkGui:
 
         ini.loadPdfFiles()
         app.selection_s = ""
+
         self.previewUpdate()
 
 
@@ -1883,6 +1957,11 @@ class gtkGui:
                 else :
                     self.arw["page_numbers"].set_active(0)
 
+        # set TextView
+
+        buf = self.arw["textview1"].get_buffer()
+        if "userLayout" in config["options"] :
+            buf.set_text(config["options"]["userLayout"])
 
 
         self.freeze_b = False
@@ -1911,7 +1990,7 @@ class gtkGui:
         buf = self.arw["user_layout"].get_buffer()
         start, end  = buf.get_bounds()
         layout_s = buf.get_text(start, end, True)
-        config["options"]["userLayout"] = layout_s
+        config["options"]["userLayout"] = layout_s.replace("\n", "/")
 
         temp1 = ""
         for key in inputFiles_a :
@@ -1928,7 +2007,7 @@ class gtkGui:
         config["options"]["height"] = str(self.arw["outputHeight"].get_text())
 
         config["options"]["noCompress"] = str(self.noCompress.get_active())
-        config["options"]["righttoleft"] = str(self.righttoleft.get_active()) # Gaston - 14 Sep 2013
+        config["options"]["righttoleft"] = str(self.righttoleft.get_active())
         config["options"]["overwrite"] = str(self.overwrite.get_active())
         config["options"]["slowmode"] = str(self.slowmode.get_active())
 
@@ -2089,42 +2168,10 @@ class gtkGui:
             start, end  = buf.get_bounds()
             layout_s = buf.get_text(start, end, False)
 
-            lines = layout_s.split("\n")
-
-            imposition = []
-            lines2 = []
-            for line in lines :
-                if line.strip() == "" :     # correct errors : ignore blank lines
-                    continue
-                if line[0:1] == "#" :       # ignore comments
-                    continue
-                if line[0:4] == "====" :    # New sheet
-                    imposition.append(lines2)
-                    lines2 = []
-                else :
-                    lines2.append(line)
-            if len(lines2) > 0 :
-                imposition.append(lines2)
-
-            numrows = len(lines2)
-            cols = lines2[0].split(",")
-            numcols = 0
-            for a in cols :
-                if a.strip() != "" :
-                    numcols += 1
-
-            imposition2 = []
-            for lines2 in imposition :
-                pages = []
-                for line in lines2 :
-                    line = line.split(",")
-                    for a in line :
-                        if a.strip() != "" :         # correct errors : ignore trailing comma
-                            pages.append(a.strip())
-                imposition2.append(pages)
+            imposition2 = ini.parse_user_layout(layout_s)
 
             self.userpages = imposition2[0]
-            self.imposition = imposition2
+            (self.imposition, numrows, numcols, pages) = imposition2
 
             # set step
             if self.arw["step_defined"].get_active() == True :
@@ -2238,30 +2285,14 @@ class gtkGui:
 
         # TODO render document  (not necessary each time)
         try :
-            filepath = os.path.join(temp_path_u, "preview.pdf")
+            filepath = os.path.join(tempfile.gettempdir(), "preview.pdf")
             info = os.stat(filepath)
             filesize = info.st_size
             if filesize == 0 :
-                #print ("=========> filesize is nul !!")
                 return
             document = Poppler.Document.new_from_file("file:///" + filepath, None)
-
-##            file_url = urllib.parse.urljoin('file:', urllib.request.pathname2url(pdftempfile.name))
-##            print( file_url)
-##            pdftempfile.seek(0)
-##            data1 = pdftempfile.read()
-##            f1 = open("toto.pdf", "wb")
-##            f1.write(data1)
-##            f1.close()
-##            data2 = "".join(map(chr, data1))  # converts bytes to string
-##            print( len(data2))
-##            #pdftempfile.seek(0)
-##            #document = Poppler.Document.new_from_file(file_url, None)
-##
-##            document = Poppler.Document.new_from_data(data2, len(data2), None) #Does not work due to this bug : https://bugs.launchpad.net/poppler-python/+bug/312462
-##                            # see also : http://stackoverflow.com/questions/21684346/how-to-display-a-pdf-that-has-been-downloaded-in-python
             self.document= document
-            #print ("print OK")
+
         except :
             print("Error rendering document in poppler")
             printExcept()
@@ -2269,6 +2300,9 @@ class gtkGui:
 
         page = document.get_page(0)
         self.page = page
+
+        page1 = document.get_page(1)        # If there is no page(1), returns None
+        self.page1 = page1
 
         # calculate the preview size
 
@@ -2287,9 +2321,9 @@ class gtkGui:
             heightPoints = B
             scale = areaAllocationW_i / pix_w
 
+        self.preview_scale = scale          # this will be needed for drag (see the end_drag function)
         Hoffset_i = int((areaAllocationW_i - widthPoints) /2)
         Voffset_i = int((areaAllocationH_i - heightPoints)/2)
-
 
         # set background.
         cr.set_source_rgb(0.7, 0.6, 0.5)
@@ -2309,6 +2343,27 @@ class gtkGui:
         self.page.render(cr)
         cr.restore()
 
+        # If there are two pages in the preview, the second will be printed over the other
+        # to help fine tuning the margins for duplex printing
+
+        if self.page1 :
+            cr.save()
+            cr.translate(Hoffset_i, Voffset_i)
+            cr.scale(scale,scale)
+            self.page1.render(cr)
+            cr.restore()
+
+        # draw middle line
+
+        if ini.booklet > 0 and len(inputFiles_a) > 0 :
+            cr.save()
+            cr.set_line_width(1)
+            cr.set_dash((10,8))
+            cr.set_source_rgb(0.5, 0.5, 1)
+            cr.move_to(areaAllocationW_i/2, Voffset_i)
+            cr.line_to(areaAllocationW_i/2, (areaAllocationH_i - Voffset_i ))
+            cr.stroke()
+            cr.restore()
 
 
         # if the output is turned, swap the numbers of rows and columns
@@ -2369,21 +2424,22 @@ class gtkGui:
             x1,x2 = colpos_i,rowpos_i
 
             # draw page number
-            # TODO cr.select_font_face("Georgia",
-##                cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-##            AttributeError: 'gi.repository.cairo' object has no attribute 'FONT_SLANT_NORMAL'
-##            Remplacé par 0 et 1 ci-dessous
-            cr.select_font_face("Georgia", 0, 1)
-            cr.set_font_size(fontsize_i)
-            x_bearing, y_bearing, txtWidth, txtHeight = cr.text_extents(pageNumber)[:4]
+            if self.arw["hide_numbers"].get_active() == 0 :
+                # TODO cr.select_font_face("Georgia",
+    ##                cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    ##            AttributeError: 'gi.repository.cairo' object has no attribute 'FONT_SLANT_NORMAL'
+    ##            Remplacé par 0 et 1 ci-dessous
+                cr.select_font_face("Georgia", 0, 1)
+                cr.set_font_size(fontsize_i)
+                x_bearing, y_bearing, txtWidth, txtHeight = cr.text_extents(pageNumber)[:4]
 
-            colpos_i -= int(txtWidth / 4)
-            rowpos_i -= int(txtHeight / 4)
+                colpos_i -= int(txtWidth / 4)
+                rowpos_i -= int(txtHeight / 4)
 
 
-            cr.move_to(colpos_i, rowpos_i - y_bearing)
-            cr.set_source_rgb(1, 0, 0)
-            cr.show_text(pageNumber)
+                cr.move_to(colpos_i, rowpos_i - y_bearing)
+                cr.set_source_rgba(1, 0, 0, 0.6)
+                cr.show_text(pageNumber)
 
             pageId = str(a[0]) + ":" + str(a[1])
             pageContent_a[pageId] = [file_number, page_number]
@@ -2400,7 +2456,6 @@ class gtkGui:
             humanReadableRow_i = (preview_rows - a[0])
             pagePosition_a = [humanReadableRow_i, a[1] + 1]
             pagePosition_s = self.rotate_position(pagePosition_a)
-
             pageNumber_s = str(file_number) + ":" + str(page_number)
             draw_page_b = False
             type_s = ""
@@ -2452,16 +2507,19 @@ class gtkGui:
 
 
         # Show page size and total pages number
-        cr.select_font_face("Arial", 0, 1)
+##        cr.select_font_face("Arial", 0, 1)
             # TODO Anciennement cr.select_font_face("Arial", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
             # mais les attributs ne marche plus.
-        cr.set_font_size(12)
+##        cr.set_font_size(12)
         try :
-            message = str(refPageSize_a[0]) + " x " + str(refPageSize_a[1]) + " - " + str(numPages) + " pages"
-            x_bearing, y_bearing, txtWidth, txtHeight = cr.text_extents(message)[:4]
-            cr.move_to(20,20)
-            cr.set_source_rgb(0, 0.6, 0)
-            cr.show_text(message)
+            message = str(round(refPageSize_a[0] * adobe_l))
+            message += " x " + str(round(refPageSize_a[1] * adobe_l))
+            message += " - " + str(numPages) + " pages"
+##            x_bearing, y_bearing, txtWidth, txtHeight = cr.text_extents(message)[:4]
+##            cr.move_to(20,20)
+##            cr.set_source_rgb(0, 0.6, 0)
+##            cr.show_text(message)
+            self.arw["info_fichier"].set_text(message)
         except :
             pass        # if refPageSize is not defined, error
 
@@ -2504,19 +2562,19 @@ class gtkGui:
 
     def rotate_position(self, position) :
 
-
+##        print( "source : ", position)
         r, c = position
         # if output page is rotated (global rotation)
         if app.arw["globalRotation270"].get_active() == 1 :
             # invert row; We use columns_i because when rotated 90°,
             # the numbers of rows of the preview is the number of columns of the page
-            r = (rows_i + 1) - r
+            r = (columns_i + 1) - r
             r,c = c,r       # swap
 
         elif app.arw["globalRotation90"].get_active() == 1 :
             # invert column; ; We use rows_i because when rotated 90°,
             # the numbers of columns of the preview is the number of rows of the page
-            c = (columns_i + 1) - c
+            c = (rows_i + 1) - c
             r,c = c,r       # swap
 
         elif app.arw["globalRotation180"].get_active() == 1 :
@@ -2524,6 +2582,7 @@ class gtkGui:
             r = (rows_i + 1) - r
             c = (columns_i  +1) - c
 
+##        print ("dest : ", str(r) + "," + str(c))
 
         return str(r) + "," + str(c)
 
@@ -2555,6 +2614,7 @@ class gtkGui:
             else :         # first button, pages in this position
                 humanReadableRow_i = rows_i - selected_page[4]
                 Id = str(str(humanReadableRow_i) + "," + str(selected_page[5] + 1))
+                Id = str(str(selected_page[5] + 1) + "," + str(humanReadableRow_i))
 
         elif event.type == Gdk.EventType.BUTTON_PRESS:
             if event.button == 3 :            # right click, runs the context menu
@@ -2570,6 +2630,8 @@ class gtkGui:
 
                 xpos = event.x
                 ypos = event.y
+
+                self.initdrag = [xpos, ypos]        # Will be used for moving page with the mouse
 
                 # check if click is inside preview
                 if (xpos < left_limit
@@ -2640,19 +2702,12 @@ class gtkGui:
                     Id = str(str(humanReadableRow_i) + "," + str(selected_page[5] + 1))
 
 
+
                 if event.state != Gdk.ModifierType.CONTROL_MASK :        # If Control not pressed, delete previous selection
                     selectedIndex_a = {}
                     selected_pages_a = []
 
                 # position reference
-##                humanReadableRow_i = rows_i - r1
-##                Id = str(str(humanReadableRow_i) + "," + str(c1 + 1))
-##                pageId = str(selected_page[2]) + ":" + str(selected_page[3])
-##
-##                # if transformation is for this page only, use page ref instead of position ref
-##                if self.thispage.get_active() == 1 :
-##                    Id = pageId
-
                 selectedIndex_a[Id] = 1
                 selected_pages_a.append(selected_page)
 
@@ -2671,6 +2726,11 @@ class gtkGui:
 
         # Load settings in transformation dialogs
         if event.state != Gdk.ModifierType.CONTROL_MASK :       # but only if CONTROL is not pressed
+            self.load_settings_in_dialog(Id)
+
+
+    def load_settings_in_dialog(self, Id) :
+
 
             # defaults
             self.arw["htranslate1"].set_text("0")
@@ -2712,6 +2772,71 @@ class gtkGui:
                         bool_b = 0
 
                     self.arw["hflip1"].set_active(bool_b)
+
+
+    def drag_motion(self, widget, cr, x, y, time) :
+        # unused
+        # To activate, connect the signal "drag-motion" of then eventbox parent of drawingarea1
+        # to this function
+        print (x)
+        cr.set_line_width(1)
+        cr.rectangle(x, y,  2, 2)
+        cr.stroke()
+        return False
+
+
+    def set_even_odd_settings(self, widget) :    # launched by a clic on the domain buttons
+        global selected_page, selectedIndex_a
+        print ("set even odd")
+        if self.evenpages.get_active() == 1 :
+            Id = "even"
+            selected_page = Id
+            self.load_settings_in_dialog(Id)
+        elif self.oddpages.get_active() == 1 :
+            Id = "odd"
+            selected_page = Id
+            self.load_settings_in_dialog(Id)
+        else :
+            print ("reset selection")
+            selected_page = None
+            selectedIndex_a = {}
+        self.previewUpdate()
+
+
+
+    def end_drag(self, widget, event) :
+        # Thisfunction will move the page when the mouse button is released
+        x = event.x
+        y = event.y
+        self.move = [x - self.initdrag[0], y - self.initdrag[1]]
+
+        if self.arw["move_with_mouse"].get_active() == 1 :
+
+            # Calculate the scaling factor
+
+            scale = 0.7 / self.preview_scale
+
+            temp = self.arw["htranslate1"].get_text()
+            temp = temp.replace(",", ".")
+            temp = float(temp)
+            hmove = (self.move[0] / 2) * scale
+            temp += hmove
+            temp = str(temp).split(".")
+            temp = temp[0] + "." + temp[1][0:1]
+            self.arw["htranslate1"].set_text(temp)
+            self.transformationsApply("")
+
+            temp = self.arw["vtranslate1"].get_text()
+            temp = temp.replace(",", ".")
+            temp = float(temp)
+            vmove = ((self.move[1] / 2) * -1) * scale
+            temp += vmove
+            temp = str(temp).split(".")
+            temp = temp[0] + "." + temp[1][0:1]
+            self.arw["vtranslate1"].set_text(temp)
+            self.transformationsApply("")
+
+
 
 
 
@@ -2873,8 +2998,17 @@ class gtkGui:
                         self.previewPage = previewPage
                     self.arw["previewEntry"].set_text(str(previewPage + 1))
                     mem = ar_pages[previewPage]
+                    try :
+                        mem1 = ar_pages[previewPage + 1]
+                    except :                # If we are arrived at the last page
+                        pass
                     ar_pages = {}
                     ar_pages[0] = mem
+
+                    # If previewing of two pages one over the other is requested
+                    if 1 == 2 :
+                        ar_pages[1] = mem1
+
                     self.ar_pages = ar_pages
                     self.ar_layout = ar_layout
 
@@ -2934,7 +3068,7 @@ class gtkGui:
 
         if len(inputFiles_a) == 0 :
             #showwarning(_("No file loaded"), _("Please select a file first"))
-            shutil.copy(sfp2("data/nofile.pdf"), os.path.join(temp_path_u, "preview.pdf"))
+            shutil.copy(sfp2("data/nofile.pdf"), os.path.join(tempfile.gettempdir(), "preview.pdf"))
             return False
         if Event != None :
             value_s = self.arw["entry11"].get_text()
@@ -2946,7 +3080,10 @@ class gtkGui:
                 return
             else :
                 return
-        self.preview(self.previewPage)
+##        self.preview(self.previewPage)
+        if self.arw["automaticUpdate"].get_active() == 0 :  # If automatic update is not disabled
+            self.preview(self.previewPage)                # update the preview
+
 
 
     def previewDelayedUpdate(self, event) :     # Unused : does not work
@@ -4004,7 +4141,7 @@ class pdfRender():
 
         # If option "Right to left" has been selected creates inverted layout (which will overwrite the previous one)
 
-        if ini.righttoleft == 1 :
+        if bool_test(config["options"]["righttoleft"]) == True :
 
             # create inverted layout
             ar_layout = []
@@ -4028,7 +4165,7 @@ class pdfRender():
         if "radiopreset8" in app.arw and app.arw["radiopreset8"].get_active() == 1 :
 
             # number of sheets of this layout
-            sheets = len(app.imposition)
+            sheets = len(ini.imposition)
 
             # create blank pages if necessary
             rest = len(ar_pages) % sheets
@@ -4053,7 +4190,7 @@ class pdfRender():
 
 
             if sheets == 1 :
-                userpages = app.imposition[0]
+                userpages = ini.imposition[0]
 
                 for key in ar_pages :
                     pages = ar_pages[key]
@@ -4136,7 +4273,7 @@ class pdfRender():
 
 
         if preview >= 0 :           # if this is a preview
-            outputStream = open(os.path.join(temp_path_u, "preview.pdf"), "wb")
+            outputStream = open(os.path.join(tempfile.gettempdir(), "preview.pdf"), "wb")
 
         else :
             try :
@@ -4325,6 +4462,8 @@ class pdfRender():
 
                 data_x.append(newPage)
 
+                # Add page number if required
+                # Choose font
                 try:
                     temp1 = newPage['/Resources'].getObject()
                     if isinstance(temp1, dict) :
@@ -4340,7 +4479,6 @@ class pdfRender():
                     pass            # Not critical. Default font will be used, but it does not show in the preview, that's why it is better to have an available font number.
 
 
-                # Add page numpber if required
                 if app.arw["page_numbers"].get_active() == True :
                     font_size = ini.readIntEntry(app.arw["numbers_font_size"], default = 18)
                     bottom_margin = ini.readIntEntry(app.arw["numbers_bottom_margin"], default = 20)
@@ -4643,25 +4781,20 @@ def main() :
 
     # set directories for Linux and Windows
 
-    if 'linuxx' in sys.platform :
-        if os.path.isdir("/var/tmp/pdfbooklet") == False :
-            os.mkdir("/var/tmp/pdfbooklet")
+    if 'linux' in sys.platform :
+        if os.path.isdir("/usr/share/pdfbooklet") == False :
+            os.mkdir("/usr/share/pdfbooklet")
 
-        temp_path_u = "/var/tmp/pdfbooklet"
         cfg_path_u = "/usr/share/pdfbooklet"
 
         if os.path.isfile(cfg_path_u + "/data/nofile.pdf") :
-            shutil.copy(cfg_path_u + "/data/nofile.pdf", "/var/tmp/pdfbooklet/preview.pdf")
-
+            shutil.copy(cfg_path_u + "/data/nofile.pdf", os.path.join(tempfile.gettempdir(), "preview.pdf"))
 
 
     else:
-        if os.path.isdir(sfp("tempfiles")) == False :
-            os.mkdir(sfp("tempfiles"))
-        temp_path_u = os.path.join(prog_path_u, "tempfiles")
         cfg_path_u = prog_path_u
         if os.path.isfile(sfp("data/nofile.pdf")) :
-            shutil.copy(sfp("data/nofile.pdf"), os.path.join(temp_path_u, "preview.pdf"))
+            shutil.copy(sfp("data/nofile.pdf"), os.path.join(tempfile.gettempdir(), "preview.pdf"))
 
 
 
