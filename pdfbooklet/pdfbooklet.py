@@ -231,11 +231,6 @@ elib_intl3.install("pdfbooklet", "share/locale")
 
 debug_b = 0
 
-# ######### Python Version ############################
-
-if sys.version_info[0] == 2 :
-    message = _("PdfBooklet 3 will NOT run in Python 2. \nPlease, start it with Python 3")
-    print (message)
 
 
 def join_list(my_list, separator) :
@@ -939,6 +934,10 @@ class gtkGui:
 
         self.initdrag = []
         self.enddrag = []
+
+        self.backup = []
+        self.backup_index = 0
+        self.backup_command = True
 
 
         self.widgets = Gtk.Builder()
@@ -2854,6 +2853,7 @@ class gtkGui:
 
         elif self.arw["delete_rectangle"].get_active() == 1 :
             # preview_limits gives : left x,  right x, bottom y, top y, in pixels.
+            #
             # init_drag gives : x, y
 
             x1 = (self.initdrag[0] - self.preview_limits[0])       # start drag
@@ -3022,6 +3022,7 @@ class gtkGui:
 
 
         if self.readGui(0) :
+            self.manage_backup()
             if self.render.parsePageSelection() :
                 #self.readConditions()
                 ar_pages, ar_layout, ar_cahiers = self.render.createPageLayout(0)
@@ -3138,6 +3139,29 @@ class gtkGui:
         self.arw["previewEntry"].set_text(str(self.previewPage + 1))
         if self.arw["automaticUpdate"].get_active() == 0 :  # If automatic update is not disabled
             self.preview(self.previewPage)                # update the preview
+
+    def manage_backup(self) :
+        if self.backup_command == False :
+            self.backup_command = True
+            return
+        if len(self.backup) == 0 :
+            self.backup.append(copy.deepcopy(config))
+            self.backup_index = len(self.backup)
+        else :
+            last = self.backup[-1]
+            a = repr(config)
+            b = repr(last)
+            if a == b :
+                return
+            else :
+                self.backup.append(copy.deepcopy(config))
+                print (len(self.backup))
+                self.backup_index = len(self.backup)
+
+    def go_back(self, widget) :
+        config = copy.deepcopy(self.backup[self.backup_index - 2])
+        self.setupGui()
+        self.backup_command = False
 
     def _____________________SHUFFLER() :
         pass
