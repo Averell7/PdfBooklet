@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*-
 
 from __future__ import print_function
-from __future__ import unicode_literals
+#from __future__ import unicode_literals
 
 # version 3.0.4 Rev 2, 14 / 03 / 2017
 # New feature : add page numbers
@@ -236,7 +236,7 @@ debug_b = 0
 if sys.version_info[0] == 2 :
     message = _("PdfBooklet 3 will NOT run in Python 2. \nPlease, start it with Python 3")
     print (message)
-    alert(message)
+
 
 def join_list(my_list, separator) :
     mydata = ""
@@ -502,6 +502,7 @@ class TxtOnly :
         self.repeat = 0
         self.booklet = 1
         self.righttoleft = 0
+        self.delete_rectangle = []
 
     def openProject2(self, filename_u) :
         # Called by OpenProject and OpenMru (in case the selected item was a project)
@@ -867,8 +868,8 @@ class TxtOnly :
 
         outputUrx_i = mediabox_l[0]
         outputUry_i = mediabox_l[1]
-        #if logdata == 0 :
-        #    self.print2 (_("Size of output file =    %s mm x %s mm ") % (int(outputUrx_i * adobe_l), int(outputUry_i * adobe_l)), 1)
+
+        app.arw["info_fichier_sortie"].set_text(_("%s mm x %s mm ") % (int(outputUrx_i * adobe_l), int(outputUry_i * adobe_l)))
 
 
 
@@ -2301,8 +2302,11 @@ class gtkGui:
         page = document.get_page(0)
         self.page = page
 
-        page1 = document.get_page(1)        # If there is no page(1), returns None
-        self.page1 = page1
+        x = document.get_n_pages()
+        if x > 1 :
+            self.page1 = document.get_page(1)
+        else :
+            self.page1 = None
 
         # calculate the preview size
 
@@ -2360,8 +2364,10 @@ class gtkGui:
             cr.set_line_width(1)
             cr.set_dash((10,8))
             cr.set_source_rgb(0.5, 0.5, 1)
-            cr.move_to(areaAllocationW_i/2, Voffset_i)
-            cr.line_to(areaAllocationW_i/2, (areaAllocationH_i - Voffset_i ))
+            line_position = (areaAllocationW_i/2) + 0.5         # The reason for + 0.5 is explained here : https://www.cairographics.org/FAQ/#sharp_lines
+                                                                # under the title : How do I draw a sharp, single-pixel-wide line?
+            cr.move_to(line_position, Voffset_i)
+            cr.line_to(line_position, (areaAllocationH_i - Voffset_i ))
             cr.stroke()
             cr.restore()
 
@@ -2632,6 +2638,7 @@ class gtkGui:
                 ypos = event.y
 
                 self.initdrag = [xpos, ypos]        # Will be used for moving page with the mouse
+                self.preview_limits = [left_limit, right_limit, top_limit, bottom_limit]
 
                 # check if click is inside preview
                 if (xpos < left_limit
@@ -2805,21 +2812,31 @@ class gtkGui:
 
 
     def end_drag(self, widget, event) :
+        global outputScale
+
         # Thisfunction will move the page when the mouse button is released
         x = event.x
         y = event.y
-        self.move = [x - self.initdrag[0], y - self.initdrag[1]]
+
+        # scaling factor
+        if self.arw["autoscale"].get_active() == 1 :
+            scaling_factor = self.preview_scale * outputScale
+        else :
+            scaling_factor = self.preview_scale
+
+
+        scaling_factor2 = scaling_factor / adobe_l
+
+        hmove = ((x - self.initdrag[0]) / scaling_factor2)
+        vmove = ((y - self.initdrag[1]) / scaling_factor2)
 
         if self.arw["move_with_mouse"].get_active() == 1 :
 
             # Calculate the scaling factor
 
-            scale = 0.7 / self.preview_scale
-
             temp = self.arw["htranslate1"].get_text()
             temp = temp.replace(",", ".")
             temp = float(temp)
-            hmove = (self.move[0] / 2) * scale
             temp += hmove
             temp = str(temp).split(".")
             temp = temp[0] + "." + temp[1][0:1]
@@ -2829,13 +2846,29 @@ class gtkGui:
             temp = self.arw["vtranslate1"].get_text()
             temp = temp.replace(",", ".")
             temp = float(temp)
-            vmove = ((self.move[1] / 2) * -1) * scale
-            temp += vmove
+            temp -= vmove
             temp = str(temp).split(".")
             temp = temp[0] + "." + temp[1][0:1]
             self.arw["vtranslate1"].set_text(temp)
             self.transformationsApply("")
 
+        elif self.arw["delete_rectangle"].get_active() == 1 :
+            # preview_limits gives : left x,  right x, bottom y, top y, in pixels.
+            # init_drag gives : x, y
+
+            x1 = (self.initdrag[0] - self.preview_limits[0])       # start drag
+            y1 = (self.initdrag[1] - self.preview_limits[3])
+            y1 = self.preview_limits[2] - y1        # invert the vertical position, because Pdf counts from bottom
+            x2 = (x - self.preview_limits[0])        # end drag
+            y2 = (y - self.preview_limits[3])
+            y2 = self.preview_limits[2] - y2
+            width = x2 - x1
+            height = y2 - y1
+            x1 = x1 / scaling_factor
+            y1 = y1 / scaling_factor
+            width = width / scaling_factor
+            height = height / scaling_factor
+            ini.delete_rectangle = [x1,y1,width,height]
 
 
 
@@ -4441,7 +4474,6 @@ class pdfRender():
                                                         #       page -2 => -1
                                                         #       page -1 => -1
                                                         #       page 0  => 0        Internal page
-                                print (page_in_booklet, (int(page_in_booklet/2) - (page_in_booklet % 2)), Htrans)
 
                                 if c == 0 :
                                     data_x.append(self.calcMatrix2(Htrans , 0))     # shift left
@@ -4487,6 +4519,10 @@ class pdfRender():
                     if start_from <= page_number + 1 :
                         data_x.append(" q BT %s %d Tf  1 0 0 1 %d %d Tm (%d) Tj ET Q\n" % (font, font_size, position, bottom_margin, page_number + 1))
                 data_x.append("Q\n")
+                if len(ini.delete_rectangle) > 0 :
+                    (x1,y1,w1,h1) = ini.delete_rectangle
+                    data_x.append("q n 1 0 1 rg \n")        # Couleur RGB ; 1 1 1 = white; 0,0,0 = black
+                    data_x.append(" n %d %d %d %d re f* Q\n" % (x1,y1,w1,h1))  # rectangle : x, y, width, height
                 ar_data.append(data_x)
 
                 i += 1
