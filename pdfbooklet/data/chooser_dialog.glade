@@ -2,10 +2,6 @@
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
   <!-- interface-naming-policy toplevel-contextual -->
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="stock">gtk-ok</property>
-  </object>
   <object class="GtkFileChooserDialog" id="filechooserdialog1">
     <property name="width_request">800</property>
     <property name="height_request">600</property>
@@ -21,125 +17,26 @@
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
-          <object class="GtkHButtonBox" id="hbuttonbox1">
+          <object class="GtkVBox" id="vbox2">
             <property name="visible">True</property>
-            <property name="spacing">7</property>
-            <property name="layout_style">end</property>
+            <property name="orientation">vertical</property>
             <child>
-              <placeholder/>
-            </child>
-            <child>
-              <object class="GtkButton" id="button1">
-                <property name="label" translatable="yes">Open Selected File(s)</property>
+              <object class="GtkHButtonBox" id="hbuttonbox1">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="image">image1</property>
-                <property name="use_underline">True</property>
-                <signal name="clicked" handler="chooserOK"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button3">
-                <property name="label">gtk-cancel</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-                <signal name="clicked" handler="chooserClose"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFrame" id="frame6">
-            <property name="visible">True</property>
-            <property name="label_xalign">0</property>
-            <child>
-              <object class="GtkHBox" id="hbox1">
-                <property name="visible">True</property>
+                <property name="spacing">7</property>
+                <property name="layout_style">end</property>
                 <child>
-                  <object class="GtkScrolledWindow" id="scrolledwindow2">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <child>
-                      <object class="GtkTreeView" id="treeview1">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="border_width">2</property>
-                        <property name="reorderable">True</property>
-                        <property name="enable_search">False</property>
-                        <property name="show_expanders">False</property>
-                        <property name="enable_grid_lines">horizontal</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
-                  <object class="GtkVBox" id="vbox10">
+                  <object class="GtkButton" id="button1">
+                    <property name="label" translatable="yes">Open Selected File(s)</property>
                     <property name="visible">True</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="button14">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Move file up</property>
-                        <signal name="clicked" handler="pdf_up"/>
-                        <child>
-                          <object class="GtkImage" id="image10">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-go-up</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="position">3</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="button15">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Move file down</property>
-                        <signal name="clicked" handler="pdf_down"/>
-                        <child>
-                          <object class="GtkImage" id="image9">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-go-down</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="position">4</property>
-                      </packing>
-                    </child>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="image">image1</property>
+                    <property name="use_underline">True</property>
+                    <signal name="clicked" handler="chooserOK"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -148,38 +45,107 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkVBox" id="vbox1">
+                  <object class="GtkButton" id="button3">
+                    <property name="label">gtk-cancel</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                    <signal name="clicked" handler="chooserClose"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFrame" id="frame6">
+                <property name="height_request">150</property>
+                <property name="visible">True</property>
+                <property name="label_xalign">0</property>
+                <child>
+                  <object class="GtkHBox" id="hbox1">
                     <property name="visible">True</property>
                     <child>
-                      <object class="GtkButton" id="button20">
+                      <object class="GtkScrolledWindow" id="scrolledwindow2">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="pdf_open"/>
+                        <property name="hscrollbar_policy">automatic</property>
+                        <property name="vscrollbar_policy">automatic</property>
                         <child>
-                          <object class="GtkImage" id="image13">
+                          <object class="GtkTreeView" id="treeview1">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-new</property>
+                            <property name="can_focus">True</property>
+                            <property name="border_width">2</property>
+                            <property name="reorderable">True</property>
+                            <property name="enable_search">False</property>
+                            <property name="show_expanders">False</property>
+                            <property name="enable_grid_lines">horizontal</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button19">
+                      <object class="GtkVBox" id="vbox10">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="add_file"/>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkImage" id="image12">
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="button14">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-add</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="pdf_up"/>
+                            <child>
+                              <object class="GtkImage" id="image10">
+                                <property name="visible">True</property>
+                                <property name="stock">gtk-go-up</property>
+                                <property name="icon-size">2</property>
+                              </object>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="position">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="button15">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="pdf_down"/>
+                            <child>
+                              <object class="GtkImage" id="image9">
+                                <property name="visible">True</property>
+                                <property name="stock">gtk-go-down</property>
+                                <property name="icon-size">2</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">4</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -189,16 +155,62 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button13">
+                      <object class="GtkVBox" id="vbox1">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="pdf_remove"/>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkImage" id="image11">
+                          <object class="GtkButton" id="button20">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-remove</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="pdf_open"/>
+                            <child>
+                              <object class="GtkImage" id="image13">
+                                <property name="visible">True</property>
+                                <property name="stock">gtk-new</property>
+                                <property name="icon-size">2</property>
+                              </object>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="button19">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="add_file"/>
+                            <child>
+                              <object class="GtkImage" id="image12">
+                                <property name="visible">True</property>
+                                <property name="stock">gtk-add</property>
+                                <property name="icon-size">2</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="button13">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="pdf_remove"/>
+                            <child>
+                              <object class="GtkImage" id="image11">
+                                <property name="visible">True</property>
+                                <property name="stock">gtk-remove</property>
+                                <property name="icon-size">2</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">2</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -208,24 +220,22 @@
                       </packing>
                     </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">2</property>
-                  </packing>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel" id="label1">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Input files&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
+                  </object>
                 </child>
               </object>
-            </child>
-            <child type="label">
-              <object class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;Input files&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
-            <property name="position">3</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child internal-child="action_area">
@@ -266,6 +276,7 @@
           </object>
           <packing>
             <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="pack_type">end</property>
             <property name="position">0</property>
           </packing>
@@ -278,6 +289,10 @@
     </action-widgets>
   </object>
   <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="stock">gtk-ok</property>
+  </object>
+  <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="stock">gtk-ok</property>
   </object>
