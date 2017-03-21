@@ -113,7 +113,6 @@ x = ftp.storbinary(command, open('/home/pyinstaller.zip', 'rb'))
 print "\n\n ================ Creating debian package =======================\n\n"
 
 os.chdir('..')
-os.system('ls')
 
 new_dir = "./pdfbooklet-" + version + "/"
 os.system('sudo alien --generate --scripts ' + rpm_file)
@@ -134,8 +133,8 @@ else :
 f1 = open(control_file, "r")
 
 data1 = f1.read()
-data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python3-cairo, python-gobject-cairo, python3-gi, gir1.2-gtk-3.0, gir1.2-poppler-0.18 \n")
-#data1 = python-gobject, python-gobject-2, pypoppler|python-poppler\nX-Python3-Version: >= 3.3")
+data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python3-cairo, python-gobject-cairo, python3-gi, gir1.2-gtk-3.0, gir1.2-poppler-0.18")
+#data1 = python-gobject, python-gobject-2, pypoppler|python-poppler\n")
 
 
 f1.close()
@@ -147,7 +146,7 @@ os.system("cd " + new_dir + "; sudo dpkg-buildpackage")
 
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 if not os.path.isfile(deb_file) :
-    deb_file = "./maggy2-" + version + "-2_all.deb"
+    deb_file = "./pdfbooklet-" + version + "-2_all.deb"
     print "=========> file is : ", deb_file
 
 # install package
