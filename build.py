@@ -134,7 +134,7 @@ else :
 f1 = open(control_file, "r")
 
 data1 = f1.read()
-data1 = data1.replace("${shlibs:Depends}", "python3 (>= 3.4), python3-cairo, python3-gi, gir1.2-gtk-3.0, gir1.2-poppler-0.18 \nX-Python3-Version: >= 3.3")
+data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python3-cairo, python-gobject-cairo, python3-gi, gir1.2-gtk-3.0, gir1.2-poppler-0.18 \n")
 #data1 = python-gobject, python-gobject-2, pypoppler|python-poppler\nX-Python3-Version: >= 3.3")
 
 
