@@ -2036,6 +2036,15 @@ class PdfFileReader(object):
     :meth:`decrypt()<PdfFileReader.decrypt>` method is called.
     """
 
+    # returns a tuple indicating if the file has an owner and a user password, and the permissions
+    def getPermissions(self) :
+        if "/Encrypt" in self.trailer :
+            encrypt = self.trailer['/Encrypt'].getObject()
+            return (encrypt['/O'].getObject(),
+                    encrypt['/U'].getObject(),
+                    encrypt['/P'].getObject())
+
+
 
 def getRectangle(self, name, defaults):
     retval = self.get(name)
@@ -2324,11 +2333,13 @@ class PageObject(DictionaryObject):
         if isinstance(ar_data, PageObject) :
             ar_data = [ar_data]
         for data in ar_data :
-            if isinstance(data, str) :
-                if sys.version[0:1] == "2" :
-                    data = bytes(data)
-                elif sys.version[0:1] == "3" :
-                    data = bytes(data, "utf-8")
+            if isinstance(data, unicode) :
+                data = data.encode("utf8")
+##            if isinstance(data, str) :
+##                if sys.version[0:1] == "2" :
+##                    data = bytes(data)
+##                elif sys.version[0:1] == "3" :
+##                    data = bytes(data, "utf-8")
             if isinstance(data, PageObject) :
 
                 # Now we work on merging the resource dictionaries.  This allows us
@@ -2355,12 +2366,13 @@ class PageObject(DictionaryObject):
                 if len(rename) > 0 :
                     pagexContent = data['/Contents'].getObject()
                     pagexContent = PageObject._contentStreamRename(pagexContent, rename, self.pdf)
-                    code_s += pagexContent.getData() + b"\n"
+                    code_s += bytes(pagexContent.getData()) + b"\n"
                 else :
                     page_keys = data.keys()
                     if "/Contents" in page_keys :            # if page is not blank
-                        data1 =self.extractContent(data["/Contents"])
+                        data1 = bytes(self.extractContent(data["/Contents"]))
                         code_s +=  data1 + b"\n"
+
 
 
             else :
