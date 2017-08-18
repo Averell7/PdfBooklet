@@ -142,17 +142,19 @@ f1 = open(control_file, "w")
 f1.write(data1)
 f1.close()
 
+os.system("cd " + new_dir + "; sudo dpkg-buildpackage")
 
-print "~~~~~~~~~~~~"
+deb_file = "./pdfbooklet-" + version + "-2_all.deb"
+print "=========> deb file is : ", deb_file
 
-os.system("cd " + new_dir)
-os.system("ls")
-os.system("sudo dpkg-buildpackage")
+# correct pdfbooklet.cfg
 
-deb_file = "./pdfbooklet_" + version + "-2_all.deb"
-if not os.path.isfile(deb_file) :
-    deb_file = "./pdfbooklet-" + version + "-2_all.deb"
-    print "=========> file is : ", deb_file
+os.system("ls " + new_dir )
+print "~~~~~~~~1"
+os.system("ls " + new_dir + "/pdfbooklet")
+print "~~~~~~~~2"
+os.system("ls " + new_dir + "/pdfbooklet-3.0.4")
+print "~~~~~~~~3"
 
 # install package
 print "\n\n ================ Installing debian package =============================\n\n"
