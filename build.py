@@ -149,11 +149,13 @@ print "=========> deb file is : ", deb_file
 
 # correct pdfbooklet.cfg
 
-os.system("ls " + new_dir )
+os.system("ls "  )
 print "~~~~~~~~1"
-os.system("ls " + new_dir + "/pdfbooklet")
+os.system("ls " + new_dir )
+print "~~~~~~~~1" + new_dir
+os.system("ls " + new_dir + "/debian")
 print "~~~~~~~~2"
-os.system("ls " + new_dir + "/pdfbooklet-3.0.4")
+os.system("ls " + new_dir + "/usr")
 print "~~~~~~~~3"
 
 # install package
