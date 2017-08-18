@@ -151,8 +151,8 @@ os.system("ls " + dir1  )
 print "~~~~~~~~1"
 os.system("sudo chmod 777 " + dir1  )
 print "~~~~~~~~2"
-os.system("ls -l /usr/share/" )
-print "~~~~~~~~2"
+os.system("ls -l " + new_dir +  "/usr/share/" )
+print "~~~~~~~~3"
 
 
 
