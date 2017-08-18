@@ -142,21 +142,28 @@ f1 = open(control_file, "w")
 f1.write(data1)
 f1.close()
 
+
+# correct pdfbooklet.cfg
+
+dir1 = new_dir + "/usr/share/pdfbooklet/"
+
+os.system("ls " + dir1  )
+print "~~~~~~~~1"
+os.system("sudo chmod 777 " + dir1 + "pdfbooklet.cfg" )
+print "~~~~~~~~2"
+os.system("ls -l " + dir1 )
+print "~~~~~~~~2"
+
+
+
+
+# Build debian package
 os.system("cd " + new_dir + "; sudo dpkg-buildpackage")
 
 deb_file = "./pdfbooklet-" + version + "-2_all.deb"
 print "=========> deb file is : ", deb_file
 
-# correct pdfbooklet.cfg
 
-os.system("ls "  )
-print "~~~~~~~~1"
-os.system("ls " + new_dir )
-print "~~~~~~~~1" + new_dir
-os.system("ls " + new_dir + "/debian")
-print "~~~~~~~~2"
-os.system("ls " + new_dir + "/usr/share")
-print "~~~~~~~~3"
 
 # install package
 print "\n\n ================ Installing debian package =============================\n\n"
