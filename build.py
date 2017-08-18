@@ -160,7 +160,7 @@ print "~~~~~~~~2"
 # Build debian package
 os.system("cd " + new_dir + "; sudo dpkg-buildpackage")
 
-deb_file = "./pdfbooklet-" + version + "-2_all.deb"
+deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 print "=========> deb file is : ", deb_file
 
 
