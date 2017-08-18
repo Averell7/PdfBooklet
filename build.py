@@ -155,7 +155,7 @@ os.system("ls " + new_dir )
 print "~~~~~~~~1" + new_dir
 os.system("ls " + new_dir + "/debian")
 print "~~~~~~~~2"
-os.system("ls " + new_dir + "/usr")
+os.system("ls " + new_dir + "/usr/share")
 print "~~~~~~~~3"
 
 # install package
