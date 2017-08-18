@@ -142,7 +142,12 @@ f1 = open(control_file, "w")
 f1.write(data1)
 f1.close()
 
-os.system("cd " + new_dir + "; sudo dpkg-buildpackage")
+
+print "~~~~~~~~~~~~"
+
+os.system("cd " + new_dir)
+os.system("ls")
+os.system("sudo dpkg-buildpackage")
 
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 if not os.path.isfile(deb_file) :
