@@ -149,7 +149,7 @@ dir1 = new_dir + "/usr/share/pdfbooklet/"
 
 os.system("ls " + dir1  )
 print "~~~~~~~~1"
-os.system("sudo chmod 777 " + dir1 + "pdfbooklet.cfg" )
+os.system("sudo chmod 777 " + dir1  )
 print "~~~~~~~~2"
 os.system("ls -l " + dir1 )
 print "~~~~~~~~2"
