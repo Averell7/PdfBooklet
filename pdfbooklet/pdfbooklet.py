@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 
 # version 3.0.5, 30 / 07 / 2017
 # German Translation added
+# New feature : creep adjustment
+
 # 3.0.4
 # New feature : add page numbers (still experimental)
 # Gui : dotted line in the middle of a booklet
