@@ -11,7 +11,7 @@
     <property name="deletable">False</property>
     <property name="transient_for">window1</property>
     <property name="program_name">Pdf-Booklet</property>
-    <property name="version">3.0.3</property>
+    <property name="version">3.0.5</property>
     <property name="website">http://pdfbooklet.sourceforge.net/</property>
     <property name="website_label">http://pdfbooklet.sourceforge.net/</property>
     <property name="license" translatable="yes">Pdf-Shuffler is delivered under the GNU General Public Licence (GPL) Version 3.
@@ -2545,7 +2545,7 @@ Transformations</property>
                             <child type="label">
                               <object class="GtkLabel" id="label44">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Page numbers&lt;/b&gt;</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Page numbers (Experimental)&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                             </child>

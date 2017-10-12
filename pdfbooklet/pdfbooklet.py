@@ -4,12 +4,15 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# version 3.0.4 Rev 2, 14 / 03 / 2017
-# New feature : add page numbers
+# version 3.0.5, 30 / 07 / 2017
+# German Translation added
+# 3.0.4
+# New feature : add page numbers (still experimental)
 # Gui : dotted line in the middle of a booklet
 # No longer uses the tempfiles/preview.pdf temporary file. The temporary directory defined by the system is used instead
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
-PB_version = "3.0.4"
+
+PB_version = "3.0.5"
 
 
 """
@@ -968,11 +971,24 @@ class gtkGui:
         self.status = self.arw["status"]
 
 
-        window1 = self.arw["window1"]
-        window1.show_all()
-        window1.set_title("Pdf-Booklet  [ " + PB_version + " ]")
-##        window1.connect("destroy", lambda w: Gtk.main_quit())
-        window1.connect("destroy", self.close_application)
+        self.window1 = self.arw["window1"]
+        self.window1.show_all()
+        self.window1.set_title("Pdf-Booklet  [ " + PB_version + " ]")
+##        self.window1.connect("destroy", lambda w: Gtk.main_quit())
+        self.window1.connect("destroy", self.close_application)
+
+        """
+        To change the cursor :
+        watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
+        self.window1.get_window().set_cursor(watch_cursor)
+
+##        display =  self.window1.get_display()
+##        watch_cursor = Gdk.Cursor.new_from_name(display, "default")
+
+        watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
+        watch_cursor = Gdk.Cursor(Gdk.CursorType.CROSS)
+        self.window1.get_window().set_cursor(watch_cursor)
+        """
 
         self.mru_items = {}
         self.menuAdd()
@@ -2358,7 +2374,8 @@ class gtkGui:
 
         # draw middle line
 
-        if ini.booklet > 0 and len(inputFiles_a) > 0 :
+        if ((ini.booklet > 0 and len(inputFiles_a) > 0)
+            or self.arw["draw_middle_line"].get_active() == True) :
             cr.save()
             cr.set_line_width(1)
             cr.set_dash((10,8))
@@ -2855,12 +2872,17 @@ class gtkGui:
             # preview_limits gives : left x,  right x, bottom y, top y, in pixels.
             #
             # init_drag gives : x, y
+            # x = horizontal position
+            left = self.preview_limits[0] # left margin
+            top = self.preview_limits[3] # top margin
 
-            x1 = (self.initdrag[0] - self.preview_limits[0])       # start drag
-            y1 = (self.initdrag[1] - self.preview_limits[3])
+
+            x1 = (self.initdrag[0] - left)       # start drag
+            y1 = self.initdrag[1]
             y1 = self.preview_limits[2] - y1        # invert the vertical position, because Pdf counts from bottom
-            x2 = (x - self.preview_limits[0])        # end drag
-            y2 = (y - self.preview_limits[3])
+                                                    # This corrects also the top margin because bottom y = page height + margin
+            x2 = x - left        # end drag
+            y2 = y
             y2 = self.preview_limits[2] - y2
             width = x2 - x1
             height = y2 - y1
@@ -2870,7 +2892,29 @@ class gtkGui:
             height = height / scaling_factor
             ini.delete_rectangle = [x1,y1,width,height]
 
+        elif self.arw["divide"].get_active() == 1 :
+            # preview_limits gives : left x,  right x, bottom y, top y, in pixels.
+            #
+            # init_drag gives : x, y
+            # x = horizontal position
+            left = self.preview_limits[0] # left margin
+            top = self.preview_limits[3] # top margin
 
+
+            x1 = (self.initdrag[0] - left)       # start drag
+            y1 = self.initdrag[1]
+            y1 = self.preview_limits[2] - y1        # invert the vertical position, because Pdf counts from bottom
+                                                    # This corrects also the top margin because bottom y = page height + margin
+            x2 = x - left        # end drag
+            y2 = y
+            y2 = self.preview_limits[2] - y2
+            width = x2 - x1
+            height = y2 - y1
+            x1 = x1 / scaling_factor
+            y1 = y1 / scaling_factor
+            width = width / scaling_factor
+            height = height / scaling_factor
+            ini.delete_rectangle = [x1,y1,width,height]
 
 
 
@@ -3141,6 +3185,7 @@ class gtkGui:
             self.preview(self.previewPage)                # update the preview
 
     def manage_backup(self) :
+        return
         if self.backup_command == False :
             self.backup_command = True
             return
@@ -4473,8 +4518,12 @@ class pdfRender():
 
                 # Booklets : option "creep"
                 if ini.booklet > 0 :                # This option makes sense only for booklets
-                    creep_f = app.readmmEntry(app.arw["creep"])
-                    if creep_f > 0 :
+                    creep_f1 = app.readmmEntry(app.arw["creep"])
+                    if creep_f1 > 0 :
+                        # calculate creep for each booklet (number of folios may vary)
+                        for key, value in ar_cahiers.items() :
+                            creep_f = creep_f1 / value
+
                         # reset to 0 for each booklet
                         # Starting page of each booklet
                         start_pages = [0]
@@ -4545,7 +4594,7 @@ class pdfRender():
                 data_x.append("Q\n")
                 if len(ini.delete_rectangle) > 0 :
                     (x1,y1,w1,h1) = ini.delete_rectangle
-                    data_x.append("q n 1 0 1 rg \n")        # Couleur RGB ; 1 1 1 = white; 0,0,0 = black
+                    data_x.append("q n 1 1 1 rg \n")        # Couleur RGB ; 1 1 1 = white; 0,0,0 = black
                     data_x.append(" n %d %d %d %d re f* Q\n" % (x1,y1,w1,h1))  # rectangle : x, y, width, height
                 ar_data.append(data_x)
 

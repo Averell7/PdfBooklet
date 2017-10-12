@@ -2333,13 +2333,14 @@ class PageObject(DictionaryObject):
         if isinstance(ar_data, PageObject) :
             ar_data = [ar_data]
         for data in ar_data :
-            if isinstance(data, unicode) :
-                data = data.encode("utf8")
-##            if isinstance(data, str) :
-##                if sys.version[0:1] == "2" :
-##                    data = bytes(data)
-##                elif sys.version[0:1] == "3" :
-##                    data = bytes(data, "utf-8")
+
+            # modified by Dysmas, march 2017
+            if sys.version[0:1] == "2" :    # when used in python3, this code raises the error : unicode is not defined
+                if isinstance(data, unicode) :
+                    data = data.encode("utf8")
+            elif isinstance(data, str) :
+                data = bytes(data, "utf-8")
+
             if isinstance(data, PageObject) :
 
                 # Now we work on merging the resource dictionaries.  This allows us

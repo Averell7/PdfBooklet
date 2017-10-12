@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #
-# PdfBooklet 3.0.4 - GTK+ based utility to create booklets and other layouts 
+# PdfBooklet 3.0.5 - GTK+ based utility to create booklets and other layouts 
 # from PDF documents.
 # Copyright (C) 2008-2012 GAF Software
 # <https://sourceforge.net/projects/pdfbooklet>
@@ -28,7 +28,7 @@ from ftplib import FTP
 import zipfile
 
 
-version = "3.0.4"
+version = "3.0.5"
 print "\n\n ================ start bdist =============================\n\n"
 os.system('sudo python3 setup.py bdist')
 print "\n\n ================ end bdist - start sdist =================\n\n"
