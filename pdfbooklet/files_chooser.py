@@ -9,7 +9,7 @@ import os, sys
 
 
 from gi.repository import Gtk, Gio
-from PyPDF2_G import PdfFileReader
+from pdfbooklet.PyPDF2_G import PdfFileReader
 
 
 def alert(message, type = 0) :
