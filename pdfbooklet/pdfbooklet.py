@@ -358,7 +358,9 @@ def get_text(parent, message, default=''):
     d.set_default_response(Gtk.ResponseType.OK)
 
     r = d.run()
-    text = entry.get_text().decode('utf8')
+    text = entry.get_text()
+    if sys.version_info[0] == 2 :
+        text = text.decode('utf8')
     d.destroy()
     if r == Gtk.ResponseType.OK:
         return text
@@ -778,7 +780,7 @@ class TxtOnly :
                 if inputFile_a[val].getIsEncrypted() :
                     inputFile_details[val]["encrypt"] = True
                     if not hasattr(inputFile_a[val], "_decryption_key") :   # if not already decrypted
-                        password = self.get_text(None, _("Please, enter the password for this file"))
+                        password = get_text(None, _("Please, enter the password for this file"))
                         if password != None :
                             password = password.encode("utf8")
                             inputFile_a[val].decrypt(password)     # Encrypted file
