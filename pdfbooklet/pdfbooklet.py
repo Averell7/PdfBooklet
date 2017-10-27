@@ -353,7 +353,7 @@ def get_text(parent, message, default=''):
     entry = Gtk.Entry()
     entry.set_text(default)
     entry.show()
-    d.vbox.pack_end(entry)
+    d.vbox.pack_end(entry, True, True, 0)
     entry.connect('activate', lambda _: d.response(Gtk.ResponseType.OK))
     d.set_default_response(Gtk.ResponseType.OK)
 
