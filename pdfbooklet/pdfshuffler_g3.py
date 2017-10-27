@@ -48,7 +48,7 @@ import glob
 from copy import copy
 import locale       #for multilanguage support
 import gettext
-import elib_intl3
+import pdfbooklet.elib_intl3 as elib_intl3
 # elib_intl does not work if the strings are unicode
 domain = "pdfshuffler"     # these lines have no effect in python 3
 locale = "share/locale"
@@ -70,9 +70,9 @@ from gi.repository import GObject      # for using custom signals
 ##from gi.repository import cairo        # Raises the error : 'gi.repository.cairo' object has no attribute 'ImageSurface'
 import cairo
 
-from PyPDF2_G.pdf import PdfFileWriter, PdfFileReader
+from pdfbooklet.PyPDF2_G.pdf import PdfFileWriter, PdfFileReader
 
-from pdfshuffler_iconview3 import CellRendererImage
+from pdfbooklet.pdfshuffler_iconview3 import CellRendererImage
 GObject.type_register(CellRendererImage)
 
 

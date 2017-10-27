@@ -222,16 +222,15 @@ from gi.repository import cairo
 
 Gtk.rc_parse("./gtkrc")
 
-from PyPDF2_G import PdfFileReader, PdfFileWriter
-import PyPDF2_G.generic as generic
-
+from pdfbooklet.PyPDF2_G import PdfFileReader, PdfFileWriter
+import pdfbooklet.PyPDF2_G.generic as generic
 
 # from pdfbooklet import *
-from files_chooser import Chooser
+from pdfbooklet.files_chooser import Chooser
 
 import locale       #for multilanguage support
 import gettext
-import elib_intl3
+import pdfbooklet.elib_intl3 as elib_intl3
 elib_intl3.install("pdfbooklet", "share/locale")
 
 debug_b = 0
@@ -4843,7 +4842,7 @@ def main() :
 
     global PdfShuffler, PDF_Doc
 
-    from pdfshuffler_g3 import PdfShuffler, PDF_Doc
+    from pdfbooklet.pdfshuffler_g3 import PdfShuffler, PDF_Doc
 
     global isExcept
     global startup_b
