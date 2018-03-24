@@ -95,7 +95,8 @@ os.system('sudo pyinstaller pdfbooklet.py')
 
 print "\n\n ================ Uploading pyintaller files =======================\n\n"
 
-zipfile1 = zipfile.ZipFile("/home/pyinstaller.zip", "w")
+pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
+zipfile1 = zipfile.ZipFile(pyinstaller_file, "w")
 os.system('ls -l /home/')
 for mydir in os.walk("./dist/") :
     for myfile in mydir[2] :
@@ -106,7 +107,7 @@ zipfile1.close()
 os.system('ls -l /home/')
             
 command = 'STOR pyinstaller.zip'
-x = ftp.storbinary(command, open('/home/pyinstaller.zip', 'rb'))
+x = ftp.storbinary(command, open(pyinstaller_file, 'rb'))
 
 
 # generate Debian package
