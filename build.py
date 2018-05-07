@@ -74,18 +74,21 @@ ftp.cwd('pdfbooklet')               # change into "debian" directory
 try :
     command = 'STOR ' + tar_file
     x = ftp.storbinary(command, open(tar_file, 'rb'))
+    print (tar_file, "uploaded")
 except :
     print ("tar file error :", command)
 
 try :
     command = 'STOR ' + tar64_file
     x = ftp.storbinary(command, open(tar64_file, 'rb'))
+    print (tar64_file, "uploaded")
 except :
     print ("tar64 file error :", command)
 
 try :
     command = 'STOR ' + rpm_file
     x = ftp.storbinary(command, open(rpm_file, 'rb'))
+    print (rpm_file, "uploaded")
 except :
     print ("rpm file error :", command)
 
@@ -117,8 +120,6 @@ x = ftp.storbinary(command, open(pyinstaller_file, 'rb'))
 # generate Debian package
 print ("\n\n ================ Creating debian package =======================\n\n")
 
-os.chdir('..')
-os.system('ls')
 
 new_dir = "./pdfbooklet-" + version + "/"
 os.system('sudo alien --generate --scripts ' + rpm_file)
