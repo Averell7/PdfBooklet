@@ -30,7 +30,7 @@ import zipfile
 
 version = "3.0.5"
 print ("\n\n ================ start bdist =============================\n\n")
-os.system('sudo python3 setup.py bdist')
+os.system('sudo python3 setup.py bdist > /dev/null')
 print ("\n\n ================ end bdist - start sdist =================\n\n")
 os.system('sudo python3 setup.py sdist')
 print ("\n\n ================ end sdist - start bdist_rpm =============\n\n")
@@ -63,36 +63,6 @@ os.system('ls')
 
 
 
-print ("\n\n ================ Uploading tar.gz =======================\n\n")
-
-ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
-x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')                     # user anonymous, passwd anonymous@
-print ("Connect to Ftp : " + x)
-ftp.cwd('pdfbooklet')               # change into "debian" directory
-#ftp.retrlines('LIST')           # list directory contents
-#ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
-try :
-    command = 'STOR ' + tar_file
-    x = ftp.storbinary(command, open(tar_file, 'rb'))
-    print (tar_file, "uploaded")
-except :
-    print ("tar file error :", command)
-
-try :
-    command = 'STOR ' + tar64_file
-    x = ftp.storbinary(command, open(tar64_file, 'rb'))
-    print (tar64_file, "uploaded")
-except :
-    print ("tar64 file error :", command)
-
-try :
-    command = 'STOR ' + rpm_file
-    x = ftp.storbinary(command, open(rpm_file, 'rb'))
-    print (rpm_file, "uploaded")
-except :
-    print ("rpm file error :", command)
-
-
 # generate pyinstaller file
 """
 print ("\n\n ================ Generate pyinstaller file =======================\n\n"
@@ -100,21 +70,6 @@ print ("\n\n ================ Generate pyinstaller file =======================\
 os.chdir('./pdfbooklet')
 os.system('sudo pyinstaller pdfbooklet.py')
 
-print ("\n\n ================ Uploading pyintaller files =======================\n\n"
-
-pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
-zipfile1 = zipfile.ZipFile(pyinstaller_file, "w")
-os.system('ls -l /home/')
-for mydir in os.walk("./dist/") :
-    for myfile in mydir[2] :
-        path = os.path.join(mydir[0], myfile)
-        if os.path.isfile(path) :
-            zipfile1.write(path)
-zipfile1.close()
-os.system('ls -l /home/')
-
-command = 'STOR pyinstaller.zip'
-x = ftp.storbinary(command, open(pyinstaller_file, 'rb'))
 """
 
 # generate Debian package
@@ -177,19 +132,71 @@ print ("\n\n ================ Installing debian package ========================
 os.system("sudo dpkg -i " + deb_file)
 os.system("sudo apt-get -f -y install")
 
-print ("\n\n ================ build.py terminated =============================\n\n")
+print ("\n\n ================ build terminated =============================\n\n")
 
 
 
+print ("\n\n ================ Uploading =======================\n\n")
 
 
-x = ftp.storbinary('STOR ' + deb_file[2:], open(deb_file, 'rb'))
-print (x)
+ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
+x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')                     # user anonymous, passwd anonymous@
+print ("Connect to Ftp : " + x)
+ftp.cwd('pdfbooklet')               # change into "debian" directory
+#ftp.retrlines('LIST')           # list directory contents
+#ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
+"""
+try :
+    command = 'STOR ' + tar_file
+    x = ftp.storbinary(command, open(tar_file, 'rb'))
+    print (tar_file, "uploaded")
+except :
+    print ("tar file error :", command)
+
+try :
+    command = 'STOR ' + tar64_file
+    x = ftp.storbinary(command, open(tar64_file, 'rb'))
+    print (tar64_file, "uploaded")
+except :
+    print ("tar64 file error :", command)
+
+try :
+    command = 'STOR ' + rpm_file
+    x = ftp.storbinary(command, open(rpm_file, 'rb'))
+    print (rpm_file, "uploaded")
+except :
+    print ("rpm file error :", command)
+"""
+
+
+try :
+    command = 'STOR ' + deb_file[2:]
+    x = ftp.storbinary(command, open(deb_file, 'rb'))
+    print (deb_file, "uploaded")
+except :
+    print ("deb file error :", command)
+
+
+"""
+print ("\n\n ================ Uploading pyintaller files =======================\n\n"
+
+pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
+zipfile1 = zipfile.ZipFile(pyinstaller_file, "w")
+os.system('ls -l /home/')
+for mydir in os.walk("./dist/") :
+    for myfile in mydir[2] :
+        path = os.path.join(mydir[0], myfile)
+        if os.path.isfile(path) :
+            zipfile1.write(path)
+zipfile1.close()
+os.system('ls -l /home/')
+
+command = 'STOR pyinstaller.zip'
+x = ftp.storbinary(command, open(pyinstaller_file, 'rb'))
+"""
 
 
 ftp.quit()
-
-
 
 #os.system('rpmrebuild -b -R --change-spec-requires rebuild.py -p ' + new_file )
 
