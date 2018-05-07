@@ -124,6 +124,12 @@ os.system("cd " + new_dir + "; sudo dpkg-buildpackage")
 
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 print ("=========> deb file is : ", deb_file)
+if os.path.isfile(deb_file) :
+  print ("found deb", deb_file)
+else :
+    print ("NOT found deb", deb_file)
+
+os.system('ls')
 
 
 
@@ -172,7 +178,7 @@ except :
 
 
 try :
-    command = 'STOR ' + deb_file[2:]
+    command = 'STOR ' + deb_file
     x = ftp.storbinary(command, open(deb_file, 'rb'))
     print (deb_file, "uploaded")
 except :
