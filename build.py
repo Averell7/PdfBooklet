@@ -148,9 +148,10 @@ print ("\n\n ================ build terminated =============================\n\n
 print ("\n\n ================ Uploading =======================\n\n")
 
 
-ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
-x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')                     # user anonymous, passwd anonymous@
-
+#ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
+#x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')                     # user anonymous, passwd anonymous@
+ftp = FTP('privftp.pro.proxad.net')     # connect to host, default port
+x = ftp.login('webmaster@chartreux.org', 'esoJnaS')
 print ("Connect to Ftp : " + x)
 ftp.cwd('pdfbooklet')               # change into "debian" directory
 #ftp.retrlines('LIST')           # list directory contents
