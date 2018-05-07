@@ -28,7 +28,7 @@ from ftplib import FTP
 import zipfile
 
 
-version = "3.0.6"
+version = "3.0.5"
 print "\n\n ================ start bdist =============================\n\n"
 os.system('sudo python3 setup.py bdist')
 print "\n\n ================ end bdist - start sdist =================\n\n"
