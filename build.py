@@ -44,19 +44,19 @@ if os.path.isfile(rpm_file) :
   print "found rpm", rpm_file
 else :
     print "NOT found rpm", rpm_file
-    os.system('ls')
+    os.system('ls ./dist/')
   
 if os.path.isfile(tar_file) :
   print "found tar", tar_file
 else :
     print "NOT found tar", tar_file
-    os.system('ls')
+    os.system('ls ./dist/')
     
 if os.path.isfile(tar64_file) :
   print "found tar", tar64_file
 else :
     print "NOT found tar", tar64_file
-    os.system('ls')
+    os.system('ls ./dist/')
   
 
 
