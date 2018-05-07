@@ -32,9 +32,9 @@ version = "3.0.5"
 print ("\n\n ================ start bdist =============================\n\n")
 os.system('sudo python3 setup.py bdist > /dev/null')
 print ("\n\n ================ end bdist - start sdist =================\n\n")
-os.system('sudo python3 setup.py sdist')
+os.system('sudo python3 setup.py sdist > /dev/null')
 print ("\n\n ================ end sdist - start bdist_rpm =============\n\n")
-os.system('sudo python3 setup.py bdist_rpm')
+os.system('sudo python3 setup.py bdist_rpm > /dev/null')
 print ("\n\n ================ end bdist_rpm ===========================\n\n")
 
 os.chdir("dist")
@@ -128,9 +128,11 @@ print ("=========> deb file is : ", deb_file)
 
 
 # install package
+"""
 print ("\n\n ================ Installing debian package =============================\n\n")
 os.system("sudo dpkg -i " + deb_file)
 os.system("sudo apt-get -f -y install")
+"""
 
 print ("\n\n ================ build terminated =============================\n\n")
 
