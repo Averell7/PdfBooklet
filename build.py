@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #
-# PdfBooklet 3.0.5 - GTK+ based utility to create booklets and other layouts 
+# PdfBooklet 3.0.6 - GTK+ based utility to create booklets and other layouts 
 # from PDF documents.
 # Copyright (C) 2008-2012 GAF Software
 # <https://sourceforge.net/projects/pdfbooklet>
@@ -28,7 +28,7 @@ from ftplib import FTP
 import zipfile
 
 
-version = "3.0.5"
+version = "3.0.6"
 print "\n\n ================ start bdist =============================\n\n"
 os.system('sudo python3 setup.py bdist')
 print "\n\n ================ end bdist - start sdist =================\n\n"
@@ -134,7 +134,7 @@ else :
 f1 = open(control_file, "r")
 
 data1 = f1.read()
-data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python3-cairo, python-gobject-cairo, python3-gi, gir1.2-gtk-3.0, gir1.2-poppler-0.18")
+data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python3-cairo, python-gobject-cairo, python-gi-cairo, python3-gi, gir1.2-gtk-3.0, gir1.2-poppler-0.18")
 #data1 = python-gobject, python-gobject-2, pypoppler|python-poppler\n")
 
 
