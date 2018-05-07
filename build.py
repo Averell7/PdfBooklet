@@ -153,7 +153,7 @@ print ("Connect to Ftp : " + x)
 ftp.cwd('pdfbooklet')               # change into "debian" directory
 #ftp.retrlines('LIST')           # list directory contents
 #ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
-"""
+
 try :
     command = 'STOR ' + tar_file
     x = ftp.storbinary(command, open(tar_file, 'rb'))
@@ -174,7 +174,6 @@ try :
     print (rpm_file, "uploaded")
 except :
     print ("rpm file error :", command)
-"""
 
 
 try :
@@ -186,7 +185,7 @@ except :
 
 
 """
-print ("\n\n ================ Uploading pyintaller files =======================\n\n"
+print ("\n\n ================ Uploading pyintaller files =======================\n\n")
 
 pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
 zipfile1 = zipfile.ZipFile(pyinstaller_file, "w")
@@ -205,6 +204,8 @@ x = ftp.storbinary(command, open(pyinstaller_file, 'rb'))
 
 
 ftp.quit()
+
+print("\n\n ================ End of build.py =======================\n\n")
 
 #os.system('rpmrebuild -b -R --change-spec-requires rebuild.py -p ' + new_file )
 
