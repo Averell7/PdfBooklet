@@ -24,6 +24,7 @@
 import os
 import re
 import glob
+import ftplib
 from ftplib import FTP
 import zipfile
 
@@ -158,30 +159,34 @@ try :
     command = 'STOR ' + tar_file
     x = ftp.storbinary(command, open(tar_file, 'rb'))
     print (tar_file, "uploaded")
-except :
+except  ftplib.all_errors as e :
     print ("tar file error :", command)
+    print(e)
 
 try :
     command = 'STOR ' + tar64_file
     x = ftp.storbinary(command, open(tar64_file, 'rb'))
     print (tar64_file, "uploaded")
-except :
+except ftplib.all_errors as e :
     print ("tar64 file error :", command)
+    print(e)
 
 try :
     command = 'STOR ' + rpm_file
     x = ftp.storbinary(command, open(rpm_file, 'rb'))
     print (rpm_file, "uploaded")
-except :
+except ftplib.all_errors as e :
     print ("rpm file error :", command)
+    print(e)
 
 
 try :
     command = 'STOR ' + deb_file
     x = ftp.storbinary(command, open(deb_file, 'rb'))
     print (deb_file, "uploaded")
-except :
+except ftplib.all_errors as e :
     print ("deb file error :", command)
+    print(e)
 
 
 """
