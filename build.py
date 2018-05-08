@@ -36,7 +36,6 @@ print ("\n\n ================ end bdist - start sdist =================\n\n")
 os.system('sudo python3 setup.py sdist > /dev/null')
 print ("\n\n ================ end sdist - start bdist_rpm =============\n\n")
 os.system('sudo python3 setup.py bdist_rpm > /dev/null')
-
 # dependencies are set in the setup.cfg file
 print ("\n\n ================ end bdist_rpm ===========================\n\n")
 
@@ -47,6 +46,9 @@ tar64_file = "pdfbooklet-" + version + ".linux-x86_64.tar.gz"
 
 # verify dependencies in rpm file
 os.system("rpm -qpR " + rpm_file)
+print()
+os.system("rpm -ivh " + rpm_file)
+print()
 
 if os.path.isfile(rpm_file) :
   print ("found rpm", rpm_file)
@@ -82,51 +84,45 @@ os.system('sudo pyinstaller pdfbooklet.py')
 print ("\n\n ================ Creating debian package =======================\n\n")
 
 
-new_dir = "./pdfbooklet-" + version + "/"
+
+
 os.system('sudo alien --generate --scripts ' + rpm_file)
-control_file = new_dir + "debian/control"
+new_dir = "./pdfbooklet-" + version + "/"
+os.system("cd " + new_dir)
+os.system("tree")
+
+control_file = "./debian/control"
 if os.path.isfile(control_file) :
-  print ("control found")
-else :
-    print ("control NOT found. See log.txt")
-    # walkdirectory
-    f1 = open("./log.txt", "w")
-    for data in os.walk("./") :
-        f1.write(repr(data))
+    print ("control found")
+    f1 = open(control_file, "r")
+
+    data1 = f1.read()
+    data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python3-cairo, python-gobject-cairo, python-gi-cairo, python3-gi, gir1.2-gtk-3.0, gir1.2-poppler-0.18")
+    #data1 = python-gobject, python-gobject-2, pypoppler|python-poppler\n")
+
+
     f1.close()
-
-    command = 'STOR ' + "./log.txt"
-    x = ftp.storbinary(command, open("./log.txt", 'rb'))
-
-f1 = open(control_file, "r")
-
-data1 = f1.read()
-data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python3-cairo, python-gobject-cairo, python-gi-cairo, python3-gi, gir1.2-gtk-3.0, gir1.2-poppler-0.18")
-#data1 = python-gobject, python-gobject-2, pypoppler|python-poppler\n")
+    f1 = open(control_file, "w")
+    f1.write(data1)
+    f1.close()
+else :
+    print ("============> ERROR : control NOT found.")
 
 
-f1.close()
-f1 = open(control_file, "w")
-f1.write(data1)
-f1.close()
 
-
+# post installation commands
 # correct pdfbooklet.cfg
 
-dir1 = new_dir + "/usr/share/pdfbooklet/"
-
-os.system("ls " + dir1  )
-print ("~~~~~~~~1")
-os.system("sudo chmod 777 " + dir1  )
-print ("~~~~~~~~2")
-os.system("ls -l " + new_dir +  "/usr/share/" )
-print ("~~~~~~~~3")
-
+pb_dir = "./usr/share/pdfbooklet/"
+text = "sudo chmod 777 " + pb_dir
+# I am unsure of the right place of this file, so let us put it in both places
+os.system(" echo " + text + "> ./postinst")
+os.system(" echo " + text + "> ./debian/postinst")
 
 
 
 # Build debian package
-os.system("cd " + new_dir + "; sudo dpkg-buildpackage")
+os.system("sudo dpkg-buildpackage")
 
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 print ("=========> deb file is : ", deb_file)
@@ -227,7 +223,7 @@ x = ftp.storbinary(command, open(pyinstaller_file, 'rb'))
 
 print("\n\n ================ End of build.py =======================\n\n")
 
-#os.system('rpmrebuild -b -R --change-spec-requires rebuild.py -p ' + new_file )
+
 
 
 
