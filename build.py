@@ -154,9 +154,7 @@ for file_x in [tar_file, tar64_file, rpm_file, deb_file] :
 
 
     for i in range (6) :
-        ftp = FTP('perso-ftp.orange.fr')                        # connect to host, default port
-        x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')       # user, passwd
-
+        ftp = FTP('perso-ftp.orange.fr', user = 'dysmas1956@wanadoo.fr', passwrd = '4ua7x9x', timeout=10)                        # connect to host, default port
         #print ("Connect to Ftp : " + x)
         ftp.cwd('pdfbooklet')            # change into "pdfbooklet" directory
         #ftp.retrlines('LIST')           # list directory contents
