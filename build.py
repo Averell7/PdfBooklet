@@ -35,7 +35,8 @@ os.system('sudo python3 setup.py bdist > /dev/null')
 print ("\n\n ================ end bdist - start sdist =================\n\n")
 os.system('sudo python3 setup.py sdist > /dev/null')
 print ("\n\n ================ end sdist - start bdist_rpm =============\n\n")
-os.system('sudo python3 setup.py bdist_rpm > /dev/null')
+os.system('sudo python3 setup.py bdist_rpm ')
+# dependencies are set in the setup.cfg file
 print ("\n\n ================ end bdist_rpm ===========================\n\n")
 
 os.chdir("dist")

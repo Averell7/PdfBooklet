@@ -70,7 +70,7 @@ setup(name='pdfbooklet',
       packages=['pdfbooklet', 'pdfbooklet.PyPDF2_G'],
       data_files=data_files,
       #requires=['python-poppler'],          # for distutils
-      #install_requires=['python-poppler']   # for setuptools
+      #install_requires=['python-poppler']   # for setuptools  should work but does not. We can use setup.cfg instead
      )
 """
 # Clean up temporary files
