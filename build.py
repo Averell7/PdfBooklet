@@ -35,7 +35,8 @@ os.system('sudo python3 setup.py bdist > /dev/null')
 print ("\n\n ================ end bdist - start sdist =================\n\n")
 os.system('sudo python3 setup.py sdist > /dev/null')
 print ("\n\n ================ end sdist - start bdist_rpm =============\n\n")
-os.system('sudo python3 setup.py bdist_rpm ')
+os.system('sudo python3 setup.py bdist_rpm > /dev/null')
+
 # dependencies are set in the setup.cfg file
 print ("\n\n ================ end bdist_rpm ===========================\n\n")
 
@@ -43,6 +44,9 @@ os.chdir("dist")
 rpm_file = "pdfbooklet-" + version + "-1.noarch.rpm"
 tar_file = "pdfbooklet-" + version + ".tar.gz"
 tar64_file = "pdfbooklet-" + version + ".linux-x86_64.tar.gz"
+
+# verify dependencies in rpm file
+os.system("rpm -qpR " + rpm_file)
 
 if os.path.isfile(rpm_file) :
   print ("found rpm", rpm_file)
