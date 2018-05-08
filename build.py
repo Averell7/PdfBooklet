@@ -148,14 +148,10 @@ print ("\n\n ================ build terminated =============================\n\n
 print ("\n\n ================ Uploading =======================\n\n")
 
 
-ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
-x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')                     # user anonymous, passwd anonymous@
 
-print ("Connect to Ftp : " + x)
-ftp.cwd('pdfbooklet')               # change into "debian" directory
-#ftp.retrlines('LIST')           # list directory contents
-#ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
 
+
+"""
 try :
     command = 'STOR ' + tar_file
     x = ftp.storbinary(command, open(tar_file, 'rb'))
@@ -163,6 +159,7 @@ try :
 except  ftplib.all_errors as e :
     print ("tar file error :", command)
     print(e)
+
 
 try :
     command = 'STOR ' + tar64_file
@@ -180,14 +177,27 @@ except ftplib.all_errors as e :
     print ("rpm file error :", command)
     print(e)
 
+"""
+for i in range (6) :
+    ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
+    x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')                     # user anonymous, passwd anonymous@
 
-try :
-    command = 'STOR ' + deb_file
-    x = ftp.storbinary(command, open(deb_file, 'rb'))
-    print (deb_file, "uploaded")
-except ftplib.all_errors as e :
-    print ("deb file error :", command)
-    print(e)
+    print ("Connect to Ftp : " + x)
+    ftp.cwd('pdfbooklet')               # change into "debian" directory
+    #ftp.retrlines('LIST')           # list directory contents
+    #ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
+
+    try :
+        command = 'STOR ' + deb_file
+        x = ftp.storbinary(command, open(deb_file, 'rb'))
+        print (deb_file, "uploaded")
+        ftp.quit()
+        break
+    except ftplib.all_errors as e :
+        print ("deb file error :", command)
+        print(e)
+        ftp.quit()
+
 
 
 """
