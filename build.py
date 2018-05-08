@@ -89,9 +89,8 @@ print ("\n\n ================ Creating debian package =======================\n\
 os.system('sudo alien --generate --scripts ' + rpm_file)
 new_dir = "./pdfbooklet-" + version + "/"
 
+os.chdir(new_dir)
 os.system("tree")               # option -d will print directories only
-os.system("cd " + new_dir)
-
 
 
 control_file = "./debian/control"
@@ -122,7 +121,7 @@ text = "sudo chmod 777 " + pb_dir
 os.system(" echo " + text + "> ./postinst")
 os.system(" echo " + text + "> ./debian/postinst")
 
-
+os.chdir("..")
 
 # Build debian package
 os.system("sudo dpkg-buildpackage")
