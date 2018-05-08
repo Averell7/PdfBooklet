@@ -92,7 +92,6 @@ new_dir = "./pdfbooklet-" + version + "/"
 os.chdir(new_dir)
 os.system("tree")               # option -d will print directories only
 
-
 control_file = "./debian/control"
 if os.path.isfile(control_file) :
     print ("control found")
@@ -110,8 +109,6 @@ if os.path.isfile(control_file) :
 else :
     print ("============> ERROR : control NOT found.")
 
-
-
 # post installation commands
 # correct pdfbooklet.cfg
 
@@ -121,10 +118,9 @@ text = "sudo chmod 777 " + pb_dir
 os.system(" echo " + text + "> ./postinst")
 os.system(" echo " + text + "> ./debian/postinst")
 
-os.chdir("..")
-
 # Build debian package
 os.system("sudo dpkg-buildpackage")
+os.chdir("..")
 
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 print ("=========> deb file is : ", deb_file)
