@@ -88,8 +88,11 @@ print ("\n\n ================ Creating debian package =======================\n\
 
 os.system('sudo alien --generate --scripts ' + rpm_file)
 new_dir = "./pdfbooklet-" + version + "/"
+
+os.system("tree")               # option -d will print directories only
 os.system("cd " + new_dir)
-os.system("tree")
+
+
 
 control_file = "./debian/control"
 if os.path.isfile(control_file) :
