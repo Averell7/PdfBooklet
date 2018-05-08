@@ -150,8 +150,31 @@ print ("\n\n ================ Uploading =======================\n\n")
 
 
 
+for file_x in [tar_file, tar64_file, tar64_file, deb_file] :
+
+
+    for i in range (6) :
+        ftp = FTP('perso-ftp.orange.fr')                        # connect to host, default port
+        x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')       # user, passwd
+
+        #print ("Connect to Ftp : " + x)
+        ftp.cwd('pdfbooklet')            # change into "pdfbooklet" directory
+        #ftp.retrlines('LIST')           # list directory contents
+        #ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
+
+        try :
+            command = 'STOR ' + file_x
+            ftp.storbinary(command, open(file_x, 'rb'))
+            print (file_x, "uploaded")
+            ftp.quit()
+            break
+        except ftplib.all_errors as e :
+            print ("Upload error :", command)
+            print(e)
+            ftp.quit()
 
 """
+
 try :
     command = 'STOR ' + tar_file
     x = ftp.storbinary(command, open(tar_file, 'rb'))
@@ -178,26 +201,6 @@ except ftplib.all_errors as e :
     print(e)
 
 """
-for i in range (6) :
-    ftp = FTP('perso-ftp.orange.fr')     # connect to host, default port
-    x = ftp.login('dysmas1956@wanadoo.fr', '4ua7x9x')                     # user anonymous, passwd anonymous@
-
-    print ("Connect to Ftp : " + x)
-    ftp.cwd('pdfbooklet')               # change into "debian" directory
-    #ftp.retrlines('LIST')           # list directory contents
-    #ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
-
-    try :
-        command = 'STOR ' + deb_file
-        x = ftp.storbinary(command, open(deb_file, 'rb'))
-        print (deb_file, "uploaded")
-        ftp.quit()
-        break
-    except ftplib.all_errors as e :
-        print ("deb file error :", command)
-        print(e)
-        ftp.quit()
-
 
 
 """
@@ -218,8 +221,6 @@ command = 'STOR pyinstaller.zip'
 x = ftp.storbinary(command, open(pyinstaller_file, 'rb'))
 """
 
-
-ftp.quit()
 
 print("\n\n ================ End of build.py =======================\n\n")
 
