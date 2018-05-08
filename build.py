@@ -150,7 +150,7 @@ print ("\n\n ================ Uploading =======================\n\n")
 
 
 
-for file_x in [tar_file, tar64_file, tar64_file, deb_file] :
+for file_x in [tar_file, tar64_file, rpm_file, deb_file] :
 
 
     for i in range (6) :
