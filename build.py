@@ -73,7 +73,7 @@ os.system('ls')
 
 # generate pyinstaller file
 
-print ("\n\n ================ Generate pyinstaller file =======================\n\n"
+print ("\n\n ================ Generate pyinstaller file =======================\n\n" )
 
 os.chdir('./pdfbooklet')
 os.system('sudo pyinstaller pdfbooklet.py > /dev/null')
