@@ -75,7 +75,8 @@ os.system("tree -d")               # option -d will print directories only
 
 print ("\n\n ================ Generate pyinstaller file =======================\n\n" )
 
-os.chdir('/pdfbooklet')
+os.chdir("..")
+os.chdir('./pdfbooklet')
 os.system('sudo pyinstaller pdfbooklet.py > /dev/null')
 
 pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
