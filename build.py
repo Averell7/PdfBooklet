@@ -72,13 +72,24 @@ os.system('ls')
 
 
 # generate pyinstaller file
-"""
+
 print ("\n\n ================ Generate pyinstaller file =======================\n\n"
 
 os.chdir('./pdfbooklet')
-os.system('sudo pyinstaller pdfbooklet.py')
+os.system('sudo pyinstaller pdfbooklet.py > /dev/null')
 
-"""
+pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
+zipfile1 = zipfile.ZipFile(pyinstaller_file, "w")
+os.system('ls -l /home/')
+for mydir in os.walk("./dist/") :
+    for myfile in mydir[2] :
+        path = os.path.join(mydir[0], myfile)
+        if os.path.isfile(path) :
+            zipfile1.write(path)
+zipfile1.close()
+os.system('ls -l /home/')
+
+
 
 # generate Debian package
 print ("\n\n ================ Creating debian package =======================\n\n")
@@ -90,7 +101,7 @@ os.system('sudo alien --generate --scripts ' + rpm_file)
 new_dir = "./pdfbooklet-" + version + "/"
 
 os.chdir(new_dir)
-os.system("tree")               # option -d will print directories only
+os.system("tree -d")               # option -d will print directories only
 
 control_file = "./debian/control"
 if os.path.isfile(control_file) :
@@ -149,7 +160,7 @@ print ("\n\n ================ Uploading =======================\n\n")
 
 
 
-for file_x in [tar_file, tar64_file, rpm_file, deb_file] :
+for file_x in [tar_file, tar64_file, rpm_file, deb_file, pyinstaller_file] :
 
 
     for i in range (6) :
@@ -170,53 +181,7 @@ for file_x in [tar_file, tar64_file, rpm_file, deb_file] :
             print(e)
             ftp.quit()
 
-"""
 
-try :
-    command = 'STOR ' + tar_file
-    x = ftp.storbinary(command, open(tar_file, 'rb'))
-    print (tar_file, "uploaded")
-except  ftplib.all_errors as e :
-    print ("tar file error :", command)
-    print(e)
-
-
-try :
-    command = 'STOR ' + tar64_file
-    x = ftp.storbinary(command, open(tar64_file, 'rb'))
-    print (tar64_file, "uploaded")
-except ftplib.all_errors as e :
-    print ("tar64 file error :", command)
-    print(e)
-
-try :
-    command = 'STOR ' + rpm_file
-    x = ftp.storbinary(command, open(rpm_file, 'rb'))
-    print (rpm_file, "uploaded")
-except ftplib.all_errors as e :
-    print ("rpm file error :", command)
-    print(e)
-
-"""
-
-
-"""
-print ("\n\n ================ Uploading pyintaller files =======================\n\n")
-
-pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
-zipfile1 = zipfile.ZipFile(pyinstaller_file, "w")
-os.system('ls -l /home/')
-for mydir in os.walk("./dist/") :
-    for myfile in mydir[2] :
-        path = os.path.join(mydir[0], myfile)
-        if os.path.isfile(path) :
-            zipfile1.write(path)
-zipfile1.close()
-os.system('ls -l /home/')
-
-command = 'STOR pyinstaller.zip'
-x = ftp.storbinary(command, open(pyinstaller_file, 'rb'))
-"""
 
 
 print("\n\n ================ End of build.py =======================\n\n")
