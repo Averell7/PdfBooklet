@@ -4,17 +4,24 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
+# version 3.0.6, 09/05/2018
+# Bug fixes
+# Better Linux support
+# No longer uses a temporary file, preview data now in memory
+
 # version 3.0.5, 30 / 07 / 2017
 # German Translation added
-# New feature : creep adjustment
 
-# 3.0.4
+# version 3.0.4
 # New feature : add page numbers (still experimental)
-# Gui : dotted line in the middle of a booklet
-# No longer uses the tempfiles/preview.pdf temporary file. The temporary directory defined by the system is used instead
+# Gui : dotted line in the middle of a booklet - Still to be improved
+# No longer uses the tempfiles/preview.pdf temporary file.
+# this is now handled in Memory. Bugs to fix on that feature.
+# To understand the reason for which we have used new_from_bytes and not new_from_data, see here :
+# https://stackoverflow.com/questions/45838863/gio-memoryinputstream-does-not-free-memory-when-closed
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 
-PB_version = "3.0.5"
+PB_version = "3.0.6"
 
 
 """
@@ -120,8 +127,7 @@ Le tooltip pour le nom de fichier pourrait afficher les valeurs réelles que don
         2) Preview process : To create the preview, a similar process is used.
                                - the config dictionary is sent to PdfRenderer, with an
                                  additional parameter which indicates a page number
-                               - PdfRenderer creates a file named preview.pdf
-                                  which contains a single page, in the tempdir directory.
+                               - PdfRenderer creates a pdf file in memory which contains a single page.
                                - This page is displayed in the gui by Poppler.
 
     Inside config, the pages are named in two different ways :
@@ -185,6 +191,8 @@ le paquet python-dev est aussi nécessaire (mais pip le trouve)
 
 import time, math, string, os, sys, re, shutil, site
 print(sys.version)
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
 try :
     import configparser     # Python 3
     from configparser import ConfigParser, RawConfigParser
@@ -216,7 +224,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Poppler
 from gi.repository import Pango
-from gi.repository import Gio
+from gi.repository import Gio, GLib
 from gi.repository import cairo
 
 
@@ -2291,6 +2299,7 @@ class gtkGui:
         global areaAllocationW_i, areaAllocationH_i
         global previewColPos_a, previewRowPos_a, pageContent_a
         global refPageSize_a, numPages
+        global outputStream, outputStream_mem
 
         # Was the size changed ?
 
@@ -2302,14 +2311,35 @@ class gtkGui:
             areaAllocationW_i = self.area.get_allocated_width()
             areaAllocationH_i  = self.area.get_allocated_height()
 
-        # TODO render document  (not necessary each time)
+
+        # If nothing has not yet been loaded, show nofile.pdf
         try :
-            filepath = os.path.join(tempfile.gettempdir(), "preview.pdf")
-            info = os.stat(filepath)
-            filesize = info.st_size
-            if filesize == 0 :
-                return
-            document = Poppler.Document.new_from_file("file:///" + filepath, None)
+            data1 = outputStream.getvalue()
+        except :
+            f1 = open(sfp2("data/nofile.pdf"),"rb")
+            data1 = f1.read()
+            f1.close()
+
+
+        # TODO : When two calls are too close, it may create a strange stack resulting in an empty OutputStream
+        #        This has to be redesigned.
+        if len(data1) == 0 :
+            #print(".........  OutputStream is empty")
+            return
+
+        # If the preview has not changed, don't render
+        # TODO : This must be redesigned, because with the image in memory, it may be necessary to render again with the same data
+##        if data1 == outputStream_mem :
+##            return
+##        else :
+##            outputStream_mem = data1
+
+
+        try :
+            bytes_data = GLib.Bytes(data1)
+            input_stream = Gio.MemoryInputStream.new_from_bytes(bytes_data)
+            # Take care that you need to call .close() on the Gio.MemoryInputStream once you're done with your pdf document.
+            document = Poppler.Document.new_from_stream(input_stream, -1, None, None)
             self.document= document
 
         except :
@@ -2374,6 +2404,10 @@ class gtkGui:
             cr.scale(scale,scale)
             self.page1.render(cr)
             cr.restore()
+
+        # clear memory
+        input_stream.close()
+
 
         # draw middle line
 
@@ -3149,7 +3183,6 @@ class gtkGui:
 
         if len(inputFiles_a) == 0 :
             #showwarning(_("No file loaded"), _("Please select a file first"))
-            shutil.copy(sfp2("data/nofile.pdf"), os.path.join(tempfile.gettempdir(), "preview.pdf"))
             return False
         if Event != None :
             value_s = self.arw["entry11"].get_text()
@@ -3164,6 +3197,7 @@ class gtkGui:
 ##        self.preview(self.previewPage)
         if self.arw["automaticUpdate"].get_active() == 0 :  # If automatic update is not disabled
             self.preview(self.previewPage)                # update the preview
+
 
 
 
@@ -4363,6 +4397,7 @@ class pdfRender():
     def createNewPdf(self, ar_pages, ar_layout, ar_cahiers, outputFile, preview = -1) :
         global debug_b, inputFile_a, inputFiles_a, previewtempfile, result, pdftempfile
         global mediabox_l
+        global outputStream
 
 
         if debug_b == 1 :
@@ -4378,7 +4413,7 @@ class pdfRender():
 
 
         if preview >= 0 :           # if this is a preview
-            outputStream = open(os.path.join(tempfile.gettempdir(), "preview.pdf"), "wb")
+            outputStream = io.BytesIO()
 
         else :
             try :
@@ -4666,19 +4701,16 @@ class pdfRender():
         #app.print2(_("Total length : %s ") % (time_e - time_s), 1)
 
         output.write(outputStream)
-        #output.write(pdftempfile)
-        if preview >= 0 :
-            outputStream.close()
-            pass
-##        pdftempfile.seek(0)
-##        data = pdftempfile.read()
-##        print(">>>",  len(data))
-        del output
+        if preview == -1 :          # if we are creating a real file (not a preview)
+            outputStream.close()    # We must close the file, otherwise it is not possible to see it in the Reader
+                                    # TODO : after closing the reader, preview should be automatically updated.
 
+        del output
 
         if debug_b == 1 :
             logfile_f.close()
 
+        # TODO
         """
         if preview == -1 :      # if we are creating a real file (not a preview)
             if app.settings.get_active() == 1 :
@@ -4865,6 +4897,8 @@ def main() :
     global columns_i
     global step_i
     global outputScale
+    global outputStream_mem
+    global mem
 
     isExcept = False
     startup_b = True
@@ -4877,6 +4911,9 @@ def main() :
     columns_i = 2
     step_i = 1
     outputScale = 1
+    outputStream_mem = ""
+    mem = {}
+    mem["update"] = time.time()
 
     base_a = extractBase()
     prog_path_u = unicode2(base_a[2])
@@ -4899,14 +4936,9 @@ def main() :
 
         cfg_path_u = "/usr/share/pdfbooklet"
 
-        if os.path.isfile(cfg_path_u + "/data/nofile.pdf") :
-            shutil.copy(cfg_path_u + "/data/nofile.pdf", os.path.join(tempfile.gettempdir(), "preview.pdf"))
-
-
     else:
         cfg_path_u = prog_path_u
-        if os.path.isfile(sfp("data/nofile.pdf")) :
-            shutil.copy(sfp("data/nofile.pdf"), os.path.join(tempfile.gettempdir(), "preview.pdf"))
+
 
 
 
