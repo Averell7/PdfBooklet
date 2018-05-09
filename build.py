@@ -75,7 +75,7 @@ os.system("tree -d")               # option -d will print directories only
 
 print ("\n\n ================ Generate pyinstaller file =======================\n\n" )
 
-os.chdir('./pdfbooklet')
+os.chdir('/pdfbooklet')
 os.system('sudo pyinstaller pdfbooklet.py > /dev/null')
 
 pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
@@ -98,7 +98,7 @@ print ("\n\n ================ Creating debian package =======================\n\
 
 
 os.system('sudo alien --generate --scripts ' + rpm_file)
-new_dir = "./pdfbooklet-" + version + "/"
+new_dir = "/dist/pdfbooklet-" + version + "/"
 
 os.chdir(new_dir)
 
