@@ -28,7 +28,7 @@ import ftplib
 from ftplib import FTP
 import zipfile
 
-
+os.system("tree -d")               # option -d will print directories only
 version = "3.0.6"
 print ("\n\n ================ start bdist =============================\n\n")
 os.system('sudo python3 setup.py bdist > /dev/null')
@@ -68,7 +68,7 @@ else :
     print ("NOT found tar", tar64_file)
 
 os.system('ls')
-
+os.system("tree -d")               # option -d will print directories only
 
 
 # generate pyinstaller file
@@ -101,7 +101,7 @@ os.system('sudo alien --generate --scripts ' + rpm_file)
 new_dir = "./pdfbooklet-" + version + "/"
 
 os.chdir(new_dir)
-os.system("tree -d")               # option -d will print directories only
+
 
 control_file = "./debian/control"
 if os.path.isfile(control_file) :
