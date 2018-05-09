@@ -17,8 +17,8 @@ before_install:
   
 install: 
   - pip install flake8 tox  
-#  - sudo pip install pyinstaller
-#  - whereis pyinstaller
+  - sudo pip install pyinstaller
+  - whereis pyinstaller
 #  - ls /usr/share
   
 
