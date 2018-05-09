@@ -39,6 +39,29 @@ os.system('sudo python3 setup.py bdist_rpm > /dev/null')
 # dependencies are set in the setup.cfg file
 print ("\n\n ================ end bdist_rpm ===========================\n\n")
 
+print ("\n\n ================ Generate pyinstaller file =======================\n\n" )
+
+
+os.chdir('./pdfbooklet')
+os.system('sudo pyinstaller pdfbooklet.py > /dev/null')
+
+pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
+zipfile1 = zipfile.ZipFile(pyinstaller_file, "w")
+os.system('ls -l /home/')
+for mydir in os.walk("./dist/") :
+    for myfile in mydir[2] :
+        path = os.path.join(mydir[0], myfile)
+        if os.path.isfile(path) :
+            zipfile1.write(path)
+zipfile1.close()
+os.system('ls -l /home/')
+
+
+os.chdir("..")
+
+
+
+
 os.chdir("dist")
 rpm_file = "pdfbooklet-" + version + "-1.noarch.rpm"
 tar_file = "pdfbooklet-" + version + ".tar.gz"
@@ -71,24 +94,6 @@ os.system('ls')
 os.system("tree -d")               # option -d will print directories only
 
 
-# generate pyinstaller file
-
-print ("\n\n ================ Generate pyinstaller file =======================\n\n" )
-
-os.chdir("..")
-os.chdir('./pdfbooklet')
-os.system('sudo pyinstaller pdfbooklet.py > /dev/null')
-
-pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
-zipfile1 = zipfile.ZipFile(pyinstaller_file, "w")
-os.system('ls -l /home/')
-for mydir in os.walk("./dist/") :
-    for myfile in mydir[2] :
-        path = os.path.join(mydir[0], myfile)
-        if os.path.isfile(path) :
-            zipfile1.write(path)
-zipfile1.close()
-os.system('ls -l /home/')
 
 
 
@@ -99,7 +104,7 @@ print ("\n\n ================ Creating debian package =======================\n\
 
 
 os.system('sudo alien --generate --scripts ' + rpm_file)
-new_dir = "/dist/pdfbooklet-" + version + "/"
+new_dir = "./pdfbooklet-" + version + "/"
 
 os.chdir(new_dir)
 
