@@ -28,7 +28,6 @@ import ftplib
 from ftplib import FTP
 import zipfile
 
-os.system("tree -d")               # option -d will print directories only
 version = "3.0.6"
 print ("\n\n ================ start bdist =============================\n\n")
 os.system('sudo python3 setup.py bdist > /dev/null')
@@ -45,8 +44,8 @@ print ("\n\n ================ Generate pyinstaller file =======================\
 os.chdir('./pdfbooklet')
 os.system('sudo pyinstaller pdfbooklet.py > /dev/null')
 
-pyinstaller_file = "/home/pyinstaller-" + version + ".zip"
-zipfile1 = zipfile.ZipFile(pyinstaller_file, "w")
+pyinstaller_file = "pyinstaller-" + version + ".zip"
+zipfile1 = zipfile.ZipFile("../dist/" + pyinstaller_file, "w")
 os.system('ls -l /home/')
 for mydir in os.walk("./dist/") :
     for myfile in mydir[2] :
@@ -54,47 +53,21 @@ for mydir in os.walk("./dist/") :
         if os.path.isfile(path) :
             zipfile1.write(path)
 zipfile1.close()
-os.system('ls -l /home/')
-
 
 os.chdir("..")
-
-
-
-
-os.chdir("dist")
-rpm_file = "pdfbooklet-" + version + "-1.noarch.rpm"
-tar_file = "pdfbooklet-" + version + ".tar.gz"
-tar64_file = "pdfbooklet-" + version + ".linux-x86_64.tar.gz"
-
-# verify dependencies in rpm file
-os.system("rpm -qpR " + rpm_file)
-print()
-os.system("rpm -ivh " + rpm_file)
-print()
-
-if os.path.isfile(rpm_file) :
-  print ("found rpm", rpm_file)
-else :
-    print ("NOT found rpm", rpm_file)
-
-
-if os.path.isfile(tar_file) :
-  print ("found tar", tar_file)
-else :
-    print ("NOT found tar", tar_file)
-
-
-if os.path.isfile(tar64_file) :
-  print ("found tar", tar64_file)
-else :
-    print ("NOT found tar", tar64_file)
-
-os.system('ls')
 os.system("tree -d")               # option -d will print directories only
+os.chdir("dist")
 
+rpm_file =   "pdfbooklet-" + version + "-1.noarch.rpm"
+tar_file =   "pdfbooklet-" + version + ".tar.gz"
+tar64_file = "pdfbooklet-" + version + ".linux-x86_64.tar.gz"
+deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 
-
+### verify dependencies in rpm file
+##os.system("rpm -qpR " + rpm_file)
+##print()
+##os.system("rpm -ivh " + rpm_file)
+##print()
 
 
 # generate Debian package
@@ -139,12 +112,31 @@ os.system(" echo " + text + "> ./debian/postinst")
 os.system("sudo dpkg-buildpackage")
 os.chdir("..")
 
-deb_file = "./pdfbooklet_" + version + "-2_all.deb"
-print ("=========> deb file is : ", deb_file)
+
+if os.path.isfile(rpm_file) :
+  print ("found rpm", rpm_file)
+else :
+    print ("NOT found rpm", rpm_file)
+
+if os.path.isfile(tar_file) :
+  print ("found tar", tar_file)
+else :
+    print ("NOT found tar", tar_file)
+
+if os.path.isfile(tar64_file) :
+  print ("found tar", tar64_file)
+else :
+    print ("NOT found tar", tar64_file)
+
 if os.path.isfile(deb_file) :
   print ("found deb", deb_file)
 else :
     print ("NOT found deb", deb_file)
+
+if os.path.isfile(pyinstaller_file) :
+  print ("found pyinstaller", pyinstaller_file)
+else :
+    print ("NOT found pyinstaller", pyinstaller_file)
 
 os.system('ls')
 
@@ -166,7 +158,8 @@ print ("\n\n ================ Uploading =======================\n\n")
 
 
 
-for file_x in [tar_file, tar64_file, rpm_file, deb_file, pyinstaller_file] :
+#for file_x in [tar_file, tar64_file, rpm_file, deb_file, pyinstaller_file] :
+for file_x in [pyinstaller_file] :
 
 
     for i in range (6) :

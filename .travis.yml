@@ -16,7 +16,7 @@ before_install:
 #  - sudo ls /home/travis/virtualenv/python3.5.2/lib/python3.5
   
 install: 
-  - pip install flake8 tox  
+  # - pip install flake8 tox  
   - sudo pip install pyinstaller
   - whereis pyinstaller
 #  - ls /usr/share
