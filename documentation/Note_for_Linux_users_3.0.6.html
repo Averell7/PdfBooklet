@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Generator" content="Atlantis Word Processor 2.0.5.1, http://www.AtlantisWordProcessor.com"><title>Important Note for Linux users</title>
+
+<style>p{margin-top:0pt;margin-bottom:0pt;font-family:Arial;font-size:11pt;color:black}</style></head><body bgcolor="#ffffca">
+<p style="margin-top: 12pt; margin-bottom: 3pt;"><span style="font-size: 14pt; color: blue;"><b>Important Note for Linux users</b></span></p>
+<p style="font-weight: bold; color: rgb(204, 0, 0);">You will find the
+last version of Linux installers in the beta directory. <br>
+</p>
+<p style="font-weight: bold; color: rgb(204, 0, 0);">pdfbooklet_3.0.6_all.deb hs been tested and seems OK. <br>
+</p>
+<p style="font-weight: bold; color: rgb(204, 0, 0);">The .rpm installer has not been tested. <br>
+</p>
+<p style="font-weight: bold; color: rgb(204, 0, 0);">For the tar.gz files, see the dependencies below. <br>
+<br>
+</p>
+
+<p><br>
+</p>
+<p>PdfBooklet is developed originally in Windows and for Windows.
+Nevertheless it works perfectly on Linux, we have made the code
+compatible. It runs in Python 2.7 or 3.4.</p>
+
+<p><br>
+</p>
+<p><b>1) Installation</b></p>
+<p>You sould normally use the <span style="font-weight: bold;">.deb file</span> which should work out of the box.<br>
+The <span style="font-weight: bold;">.rpm</span> file is not yet tested, and the dependencies are not properly set. <br>
+ </p>
+
+<p><span style="color: rgb(0, 0, 0);">&nbsp;</span> <br>
+</p><span style="color: rgb(0, 0, 0);"></span>
+<p>In case these installers do not work for you, we are providing other solutions.&nbsp; </p>
+<p style="margin-top: 12pt; margin-bottom: 3pt; margin-left: 40px;"><b>a) Install from source</b></p>
+<p style="margin-left: 40px;">Decompress the file : <i>Install by unzipping – linux.zip </i>in a directory where you have full write rights. Run pdfbooklet.py with the following command :</p>
+<p style="margin-left: 40px;"><span style="color: rgb(0, 0, 0);">&nbsp;</span></p>
+<p style="margin-left: 40px;"><span style="font-family: Courier New;">python pdfbooklet.py</span></p>
+<p style="margin-left: 40px;">or<span style="font-family: Courier New;"> </span></p>
+<p style="margin-left: 40px;"><span style="font-family: Courier New;">python3 pdfbooklet.py</span></p>
+<p style="margin-left: 40px;"><span style="color: rgb(0, 0, 0);">&nbsp;</span></p>
+<p style="margin-left: 40px;">If you have the dependencies satisfied, the program should run. If
+not, either install the missing packages, if you know how to do that,
+or use the second solution :</p>
+<p style="margin-left: 40px;"><span style="color: rgb(0, 0, 0);">&nbsp;</span></p>
+<p style="margin-top: 12pt; margin-bottom: 3pt; margin-left: 40px;"><b>b) Install the pyinstaller bundle</b></p>
+<p style="margin-left: 40px;">To solve the dependencies problem, we have built a bundle with
+pyinstaller, which contains everything needed : Python3, Gtk3, Poppler.
+</p>
+<p style="margin-left: 40px;">Unzip the big file : pdfbooklet 3.x.x pyinstaller.zip, in a directory where you have write rights. </p>
+<p style="margin-left: 40px;">Run the file : pdfbooklet</p>
+<p style="margin-top: 12pt; margin-bottom: 3pt; margin-left: 40px;"><b>c) Install from tarball</b></p>
+<p style="margin-left: 40px;">We offer also the tarballs in 32 and 64 bits if you know how to install them. </p>
+<p style="margin-top: 12pt; margin-bottom: 3pt;"><span style="font-size: 12pt; color: rgb(0, 0, 0);"><b><i>2) Known problems<br>
+</i></b></span></p>
+<ol>
+  <li style="font-family: monospace;">
+    <p>Dependencies problems : see below the modules which must be installed. Otherwise consider using the pyinstaller bundle. </p>
+  </li>
+  <li>
+    <p>pdfbooklet needs read/write rights in the forder where
+pdfbooklet.cfg is located and the installer does not always provides
+this. <span style="font-size: 12pt; color: rgb(0, 0, 0);"><b><i><br>
+    </i></b></span></p>
+  </li>
+</ol>
+
+<p style="margin-top: 9pt; margin-bottom: 3pt;"><span style="font-size: 12pt;"><b><i>Technical information </i></b></span></p>
+<p><span style="color: rgb(0, 0, 0);">&nbsp;</span></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The needed dependencies for python3 are :<br>
+&nbsp;python-gi<br>
+&nbsp;python-gi-cairo<br>
+</p>
+<p>&nbsp;python3-gi<br>
+<span style="color: rgb(0, 0, 0);">&nbsp;python3-cairo</span><br>
+</p>
+<p>&nbsp;python3-gi-cairo</p>
+<p>&nbsp;gir1.2-gtk-3.0</p>
+<p>&nbsp;gir1.2-poppler-0.18<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; They are installed with the following commande line :<br>
+</p>
+
+<p>&nbsp;- sudo apt-get install&nbsp; python-gi&nbsp; python-gi-cairo python3-gi <span style="color: rgb(0, 0, 0);">python3-cairo&nbsp; </span>python3-gi-cairo&nbsp; gir1.2-gtk-3.0&nbsp; gir1.2-poppler-0.18 </p>
+<p><br>
+</p>
+
+<p><span style="color: rgb(0, 0, 0);">&nbsp;</span></p>
+<p>For python 2.7 :</p>
+<p>- sudo apt-get install&nbsp; python-gobject-cairo</p>
+<p><span style="color: rgb(0, 0, 0);">&nbsp;</span></p>
+<p><span style="color: rgb(0, 0, 0);">&nbsp;</span></p>
+<p><span style="color: rgb(0, 0, 0);">&nbsp;</span></p>
+</body></html>

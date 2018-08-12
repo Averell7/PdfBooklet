@@ -36,29 +36,14 @@ from distutils.core import setup
 
 
 
-
 data_files=[('/usr/share/pdfbooklet/data', glob.glob('pdfbooklet/data/*.*')),
-            ('/usr/share/pdfbooklet/documentation', glob.glob('documentation/*.*')),          
+            ('/usr/share/pdfbooklet/documentation', glob.glob('./documentation/*.*')),          
             ('/usr/share/applications', ['pdfbooklet/data/pdfbooklet.desktop']),
             ('/usr/share/locale/fr/LC_MESSAGES', glob.glob('locale/fr/LC_MESSAGES/*.*')),
             ('/usr/share/pixmaps', ['pdfbooklet/data/pdfbooklet.png']),
             ('/usr/share/pdfbooklet/icons/hicolor/scalable', ['pdfbooklet/data/pdfbooklet.svg'])]
 
-"""
-# Freshly generate .mo from .po, add to data_files:
-if os.path.isdir('mo/'):
-    os.system ('rm -r mo/')
-for name in os.listdir('po'):
-    m = re.match(r'(.+)\.po$', name)
-    if m != None:
-        lang = m.group(1)
-        out_dir = 'mo/%s/LC_MESSAGES' % lang
-        out_name = os.path.join(out_dir, 'pdfshuffler.mo')
-        install_dir = 'share/locale/%s/LC_MESSAGES/' % lang
-        os.makedirs(out_dir)
-        os.system('msgfmt -o %s po/%s' % (out_name, name))
-        data_files.append((install_dir, [out_name]))
-"""
+
 setup(name='pdfbooklet',
       version='3.0.6',
       author='GAF Software',
@@ -72,10 +57,3 @@ setup(name='pdfbooklet',
       #requires=['python-poppler'],          # for distutils
       #install_requires=['python-poppler']   # for setuptools  should work but does not. We can use setup.cfg instead
      )
-"""
-# Clean up temporary files
-if os.path.isdir('mo/'):
-    os.system ('rm -r mo/')
-if os.path.isdir('build/'):
-    os.system ('rm -r build/')
-"""

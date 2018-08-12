@@ -1,4 +1,4 @@
 include README
-include data *
-include documentation *
+recursive-include pdfbooklet *
+recursive-include documentation *.*
 recursive-include locale *

@@ -28,6 +28,8 @@ import ftplib
 from ftplib import FTP
 import zipfile
 
+pyinstaller_file = ""
+
 version = "3.0.6"
 print ("\n\n ================ start bdist =============================\n\n")
 os.system('sudo python3 setup.py bdist > /dev/null')
@@ -38,11 +40,12 @@ os.system('sudo python3 setup.py bdist_rpm > /dev/null')
 # dependencies are set in the setup.cfg file
 print ("\n\n ================ end bdist_rpm ===========================\n\n")
 
+"""
 print ("\n\n ================ Generate pyinstaller file =======================\n\n" )
 
 
 os.chdir('./pdfbooklet')
-os.system('sudo pyinstaller pdfbooklet.py > /dev/null')
+os.system('sudo pyinstaller pdfbooklet.py -y > /dev/null')
 
 pyinstaller_file = "pyinstaller-" + version + ".zip"
 zipfile1 = zipfile.ZipFile("../dist/" + pyinstaller_file, "w")
@@ -55,7 +58,9 @@ for mydir in os.walk("./dist/") :
 zipfile1.close()
 
 os.chdir("..")
-os.system("tree -d")               # option -d will print directories only
+"""
+
+#os.system("tree -d")               # option -d will print directories only
 os.chdir("dist")
 
 rpm_file =   "pdfbooklet-" + version + "-1.noarch.rpm"
@@ -63,11 +68,7 @@ tar_file =   "pdfbooklet-" + version + ".tar.gz"
 tar64_file = "pdfbooklet-" + version + ".linux-x86_64.tar.gz"
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 
-### verify dependencies in rpm file
-##os.system("rpm -qpR " + rpm_file)
-##print()
-##os.system("rpm -ivh " + rpm_file)
-##print()
+
 
 
 # generate Debian package
@@ -88,9 +89,9 @@ if os.path.isfile(control_file) :
     f1 = open(control_file, "r")
 
     data1 = f1.read()
-    data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python3-cairo, python-gobject-cairo, python-gi-cairo, python3-gi, gir1.2-gtk-3.0, gir1.2-poppler-0.18")
-    #data1 = python-gobject, python-gobject-2, pypoppler|python-poppler\n")
-
+    data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python-gi, python-gi-cairo, python3-gi, python3-gi-cairo, python3-cairo, gir1.2-gtk-3.0, gir1.2-poppler-0.18")
+    # above dependencies are for Debian. Unsure if python3-cairo is necessary. 
+    # for rpm, something like that will be necessary, but unsufficient : python-gobject, python-gobject-2, pypoppler|python-poppler\n")
 
     f1.close()
     f1 = open(control_file, "w")
@@ -150,35 +151,6 @@ os.system("sudo apt-get -f -y install")
 """
 
 print ("\n\n ================ build terminated =============================\n\n")
-
-
-
-print ("\n\n ================ Uploading =======================\n\n")
-
-
-
-
-#for file_x in [tar_file, tar64_file, rpm_file, deb_file, pyinstaller_file] :
-for file_x in [pyinstaller_file] :
-
-
-    for i in range (6) :
-        ftp = FTP('perso-ftp.orange.fr', user = 'dysmas1956@wanadoo.fr', passwd = '4ua7x9x', timeout=10)                        # connect to host, default port
-        #print ("Connect to Ftp : " + x)
-        ftp.cwd('pdfbooklet')            # change into "pdfbooklet" directory
-        #ftp.retrlines('LIST')           # list directory contents
-        #ftp.retrbinary('RETR Archeotes.sqlite', open('Archeotes.sqlite', 'wb').write)
-
-        try :
-            command = 'STOR ' + file_x
-            ftp.storbinary(command, open(file_x, 'rb'))
-            print (file_x, "uploaded")
-            ftp.quit()
-            break
-        except ftplib.all_errors as e :
-            print ("Upload error :", command)
-            print(e)
-            ftp.quit()
 
 
 
