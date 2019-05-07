@@ -26,6 +26,7 @@ import re
 import glob
 import ftplib
 from ftplib import FTP
+import pysftp
 import zipfile
 
 pyinstaller_file = ""
@@ -158,10 +159,14 @@ print ("\n\n ================ build terminated =============================\n\n
 print("\n\n ================ End of build.py =======================\n\n")
 
 
-ftp = FTP("ftp.online.net")  # connect to host, default port
-ftp.login("travis@idefix64.fr", "sRhf45cU_d")
-for build_file in [rpm_file, tar_file, tar64_file, deb_file]:
-    with open(build_file, "rb") as f1:
-        ftp.storbinary('STOR ' + build_file, f1)     # send the file
+#ftp = FTP("ftp.online.net")  # connect to host, default port
+ftp = pysftp.Connection("ftp.online.net","travis@idefix64.fr", "sRhf45cU_d") 
+#ftp.login("travis@idefix64.fr", "sRhf45cU_d")
+i = 1
+for build_file in [rpm_file, tar_file, tar64_file, deb_file]:    
+    print build_file
+    #ftp.storbinary('STOR ' + build_file, f1)     # send the file
+    print(sending(os.path.split(build_file)[1]))
+    ftp.put(build_file, "/" + os.path.split(build_file)[1])
 
 
