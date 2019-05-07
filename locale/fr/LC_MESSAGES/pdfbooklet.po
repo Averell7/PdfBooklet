@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pdf-Booklet 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-17 18:26+0100\n"
-"PO-Revision-Date: 2016-12-17 18:29+0100\n"
-"Last-Translator: Averell7 <averell7@users.sourceforge.net>\n"
+"POT-Creation-Date: 2018-05-12 18:45+0200\n"
+"PO-Revision-Date: 2018-05-12 18:57+0100\n"
+"Last-Translator: Averell <dy1977@orange.fr>\n"
 "Language-Team: Averell <pdfbooklet.sf.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,155 +18,160 @@ msgstr ""
 "X-Poedit-Country: FRANCE\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: pdfbooklet303.py:534
-#: pdfbooklet303.py:555
-#: pdfbooklet303.py:576
-#: pdfbooklet303.py:579
-#: pdfbooklet303.py:601
-#: pdfbooklet303.py:605
-#: pdfbooklet303.py:612
-#: pdfbooklet303.py:615
-#: pdfbooklet303.py:638
-#: pdfbooklet303.py:1569
-#: pdfbooklet303.py:1592
-#: pdfbooklet303.py:1613
-#: pdfbooklet303.py:1616
-#: pdfbooklet303.py:1640
-#: pdfbooklet303.py:1644
-#: pdfbooklet303.py:1651
-#: pdfbooklet303.py:1654
-#: pdfbooklet303.py:1674
-#: pdfbooklet303.py:3831
+#: pdfbooklet304.py:532
+#: pdfbooklet304.py:553
+#: pdfbooklet304.py:574
+#: pdfbooklet304.py:577
+#: pdfbooklet304.py:599
+#: pdfbooklet304.py:603
+#: pdfbooklet304.py:610
+#: pdfbooklet304.py:613
+#: pdfbooklet304.py:640
+#: pdfbooklet304.py:1662
+#: pdfbooklet304.py:1685
+#: pdfbooklet304.py:1706
+#: pdfbooklet304.py:1709
+#: pdfbooklet304.py:1731
+#: pdfbooklet304.py:1735
+#: pdfbooklet304.py:1742
+#: pdfbooklet304.py:1745
+#: pdfbooklet304.py:1767
+#: pdfbooklet304.py:4118
 msgid "Invalid data"
 msgstr "Entrée invalide"
 
-#: pdfbooklet303.py:534
-#: pdfbooklet303.py:555
-#: pdfbooklet303.py:579
-#: pdfbooklet303.py:612
-#: pdfbooklet303.py:615
-#: pdfbooklet303.py:1569
-#: pdfbooklet303.py:1592
-#: pdfbooklet303.py:1616
-#: pdfbooklet303.py:1651
-#: pdfbooklet303.py:1654
+#: pdfbooklet304.py:532
+#: pdfbooklet304.py:553
+#: pdfbooklet304.py:577
+#: pdfbooklet304.py:610
+#: pdfbooklet304.py:613
+#: pdfbooklet304.py:1662
+#: pdfbooklet304.py:1685
+#: pdfbooklet304.py:1709
+#: pdfbooklet304.py:1742
+#: pdfbooklet304.py:1745
 #, python-format
 msgid "Invalid data for %s - must be numeric. Aborting \n"
 msgstr "Valeur invalide pour %s, doit être numérique. Abandon.\n"
 
-#: pdfbooklet303.py:576
-#: pdfbooklet303.py:605
-#: pdfbooklet303.py:1613
-#: pdfbooklet303.py:1644
+#: pdfbooklet304.py:574
+#: pdfbooklet304.py:603
+#: pdfbooklet304.py:1706
+#: pdfbooklet304.py:1735
 #, python-format
 msgid "Invalid data for %s - must be > 0. Aborting \n"
 msgstr "Valeur invalide pour %s, doit être > 0. Abandon.\n"
 
-#: pdfbooklet303.py:601
-#: pdfbooklet303.py:1640
+#: pdfbooklet304.py:599
+#: pdfbooklet304.py:1731
 #, python-format
 msgid "Invalid data for %s - must be >= 0. Aborting \n"
 msgstr "Valeur invalide pour %s, doit être >= 0. Abandon.\n"
 
-#: pdfbooklet303.py:638
-#: pdfbooklet303.py:1674
+#: pdfbooklet304.py:640
+#: pdfbooklet304.py:1767
 #, python-format
 msgid "Invalid data for %s - must be 0 or 1. Aborting \n"
 msgstr "Valeur invalide pour %s, doit être 0 ou 1. Abandon.\n"
 
-#: pdfbooklet303.py:726
+#: pdfbooklet304.py:779
 msgid "Please, enter the password for this file"
 msgstr "Entrez le mot de passe pour ce fichier svp"
 
-#: pdfbooklet303.py:754
+#: pdfbooklet304.py:807
 msgid "The reference page is invalid. We use the first page"
 msgstr "La page de référence est invalide, nous utilisons la première page. "
 
-#: pdfbooklet303.py:767
+#: pdfbooklet304.py:820
 msgid "Reference page invalid, there is no file nÂ°"
 msgstr "La page de référence est invalide, il n'y a pas de fichier n°"
 
-#: pdfbooklet303.py:795
+#: pdfbooklet304.py:848
 msgid "Width"
 msgstr "Largeur"
 
-#: pdfbooklet303.py:797
+#: pdfbooklet304.py:850
 msgid "Height"
 msgstr "Hauteur"
 
-#: pdfbooklet303.py:1021
+#: pdfbooklet304.py:869
+#, python-format
+msgid "%s mm x %s mm "
+msgstr "%s mm x %s mm "
+
+#: pdfbooklet304.py:1113
 msgid "You must restart the program to apply the new theme."
 msgstr "Vous devez redémarrer le programme pour afficher le nouveau thème."
 
-#: pdfbooklet303.py:1111
-#: pdfshuffler_g3.py:615
+#: pdfbooklet304.py:1204
+#: pdfbooklet/pdfshuffler_g3.py:615
 msgid "Import..."
 msgstr "Importer ..."
 
-#: pdfbooklet303.py:1121
-#: files_chooser.py:103
-#: pdfshuffler_g3.py:515
-#: pdfshuffler_g3.py:626
+#: pdfbooklet304.py:1214
+#: pdfbooklet/files_chooser.py:77
+#: pdfbooklet/pdfshuffler_g3.py:515
+#: pdfbooklet/pdfshuffler_g3.py:626
 msgid "All files"
 msgstr "Tous les fichiers"
 
-#: pdfbooklet303.py:1126
+#: pdfbooklet304.py:1219
 msgid "INI files"
 msgstr "fichiers INI"
 
-#: pdfbooklet303.py:1218
+#: pdfbooklet304.py:1311
 msgid "Save project..."
 msgstr "Enregistrer le projet..."
 
-#: pdfbooklet303.py:1483
+#: pdfbooklet304.py:1576
 msgid "Pdf-Booklet_User's_Guide.pdf"
 msgstr "Manuel_de_Pdf-Booklet.pdf"
 
-#: pdfbooklet303.py:1502
-#: pdfbooklet303.py:2955
-#: pdfbooklet303.py:3117
-#: pdfbooklet303.py:3824
+#: pdfbooklet304.py:1595
+#: pdfbooklet304.py:3242
+#: pdfbooklet304.py:3404
+#: pdfbooklet304.py:4111
 msgid "No selection"
 msgstr "Il n'y a pas de sélection"
 
-#: pdfbooklet303.py:1502
-#: pdfbooklet303.py:3117
+#: pdfbooklet304.py:1595
+#: pdfbooklet304.py:3404
 msgid ""
 "There is no selected page. \n"
 "Please select a page first. "
 msgstr "Vous devez d'abord sélectionner une page"
 
-#: pdfbooklet303.py:1696
+#: pdfbooklet304.py:1789
 msgid "rows"
 msgstr "lignes"
 
-#: pdfbooklet303.py:1698
+#: pdfbooklet304.py:1791
 msgid "columns"
 msgstr "colonnes"
 
-#: pdfbooklet303.py:1707
+#: pdfbooklet304.py:1800
 msgid "step"
 msgstr "Pas"
 
-#: pdfbooklet303.py:1716
+#: pdfbooklet304.py:1809
 msgid "folios"
 msgstr "folios"
 
-#: pdfbooklet303.py:1717
-#: data/pdfbooklet3.glade:2469
+#: pdfbooklet304.py:1810
+#: data/pdfbooklet3.glade:2547
 msgid "Leading blank pages"
 msgstr "Pages blanches au début"
 
-#: pdfbooklet303.py:1719
-#: data/pdfbooklet3.glade:2424
+#: pdfbooklet304.py:1812
+#: data/pdfbooklet3.glade:2502
 msgid "Trailing blank pages"
 msgstr "Pages blanches à la fin"
 
-#: pdfbooklet303.py:1743
+#: pdfbooklet304.py:1836
 msgid "Invalid value for reference page, please correct and try again"
 msgstr "La valeur de la page de référence est invalide. Veuillez corriger et réessayer."
 
-#: pdfbooklet303.py:2115
+#: pdfbooklet304.py:2202
 #, python-format
 msgid ""
 "Expected page number was : %d. Only %d found. \n"
@@ -175,22 +180,22 @@ msgstr ""
 "Le nombre de pages attendues était: %d. %d seulement trouvées. \n"
 "Il y a une erreur dans votre disposition, merci de corriger"
 
-#: pdfbooklet303.py:2955
+#: pdfbooklet304.py:3242
 msgid ""
 "There is no selected file. \n"
 "Please select a file first. "
 msgstr "Vous devez d'abord sélectionner un fichier"
 
-#: pdfbooklet303.py:3022
-#: pdfshuffler_g3.py:474
+#: pdfbooklet304.py:3309
+#: pdfbooklet/pdfshuffler_g3.py:474
 msgid "page"
 msgstr "pages"
 
-#: pdfbooklet303.py:3281
+#: pdfbooklet304.py:3568
 msgid "File existing"
 msgstr "Fichier existant"
 
-#: pdfbooklet303.py:3281
+#: pdfbooklet304.py:3568
 msgid ""
 "The outputfile already exists \n"
 "overWrite ? "
@@ -198,28 +203,28 @@ msgstr ""
 "Le fichier de sortie existe déjà. \n"
 "Écraser ? "
 
-#: pdfbooklet303.py:3807
+#: pdfbooklet304.py:4094
 msgid "No file loaded"
 msgstr "Auncun fichier chargé"
 
-#: pdfbooklet303.py:3807
+#: pdfbooklet304.py:4094
 msgid "Please select a file first"
 msgstr "Vous devez d'abord sélectionner un fichier"
 
-#: pdfbooklet303.py:3824
+#: pdfbooklet304.py:4111
 msgid "There is no selection"
 msgstr "Il n'y a pas de sélection"
 
-#: pdfbooklet303.py:3831
+#: pdfbooklet304.py:4118
 #, python-format
 msgid "Invalid data for Selection : %s. Aborting \n"
 msgstr "Valeur invalide pour %s, Abandon.\n"
 
-#: pdfbooklet303.py:4120
+#: pdfbooklet304.py:4409
 msgid "File already open"
 msgstr "Fichier déjà ouvert"
 
-#: pdfbooklet303.py:4120
+#: pdfbooklet304.py:4409
 msgid ""
 "The output file is already opened \n"
 "probably in Adobe Reader. \n"
@@ -229,58 +234,58 @@ msgstr ""
 "probablement dans Adobe Reader. \n"
 "Fermez le fichier et recommencez."
 
-#: pdfbooklet303.py:4346
+#: pdfbooklet304.py:4678
 #, python-format
 msgid "Assembling pages: %s "
 msgstr "Assemblage des pages: %s"
 
-#: files_chooser.py:71
+#: pdfbooklet/files_chooser.py:45
 msgid "Filename"
 msgstr "Fichier"
 
-#: files_chooser.py:108
-#: pdfshuffler_g3.py:509
-#: pdfshuffler_g3.py:631
+#: pdfbooklet/files_chooser.py:82
+#: pdfbooklet/pdfshuffler_g3.py:509
+#: pdfbooklet/pdfshuffler_g3.py:631
 msgid "PDF files"
 msgstr "Fichiers PDF"
 
-#: files_chooser.py:163
+#: pdfbooklet/files_chooser.py:136
 msgid "File type not supported!"
 msgstr "Type de ficher pas encore supporté !"
 
-#: files_chooser.py:165
-#: pdfshuffler_g3.py:657
+#: pdfbooklet/files_chooser.py:138
+#: pdfbooklet/pdfshuffler_g3.py:657
 #, python-format
 msgid "File %s does not exist"
 msgstr "Le fichier %s n'existe pas"
 
-#: files_chooser.py:184
+#: pdfbooklet/files_chooser.py:156
 msgid "You have chosen a directory, it is not supported"
 msgstr "Vous avez choisi un répertoire, ce n'est pas supporté. "
 
-#: files_chooser.py:197
-#: pdfshuffler_g3.py:659
+#: pdfbooklet/files_chooser.py:169
+#: pdfbooklet/pdfshuffler_g3.py:659
 msgid "Closed, no files selected"
 msgstr "Fermé, aucun fichier sélectionné"
 
-#: pdfshuffler_g3.py:333
+#: pdfbooklet/pdfshuffler_g3.py:333
 msgid "No document"
 msgstr "Pas de document"
 
-#: pdfshuffler_g3.py:335
+#: pdfbooklet/pdfshuffler_g3.py:335
 msgid "Several documents"
 msgstr "Plusieurs documents"
 
-#: pdfshuffler_g3.py:351
+#: pdfbooklet/pdfshuffler_g3.py:351
 #, python-format
 msgid "Rendering thumbnails... [%(i1)s/%(i2)s]"
 msgstr "Rendu des miniatures... [%(i1)s/%(i2)s]"
 
-#: pdfshuffler_g3.py:500
+#: pdfbooklet/pdfshuffler_g3.py:500
 msgid "Export ..."
 msgstr "Exporter ..."
 
-#: pdfshuffler_g3.py:559
+#: pdfbooklet/pdfshuffler_g3.py:559
 #, python-format
 msgid ""
 "File %s is encrypted.\n"
@@ -291,45 +296,45 @@ msgstr ""
 "Le support des fichiers encryptés n'est pas encore implémenté.\n"
 "L'exportation du fichier a échoué."
 
-#: pdfshuffler_g3.py:1065
+#: pdfbooklet/pdfshuffler_g3.py:1065
 msgid "Left"
 msgstr "Gauche"
 
-#: pdfshuffler_g3.py:1065
+#: pdfbooklet/pdfshuffler_g3.py:1065
 msgid "Right"
 msgstr "Droite"
 
-#: pdfshuffler_g3.py:1066
+#: pdfbooklet/pdfshuffler_g3.py:1066
 msgid "Top"
 msgstr "Haut"
 
-#: pdfshuffler_g3.py:1066
+#: pdfbooklet/pdfshuffler_g3.py:1066
 msgid "Bottom"
 msgstr "Bas"
 
-#: pdfshuffler_g3.py:1085
+#: pdfbooklet/pdfshuffler_g3.py:1085
 msgid "Crop Selected Pages"
 msgstr "Récupération des pages sélectionnés"
 
-#: pdfshuffler_g3.py:1094
+#: pdfbooklet/pdfshuffler_g3.py:1094
 msgid "Crop Margins"
 msgstr "Récupération des marges"
 
-#: pdfshuffler_g3.py:1101
+#: pdfbooklet/pdfshuffler_g3.py:1101
 #, python-format
 msgid "% of width"
 msgstr "% de la largeur"
 
-#: pdfshuffler_g3.py:1101
+#: pdfbooklet/pdfshuffler_g3.py:1101
 #, python-format
 msgid "% of height"
 msgstr "% de la hauteur"
 
-#: pdfshuffler_g3.py:1141
+#: pdfbooklet/pdfshuffler_g3.py:1141
 msgid "Dialog closed"
 msgstr "Fenêtre de dialogue fermée"
 
-#: pdfshuffler_g3.py:1155
+#: pdfbooklet/pdfshuffler_g3.py:1155
 #, python-format
 msgid "%s is a tool for rearranging and modifying PDF files. Developed using GTK+ and Python"
 msgstr "%s est un outil pour réorganiser et modifier les fichiers PDF. Développé avec GTK+ et Python"
@@ -370,24 +375,7 @@ msgstr "Tourner de 180°"
 msgid "Rotate 270"
 msgstr "Tourner de 270°"
 
-#: data/pdfbooklet3.glade:242
-msgid "Custom Transformations"
-msgstr "Transformations"
-
-#: data/pdfbooklet3.glade:252
-msgid "Load"
-msgstr "Charger"
-
-#: data/pdfbooklet3.glade:260
-#: data/pdfshuffler_g.glade:777
-msgid "Save"
-msgstr "Enregistrer"
-
-#: data/pdfbooklet3.glade:272
-msgid "Disable automatic update"
-msgstr "Désactiver la mise à jour automatique  de l'aperçu"
-
-#: data/pdfbooklet3.glade:342
+#: data/pdfbooklet3.glade:302
 msgid ""
 "<b>Syntax : </b>\n"
 "separate items by commas, \n"
@@ -423,11 +411,11 @@ msgstr ""
 "<b>Exemples : </b>\n"
 "10, 25, 43\n"
 
-#: data/pdfbooklet3.glade:404
+#: data/pdfbooklet3.glade:362
 msgid "compare files"
 msgstr "Comparer des fichiers"
 
-#: data/pdfbooklet3.glade:436
+#: data/pdfbooklet3.glade:394
 msgid ""
 "This is an advanced feature. Please read documentation to use it properly.\n"
 "Here is a short summary :\n"
@@ -451,166 +439,186 @@ msgstr ""
 "8,1,2,7\n"
 "3,6,5,4\n"
 
-#: data/pdfbooklet3.glade:515
-#: data/pdfbooklet3.glade:1141
+#: data/pdfbooklet3.glade:473
+#: data/pdfbooklet3.glade:1127
 msgid "Step :"
 msgstr "Pas :"
 
-#: data/pdfbooklet3.glade:526
-#: data/pdfbooklet3.glade:1300
+#: data/pdfbooklet3.glade:484
+#: data/pdfbooklet3.glade:1318
 msgid "Automatic"
 msgstr "Automatique"
 
-#: data/pdfbooklet3.glade:543
+#: data/pdfbooklet3.glade:501
 msgid "="
 msgstr "="
 
-#: data/pdfbooklet3.glade:676
-#: data/pdfbooklet3.glade:684
+#: data/pdfbooklet3.glade:634
+#: data/pdfbooklet3.glade:642
 msgid "_Files"
 msgstr "Fichiers"
 
-#: data/pdfbooklet3.glade:702
+#: data/pdfbooklet3.glade:660
 msgid "_Open Project"
 msgstr "_Ouvrir le projet..."
 
-#: data/pdfbooklet3.glade:714
+#: data/pdfbooklet3.glade:672
 msgid "_Save project"
 msgstr "Enregistrer le projet..."
 
-#: data/pdfbooklet3.glade:726
+#: data/pdfbooklet3.glade:684
 msgid "Save project _as ..."
 msgstr "Enregister le projet sous..."
 
-#: data/pdfbooklet3.glade:744
+#: data/pdfbooklet3.glade:702
 msgid "Save settings as _default"
 msgstr "Enregister les _paramètres"
 
-#: data/pdfbooklet3.glade:762
+#: data/pdfbooklet3.glade:720
 #: data/pdfshuffler_g.glade:499
 msgid "_Quit"
 msgstr "_Quitter"
 
-#: data/pdfbooklet3.glade:818
+#: data/pdfbooklet3.glade:776
 msgid "_Pages"
 msgstr "Pages"
 
-#: data/pdfbooklet3.glade:826
+#: data/pdfbooklet3.glade:784
 msgid "_Edit pages list"
 msgstr "Éditer la liste des pages"
 
-#: data/pdfbooklet3.glade:838
+#: data/pdfbooklet3.glade:796
 msgid "_Pages selector"
 msgstr "Sélecteur de pages"
 
-#: data/pdfbooklet3.glade:856
+#: data/pdfbooklet3.glade:814
+msgid "_Display"
+msgstr "_Affichage"
+
+#: data/pdfbooklet3.glade:824
+msgid "_Hide Numbers"
+msgstr "_Cacher les numéros"
+
+#: data/pdfbooklet3.glade:832
+msgid "Disable Automatic _Update"
+msgstr "Désactiver la mise à jour automatique  de l'aperçu"
+
+#: data/pdfbooklet3.glade:844
 #: data/pdfshuffler_g.glade:720
 msgid "_Help"
 msgstr "_Aide"
 
-#: data/pdfbooklet3.glade:864
+#: data/pdfbooklet3.glade:852
 msgid "User's Guide"
 msgstr "Manuel de l'utilisateur"
 
-#: data/pdfbooklet3.glade:876
+#: data/pdfbooklet3.glade:864
 #: data/pdfshuffler_g.glade:728
 msgid "_About"
 msgstr "À propos"
 
-#: data/pdfbooklet3.glade:895
-msgid "Thèmes"
+#: data/pdfbooklet3.glade:882
+msgid "Themes"
 msgstr "Thèmes"
 
-#: data/pdfbooklet3.glade:939
+#: data/pdfbooklet3.glade:926
 msgid "Single Booklet"
 msgstr "Cahier unique"
 
-#: data/pdfbooklet3.glade:956
+#: data/pdfbooklet3.glade:943
 msgid "Multiple Booklets"
 msgstr "Cahiers multiples"
 
-#: data/pdfbooklet3.glade:973
+#: data/pdfbooklet3.glade:960
 msgid "2 pages"
 msgstr " 2 pages"
 
-#: data/pdfbooklet3.glade:990
+#: data/pdfbooklet3.glade:977
 msgid "x pages in line"
 msgstr "x pages en ligne"
 
-#: data/pdfbooklet3.glade:1007
+#: data/pdfbooklet3.glade:994
 msgid "x pages in columns"
 msgstr "x pages en colonnes"
 
-#: data/pdfbooklet3.glade:1024
+#: data/pdfbooklet3.glade:1011
 msgid "x copies"
 msgstr "x copies"
 
-#: data/pdfbooklet3.glade:1041
+#: data/pdfbooklet3.glade:1028
 msgid "One Page"
 msgstr "Une page"
 
-#: data/pdfbooklet3.glade:1058
+#: data/pdfbooklet3.glade:1045
 msgid "User defined"
 msgstr "défini par l'utilisateur"
 
-#: data/pdfbooklet3.glade:1154
+#: data/pdfbooklet3.glade:1140
 msgid "Type : Calendar"
 msgstr "Type : calendrier"
 
-#: data/pdfbooklet3.glade:1167
+#: data/pdfbooklet3.glade:1153
 msgid "Type : Book"
 msgstr "Type : livre"
 
-#: data/pdfbooklet3.glade:1180
+#: data/pdfbooklet3.glade:1166
 msgid "Leafs in a booklet :"
 msgstr "Feuilles par cahier : "
 
-#: data/pdfbooklet3.glade:1193
+#: data/pdfbooklet3.glade:1179
 msgid "columns :"
 msgstr "colonnes : "
 
-#: data/pdfbooklet3.glade:1206
+#: data/pdfbooklet3.glade:1192
 msgid "rows :"
 msgstr "lignes :"
 
-#: data/pdfbooklet3.glade:1316
+#: data/pdfbooklet3.glade:1279
+msgid " Nothing loaded"
+msgstr "Auncun fichier chargé"
+
+#: data/pdfbooklet3.glade:1343
+msgid "               "
+msgstr "                 "
+
+#: data/pdfbooklet3.glade:1362
 msgid "No change"
 msgstr "Pas de changement"
 
-#: data/pdfbooklet3.glade:1336
+#: data/pdfbooklet3.glade:1382
 msgid "user defined (W / H)"
 msgstr "Personnalisé (L / H) : "
 
-#: data/pdfbooklet3.glade:1397
-#: data/pdfbooklet3.glade:2614
+#: data/pdfbooklet3.glade:1443
+#: data/pdfbooklet3.glade:2697
 msgid "mm"
 msgstr "mm"
 
-#: data/pdfbooklet3.glade:1414
+#: data/pdfbooklet3.glade:1460
 msgid "Auto scale"
 msgstr "Mise à l'échelle auto."
 
-#: data/pdfbooklet3.glade:1438
+#: data/pdfbooklet3.glade:1484
 msgid "<b>Output size</b>"
 msgstr "Format de page du fichier se sortie"
 
-#: data/pdfbooklet3.glade:1454
+#: data/pdfbooklet3.glade:1500
 msgid "       "
 msgstr "      "
 
-#: data/pdfbooklet3.glade:1471
+#: data/pdfbooklet3.glade:1517
 msgid "<b>Disposition</b>"
 msgstr "<b>Disposition</b>"
 
-#: data/pdfbooklet3.glade:1481
+#: data/pdfbooklet3.glade:1527
 msgid "Layout"
 msgstr "Disposition"
 
-#: data/pdfbooklet3.glade:1507
+#: data/pdfbooklet3.glade:1553
 msgid "All pages in this position"
 msgstr "Toutes les pages dans cette position"
 
-#: data/pdfbooklet3.glade:1511
+#: data/pdfbooklet3.glade:1557
 msgid ""
 "The tranformations will be applied to all pages which have the same position in the layout.\n"
 "Example : all top left pages, or all bottom right pages. "
@@ -618,35 +626,35 @@ msgstr ""
 "La transformation sera appliquée à toutes les pages qui ont la même position dans l'agencement.\n"
 "Exemple: toutes les pages en haut à gauche, ou toutes les pages en bas à droite."
 
-#: data/pdfbooklet3.glade:1526
+#: data/pdfbooklet3.glade:1572
 msgid "This page only"
 msgstr "Seulement cette page"
 
-#: data/pdfbooklet3.glade:1530
+#: data/pdfbooklet3.glade:1576
 msgid "Transformations are applied only to the selected page. "
 msgstr "Les transformations sont appliquées seulement sur la page choisie."
 
-#: data/pdfbooklet3.glade:1544
+#: data/pdfbooklet3.glade:1590
 msgid "Even pages"
 msgstr "Pages paires"
 
-#: data/pdfbooklet3.glade:1548
+#: data/pdfbooklet3.glade:1594
 msgid "Transformations are applied to all even pages. "
 msgstr "Les transformations sont appliquées sur toutes les pages paires.."
 
-#: data/pdfbooklet3.glade:1562
+#: data/pdfbooklet3.glade:1608
 msgid "Odd pages"
 msgstr "Pages impaires"
 
-#: data/pdfbooklet3.glade:1566
+#: data/pdfbooklet3.glade:1612
 msgid "Transformations are applied to all odd pages. "
 msgstr "Les transformations sont appliquées sur toutes les pages impaires.."
 
-#: data/pdfbooklet3.glade:1584
+#: data/pdfbooklet3.glade:1630
 msgid "<b>Domain</b>"
 msgstr "<b>Domaine</b>"
 
-#: data/pdfbooklet3.glade:1599
+#: data/pdfbooklet3.glade:1645
 msgid ""
 "Choose the domain \n"
 "<b><span foreground=\"blue\" size=\"large\">before</span></b>\n"
@@ -658,60 +666,68 @@ msgstr ""
 "d'appliquer\n"
 "des transformations. \n"
 
-#: data/pdfbooklet3.glade:1631
-#: data/pdfbooklet3.glade:1975
+#: data/pdfbooklet3.glade:1694
+#: data/pdfbooklet3.glade:2063
 msgid "Vertical Shift (mm)"
 msgstr "Déplacement vertical (mm)"
 
-#: data/pdfbooklet3.glade:1643
-#: data/pdfbooklet3.glade:1987
+#: data/pdfbooklet3.glade:1706
+#: data/pdfbooklet3.glade:2075
 msgid "Scale (%)"
 msgstr "Echelle (%)"
 
-#: data/pdfbooklet3.glade:1655
-#: data/pdfbooklet3.glade:1999
+#: data/pdfbooklet3.glade:1718
+#: data/pdfbooklet3.glade:2087
 msgid "Rotation (degrees)"
 msgstr "Rotation (degrés)"
 
-#: data/pdfbooklet3.glade:1667
-#: data/pdfbooklet3.glade:2034
+#: data/pdfbooklet3.glade:1730
+#: data/pdfbooklet3.glade:2122
 msgid "Horizontal Shift (mm)"
 msgstr "Déplacement horizontal (mm)"
 
-#: data/pdfbooklet3.glade:1755
-#: data/pdfbooklet3.glade:2099
+#: data/pdfbooklet3.glade:1818
+#: data/pdfbooklet3.glade:2187
 msgid "Vertical Flip"
 msgstr "Retournement vertical"
 
-#: data/pdfbooklet3.glade:1767
-#: data/pdfbooklet3.glade:2111
+#: data/pdfbooklet3.glade:1830
+#: data/pdfbooklet3.glade:2199
 msgid "Horizontal Flip"
 msgstr "Retournement horizontal"
 
-#: data/pdfbooklet3.glade:1779
-#: data/pdfbooklet3.glade:2123
+#: data/pdfbooklet3.glade:1842
+#: data/pdfbooklet3.glade:2211
 msgid "Scale Horizontally"
 msgstr "Mettrre à l'échelle horizontallement"
 
-#: data/pdfbooklet3.glade:1791
-#: data/pdfbooklet3.glade:2135
+#: data/pdfbooklet3.glade:1854
+#: data/pdfbooklet3.glade:2223
 msgid "Scale Vertically"
 msgstr "Mettre à l'échelle verticalement"
 
-#: data/pdfbooklet3.glade:1838
-#: data/pdfbooklet3.glade:1856
+#: data/pdfbooklet3.glade:1901
+#: data/pdfbooklet3.glade:1919
 msgid " "
 msgstr " "
 
-#: data/pdfbooklet3.glade:1900
+#: data/pdfbooklet3.glade:1940
+msgid ""
+"Activate this button to enable\n"
+"moving the pages with the mouse."
+msgstr ""
+"Activez ce bouton\n"
+"pour déplacer la page avec la souris"
+
+#: data/pdfbooklet3.glade:1988
 msgid "Apply"
 msgstr "Appliquer"
 
-#: data/pdfbooklet3.glade:1914
+#: data/pdfbooklet3.glade:2002
 msgid "Reset"
 msgstr "Défauts"
 
-#: data/pdfbooklet3.glade:1946
+#: data/pdfbooklet3.glade:2034
 msgid ""
 "Pages\n"
 "Transformations"
@@ -719,41 +735,26 @@ msgstr ""
 "Transformations\n"
 "de pages"
 
-#: data/pdfbooklet3.glade:2180
-#: data/pdfbooklet3.glade:2198
-#: data/pdfbooklet3.glade:2495
-#: data/pdfbooklet3.glade:2506
+#: data/pdfbooklet3.glade:2268
+#: data/pdfbooklet3.glade:2286
+#: data/pdfbooklet3.glade:2573
+#: data/pdfbooklet3.glade:2584
 msgid "  "
 msgstr "  "
 
-#: data/pdfbooklet3.glade:2220
+#: data/pdfbooklet3.glade:2308
 msgid "<b>Output page transformations</b>"
 msgstr "Transformations de la page finale"
 
-#: data/pdfbooklet3.glade:2323
+#: data/pdfbooklet3.glade:2411
 msgid "<b>Global rotation</b>"
 msgstr " Rotation globale"
 
-#: data/pdfbooklet3.glade:2343
+#: data/pdfbooklet3.glade:2431
 msgid "Reset All"
 msgstr "Réinitialise tout"
 
-#: data/pdfbooklet3.glade:2368
-msgid ""
-"To apply transformations to particular Output pages : \n"
-"   - Create your pdf file. \n"
-"   - Open the created file in PdfBooklet\n"
-"   - Select the \"One page\" layout\n"
-"   - Use the \"Transformations\" tab\n"
-"      to modify the pages you want"
-msgstr ""
-"Pour appliquer des transformations sur des pages particulières de Sortie: \n"
-"  - Créez votre fichier pdf. \n"
-"  - Ouvrez le fichier créé dans PdfBooklet \n"
-"  - Choisissez l'agencement \"Une page\" \n"
-"  - Utilisez l'onglet \"Transformations\" pour modifier les pages que vous voulez"
-
-#: data/pdfbooklet3.glade:2390
+#: data/pdfbooklet3.glade:2464
 msgid ""
 "Global\n"
 "Transformations"
@@ -761,107 +762,146 @@ msgstr ""
 "Transformations\n"
 "globales"
 
-#: data/pdfbooklet3.glade:2478
+#: data/pdfbooklet3.glade:2533
+msgid "0"
+msgstr "0"
+
+#: data/pdfbooklet3.glade:2556
 msgid "Right to left"
 msgstr "De droite à gauche"
 
-#: data/pdfbooklet3.glade:2521
+#: data/pdfbooklet3.glade:2599
 msgid "<b>Page setup</b>"
 msgstr "<b>Mise en page</b>"
 
-#: data/pdfbooklet3.glade:2561
+#: data/pdfbooklet3.glade:2642
 msgid "Reference page"
 msgstr "Page de référence"
 
-#: data/pdfbooklet3.glade:2572
+#: data/pdfbooklet3.glade:2654
 msgid "Creep adjustment"
 msgstr "Ajustement de la gouttière"
 
-#: data/pdfbooklet3.glade:2634
+#: data/pdfbooklet3.glade:2717
 msgid "<b>Advanced</b>"
 msgstr "<b>Avancé</b>"
 
-#: data/pdfbooklet3.glade:2670
+#: data/pdfbooklet3.glade:2734
+msgid "Page setup"
+msgstr "<b>Mise en page</b>"
+
+#: data/pdfbooklet3.glade:2766
 msgid "Output file"
 msgstr "Fichier de sortie"
 
-#: data/pdfbooklet3.glade:2682
-msgid ""
-"%F : Full file path without extension\n"
-"%P : Path\n"
-"%N : Name\n"
-"%B : Basename\n"
-"%E : Extension"
-msgstr ""
-"%F : Chemin complet sans extension\n"
-"%P : Chemin\n"
-"%N : Nom\n"
-"%B : Non de la base\n"
-"%E : Extension"
-
-#: data/pdfbooklet3.glade:2698
+#: data/pdfbooklet3.glade:2789
 msgid "..."
 msgstr "..."
 
-#: data/pdfbooklet3.glade:2745
+#: data/pdfbooklet3.glade:2836
 msgid "Show Pdf"
 msgstr "Montrer Pdf"
 
-#: data/pdfbooklet3.glade:2756
+#: data/pdfbooklet3.glade:2847
 msgid "Overwrite output files"
 msgstr "Écraser le fichier de sortie"
 
-#: data/pdfbooklet3.glade:2770
+#: data/pdfbooklet3.glade:2861
 msgid "Save settings with pdf"
 msgstr "Enregister les paramètres avec le fichier pdf"
 
-#: data/pdfbooklet3.glade:2784
+#: data/pdfbooklet3.glade:2875
 msgid "Don't compress output"
 msgstr "Ne pas compresser le fichier de sortie"
 
-#: data/pdfbooklet3.glade:2798
+#: data/pdfbooklet3.glade:2889
 msgid "Safe mode (slow)"
 msgstr "Mode sûr (lent)"
 
-#: data/pdfbooklet3.glade:2825
+#: data/pdfbooklet3.glade:2916
 msgid "<b>Output</b>"
 msgstr "<b>Fichier de sortie</b> "
 
-#: data/pdfbooklet3.glade:2845
+#: data/pdfbooklet3.glade:2942
+msgid "Output"
+msgstr "Fichier de sortie"
+
+#: data/pdfbooklet3.glade:2957
+msgid ""
+"New features under development\n"
+"May work or not..."
+msgstr ""
+"Fonctions nouvelles en cours de développement.\n"
+"Cela peut marcher ou non..."
+
+# Inutilisé
+#: data/pdfbooklet3.glade:2978
+msgid "Delete rectangle"
+msgstr "Effacer une zone"
+
+#: data/pdfbooklet3.glade:2991
+msgid "Preview"
+msgstr "Aperçu"
+
+#: data/pdfbooklet3.glade:3017
+msgid "Diviser un cahier"
+msgstr ""
+
+#: data/pdfbooklet3.glade:3031
+msgid "middle line"
+msgstr "Ligne médiane"
+
+#: data/pdfbooklet3.glade:3114
+msgid "Bottom margin"
+msgstr "Marge du bas"
+
+#: data/pdfbooklet3.glade:3169
+msgid "Start from page :"
+msgstr "Commencer page :"
+
+#: data/pdfbooklet3.glade:3188
+msgid "Add page numbers"
+msgstr "Ajouter des numéros de page"
+
+#: data/pdfbooklet3.glade:3203
+msgid "Font size"
+msgstr "Taille de police"
+
+#: data/pdfbooklet3.glade:3240
+msgid "<b>Page numbers (Experimental)</b>"
+msgstr "<b>Numéros de page (expérimental)</b>"
+
+#: data/pdfbooklet3.glade:3261
+msgid " Experimental"
+msgstr "Expérimental"
+
+#: data/pdfbooklet3.glade:3277
 msgid "Options"
 msgstr "Options"
 
-#: data/pdfbooklet3.glade:2960
+#: data/pdfbooklet3.glade:3393
 msgid "Update"
 msgstr "Mettre à jour"
 
-#: data/pdfbooklet3.glade:2977
+#: data/pdfbooklet3.glade:3410
 msgid "Go"
 msgstr "Lancer"
 
-#: data/pdfbooklet3.glade:2994
+#: data/pdfbooklet3.glade:3427
 msgid "---"
 msgstr "---"
 
-#: data/chooser_dialog.glade:30
-msgid "Open File(s) in List"
-msgstr "Ouvrir les fichiers de la liste"
-
-#: data/chooser_dialog.glade:78
+#: data/chooser_dialog.glade:33
 msgid "Open Selected File(s)"
 msgstr "Ouvrir les fichiers sélectionnés"
 
-#: data/chooser_dialog.glade:166
-msgid "Move file up"
-msgstr "Déplacer vers le haut"
-
-#: data/chooser_dialog.glade:187
-msgid "Move file down"
-msgstr "Déplacer vers le bas"
-
-#: data/chooser_dialog.glade:287
+#: data/chooser_dialog.glade:227
 msgid "<b>Input files</b>"
 msgstr "<b>Fichiers source</b>"
+
+#: data/chooser_dialog.glade:247
+msgid "Open File(s) in List"
+msgstr "Ouvrir les fichiers de la liste"
 
 #: data/pdfshuffler_g.glade:34
 #: data/pdfshuffler_g.glade:47
@@ -942,6 +982,10 @@ msgstr "Zoom _arrière"
 msgid "Open"
 msgstr "Ouvrir"
 
+#: data/pdfshuffler_g.glade:777
+msgid "Save"
+msgstr "Enregistrer"
+
 #: data/pdfshuffler_g.glade:791
 msgid "Save as"
 msgstr "Enregistrer sous..."
@@ -969,6 +1013,47 @@ msgstr "Couper les marges"
 #: data/pdfshuffler_g.glade:895
 msgid "Delete"
 msgstr "Effacer"
+
+#~ msgid "Custom Transformations"
+#~ msgstr "Transformations"
+
+#~ msgid "Load"
+#~ msgstr "Charger"
+
+#~ msgid ""
+#~ "To apply transformations to particular Output pages : \n"
+#~ "   - Create your pdf file. \n"
+#~ "   - Open the created file in PdfBooklet\n"
+#~ "   - Select the \"One page\" layout\n"
+#~ "   - Use the \"Transformations\" tab\n"
+#~ "      to modify the pages you want"
+#~ msgstr ""
+#~ "Pour appliquer des transformations sur des pages particulières de "
+#~ "Sortie: \n"
+#~ "  - Créez votre fichier pdf. \n"
+#~ "  - Ouvrez le fichier créé dans PdfBooklet \n"
+#~ "  - Choisissez l'agencement \"Une page\" \n"
+#~ "  - Utilisez l'onglet \"Transformations\" pour modifier les pages que "
+#~ "vous voulez"
+
+#~ msgid ""
+#~ "%F : Full file path without extension\n"
+#~ "%P : Path\n"
+#~ "%N : Name\n"
+#~ "%B : Basename\n"
+#~ "%E : Extension"
+#~ msgstr ""
+#~ "%F : Chemin complet sans extension\n"
+#~ "%P : Chemin\n"
+#~ "%N : Nom\n"
+#~ "%B : Non de la base\n"
+#~ "%E : Extension"
+
+#~ msgid "Move file up"
+#~ msgstr "Déplacer vers le haut"
+
+#~ msgid "Move file down"
+#~ msgstr "Déplacer vers le bas"
 
 #~ msgid "Slow mode"
 #~ msgstr "Mode lent"
@@ -1060,15 +1145,12 @@ msgstr "Effacer"
 #~ msgid "Remove file from list"
 #~ msgstr "Enlever le fichier de la liste"
 
-# Inutilisé
-#~ msgid "Delete this page"
-#~ msgstr "Effacer cette page"
-#~ msgid "Add blank page before"
-#~ msgstr "Ajouter une page blanche avant"
 #~ msgid "Add blank page after"
 #~ msgstr "Ajouter une page blanche après"
+
 #~ msgid "label"
 #~ msgstr " "
+
 # Debug
 #~ msgid "destroy"
 #~ msgstr "destroy"
@@ -1077,8 +1159,6 @@ msgstr "Effacer"
 # A développer
 #~ msgid "Licence CeCill"
 #~ msgstr "Licence CeCill"
-#~ msgid "<b>Page content</b>"
-#~ msgstr "contenu"
 #, fuzzy
 #~ msgid "%F-bklt.pdf"
 #~ msgstr "Montrer Pdf"
@@ -1094,9 +1174,6 @@ msgstr "Effacer"
 
 #~ msgid ">>"
 #~ msgstr ">>"
-
-#~ msgid "90"
-#~ msgstr "90"
 
 #~ msgid "180"
 #~ msgstr "180"
@@ -1135,14 +1212,8 @@ msgstr "Effacer"
 #~ msgid " columns"
 #~ msgstr "  colonnes  "
 
-#~ msgid " Preview "
-#~ msgstr "Aperçu"
-
 #~ msgid " lines"
 #~ msgstr "lignes"
-
-#~ msgid " Repeat                       "
-#~ msgstr "Répéter                       "
 
 #~ msgid "  Right page"
 #~ msgstr " Page droite"

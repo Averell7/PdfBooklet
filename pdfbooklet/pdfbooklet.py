@@ -4,6 +4,10 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
+
+# version 3.1
+# fix a serious bug which prevented auto-scale to work.
+
 # version 3.0.6, 09/05/2018
 # Bug fixes
 # Better Linux support
@@ -21,7 +25,7 @@ from __future__ import unicode_literals
 # https://stackoverflow.com/questions/45838863/gio-memoryinputstream-does-not-free-memory-when-closed
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 
-PB_version = "3.0.6"
+PB_version = "3.1.0"
 
 
 """
@@ -190,7 +194,7 @@ le paquet python-dev est aussi nécessaire (mais pip le trouve)
 """
 
 import time, math, string, os, sys, re, shutil, site
-print(sys.version)
+#print(sys.version)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 try :
@@ -348,7 +352,7 @@ def askyesno(title, string) :
     dialog.destroy()
     return rep
 
-def get_text(parent, message, default=''):
+def ask_text(parent, message, default=''):
     """
     Display a dialog with a text entry.
     Returns the text, or None if canceled.
@@ -471,7 +475,7 @@ class myConfigParser() :
                     value = '1'
                 elif value == False :
                     value = '0'
-                data1 = (b + " = " + value + "\n").encode("utf8")  # En python 3 cette ligne précédente convertit en bytes !!!
+                data1 = (b + " = " + value + "\n").encode("utf8")  # En python 3 cette ligne convertit en bytes !!!
                 data1 = (b + " = " + value + "\n")
                 iniFile.write(data1)
             iniFile.write("\n")
@@ -1270,8 +1274,8 @@ class gtkGui:
             self.previewUpdate()
             return
         else :
-            ini.parseIniFile(sfp2("pdfbooklet.cfg"))     # reset transformations
-            self.setupGui(sfp2("pdfbooklet.cfg"))
+            ini.parseIniFile(sfp3("pdfbooklet.cfg"))     # reset transformations
+            self.setupGui(sfp3("pdfbooklet.cfg"))
 
         inputFiles_a = {}
 
@@ -1425,7 +1429,7 @@ class gtkGui:
             mrudir = os.path.split(filenames_a)[0]
 
 
-        configtemp = parser.read(sfp2("pdfbooklet.cfg"))
+        configtemp = parser.read(sfp3("pdfbooklet.cfg"))
 
 ####    if configtemp.has_section(section) == False :
 ####        configtemp.add_section(section)
@@ -1455,10 +1459,10 @@ class gtkGui:
         # set the new value
         configtemp["mru"]["mru1"] = filenames
         configtemp["mru2"]["mru1"] = mrudir
-##        f = open(sfp2("pdfbooklet.cfg"),"w")
+##        f = open(sfp3("pdfbooklet.cfg"),"w")
 ##        configtemp.write(f)
 ##        f.close()
-        parser.write(configtemp, sfp2("pdfbooklet.cfg"))
+        parser.write(configtemp, sfp3("pdfbooklet.cfg"))
         configtemp = None
         self.menuAdd()
 
@@ -1476,7 +1480,7 @@ class gtkGui:
 
         #filenames = filenames.encode('utf-8')
 
-        configtemp = parser.read(sfp2("pdfbooklet.cfg"))
+        configtemp = parser.read(sfp3("pdfbooklet.cfg"))
 
         if configtemp.has_section("mru") == False :
             configtemp.add_section("mru")
@@ -1504,7 +1508,7 @@ class gtkGui:
 
             configtemp.set("mru","mru1",filenames)
             configtemp.set("mru2","mru2",mrudir)
-            f = open(sfp2("pdfbooklet.cfg"),"w", encoding = "utf8")
+            f = open(sfp3("pdfbooklet.cfg"),"w", encoding = "utf8")
             configtemp.write(f)
             f.close()
             configtemp = None
@@ -1517,8 +1521,8 @@ class gtkGui:
 
     def read_mru2(self) :
 
-        if os.path.isfile(sfp2("pdfbooklet.cfg")) :
-            configtemp = parser.read(sfp2("pdfbooklet.cfg"))
+        if os.path.isfile(sfp3("pdfbooklet.cfg")) :
+            configtemp = parser.read(sfp3("pdfbooklet.cfg"))
 
             mru_dir = ""
             if "mru2" in configtemp :
@@ -1530,8 +1534,8 @@ class gtkGui:
 
     def read_mru2_python2(self) :
 
-        if os.path.isfile(sfp2("pdfbooklet.cfg")) :
-            configtemp = parser.read(sfp2("pdfbooklet.cfg"))
+        if os.path.isfile(sfp3("pdfbooklet.cfg")) :
+            configtemp = parser.read(sfp3("pdfbooklet.cfg"))
 
             try :
                 mru_dir = configtemp.get("mru2","mru2")
@@ -1543,22 +1547,22 @@ class gtkGui:
 
     def write_mru2(self, filename_u) :
 
-        if os.path.isfile(sfp2("pdfbooklet.cfg")) :
-            configtemp = parser.read(sfp2("pdfbooklet.cfg"))
+        if os.path.isfile(sfp3("pdfbooklet.cfg")) :
+            configtemp = parser.read(sfp3("pdfbooklet.cfg"))
 
         if not "mru2" in configtemp :
             configtemp["mru2"] = OrderedDict()
 
         (path_u, file_u) = os.path.split(filename_u)
         configtemp["mru2"]["mru2"] = path_u
-        parser.write(configtemp, sfp2("pdfbooklet.cfg"))
+        parser.write(configtemp, sfp3("pdfbooklet.cfg"))
 
 
     def menuAdd(self) :
         # Called by function mru, adds an entry to the menu
 
 
-        configtemp = parser.read(sfp2("pdfbooklet.cfg"))
+        configtemp = parser.read(sfp3("pdfbooklet.cfg"))
         if configtemp == False :
             return
 
@@ -1643,7 +1647,7 @@ class gtkGui:
     def saveDefaults(self, dummy) :
 
         out_a = self.makeIniFile()
-        iniFile = open(sfp2("pdfbooklet.cfg"), "w")
+        iniFile = open(sfp3("pdfbooklet.cfg"), "w")
         for a in out_a :
             if not a in ["mru", "mru2", "options"] :
                 continue
@@ -2082,7 +2086,7 @@ class gtkGui:
         # most recently used
 
         # TODO : if file exists (ici et ailleurs)
-        configtemp = parser.read(sfp2("pdfbooklet.cfg"))
+        configtemp = parser.read(sfp3("pdfbooklet.cfg"))
 
         if "mru" in configtemp :
             for option in configtemp["mru"] :
@@ -2133,7 +2137,7 @@ class gtkGui:
                 self.presetUp(1,2)
             else :
                 self.presetUp(2,1)
-            self.guiPresetsShow("")
+            self.guiPresetsShow("copies")
 
         elif self.arw["radiopreset4"].get_active() == 1 :   # 4-up in lines
             if presetOrientation_i == 1 :
@@ -2156,12 +2160,12 @@ class gtkGui:
                 self.presetCopies(2,1)
             self.guiPresetsShow("copies")
 
-        elif self.arw["radiopreset7"].get_active() == 1 :
+        elif self.arw["radiopreset7"].get_active() == 1 :  # 1 page
             if presetOrientation_i == 1 :
                 self.presetMerge()
             else :
                 self.presetMerge()
-            self.guiPresetsShow("")
+            self.guiPresetsShow("copies")
 
         elif self.arw["radiopreset8"].get_active() == 1 :   # User defined
             return      # This button launchs the function "user_defined" which will handle the request
@@ -2245,7 +2249,7 @@ class gtkGui:
                 a.show()
 
         if action_s == "copies" :
-            for a in StepWidgets :
+            for a in StepWidgets + OrientationWidgets :
                 a.show()
 
 
@@ -2847,7 +2851,7 @@ class gtkGui:
 
     def set_even_odd_settings(self, widget) :    # launched by a clic on the domain buttons
         global selected_page, selectedIndex_a
-        print ("set even odd")
+        #print ("set even odd")
         if self.evenpages.get_active() == 1 :
             Id = "even"
             selected_page = Id
@@ -2857,7 +2861,7 @@ class gtkGui:
             selected_page = Id
             self.load_settings_in_dialog(Id)
         else :
-            print ("reset selection")
+            #print ("reset selection")
             selected_page = None
             selectedIndex_a = {}
         self.previewUpdate()
@@ -3237,7 +3241,7 @@ class gtkGui:
                 return
             else :
                 self.backup.append(copy.deepcopy(config))
-                print (len(self.backup))
+                #print (len(self.backup))
                 self.backup_index = len(self.backup)
 
     def go_back(self, widget) :
@@ -3909,9 +3913,7 @@ class pdfRender():
                 myrows_i = 1
                 mycolumns_i = 1
 
-            #print ("a")
             if Scale != 1:
-                print(Scale)
                 Scale_f = float(Scale)
             elif cScale != 1 :
                 Scale_f = float(cScale)
@@ -4594,8 +4596,8 @@ class pdfRender():
 
 
                 # scale the page to fit the output sheet, if required
-                if"autoscale" in config["options"]:
-                    if ini.readBoolean(config["options"]["autoscale"]) == True :
+                if"autoScale" in config["options"]:
+                    if ini.readBoolean(config["options"]["autoScale"]) == True :
                         scaleFactor_f = self.autoScaleAndRotate(file_number, page_number)
                         matrix1_s = self.calcMatrix2(0, 0, Scale = scaleFactor_f)
                         data_x.append(matrix1_s)
@@ -4851,12 +4853,17 @@ def sfp(path) :
 def sfp2(file1) :
     # sfp2 = set full path, used for temporary directory
     try:
+        return os.path.join(share_path_u, file1)
+    except :
+        time.sleep(1)                 # Sometimes there was a sort of conflict with another thread
+        return os.path.join(share_path_u, file1)
+
+def sfp3(file1) :
+    # sfp3 = set full path, used for config directory
+    try:
         return os.path.join(cfg_path_u, file1)
     except :
-      time.sleep(1)                 # Sometimes there was a sort of conflict with another thread
-      return os.path.join(cfg_path_u, file1)
-
-
+        time.sleep(1)                 # Sometimes there was a sort of conflict with another thread
 
 def close_applicationx(self, widget, event=None, mydata=None):
 
@@ -4890,6 +4897,7 @@ def main() :
     global prog_path_u
     global temp_path_u
     global cfg_path_u
+    global share_path_u
     global pdftempfile
     pdftempfile = tempfile.NamedTemporaryFile()
 
@@ -4931,15 +4939,18 @@ def main() :
     # set directories for Linux and Windows
 
     if 'linux' in sys.platform :
-        if os.path.isdir("/usr/share/pdfbooklet") == False :
-            os.mkdir("/usr/share/pdfbooklet")
+        cfg_path_u = os.path.join(os.environ['HOME'], ".config", "pdfbooklet")
+        if os.path.isdir(cfg_path_u) == False :
+            os.mkdir(cfg_path_u)
 
-        cfg_path_u = "/usr/share/pdfbooklet"
+        share_path_u = "/usr/share/pdfbooklet"
+        if os.path.isdir(share_path_u) == False :
+            os.mkdir(share_path_u)
 
     else:
+        #TODO : this is not the recommended situation.
         cfg_path_u = prog_path_u
-
-
+        share_path_u = prog_path_u
 
 
 
@@ -4987,10 +4998,10 @@ def main() :
 
 
 
-        if os.path.isfile(sfp2("pdfbooklet.cfg")) == False :
-            f1 = open(sfp2("pdfbooklet.cfg"), "w")
+        if os.path.isfile(sfp3("pdfbooklet.cfg")) == False :
+            f1 = open(sfp3("pdfbooklet.cfg"), "w")
             f1.close()
-        ini.parseIniFile(sfp2("pdfbooklet.cfg"))
+        ini.parseIniFile(sfp3("pdfbooklet.cfg"))
 
 
         if len(argv_a) > 1 :            # a filename has been added in the command line
