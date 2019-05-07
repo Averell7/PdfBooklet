@@ -30,7 +30,7 @@ import zipfile
 
 pyinstaller_file = ""
 
-version = "3.0.6"
+version = "3.1.0"
 print ("\n\n ================ start bdist =============================\n\n")
 os.system('sudo python3 setup.py bdist > /dev/null')
 print ("\n\n ================ end bdist - start sdist =================\n\n")
@@ -158,6 +158,7 @@ print ("\n\n ================ build terminated =============================\n\n
 print("\n\n ================ End of build.py =======================\n\n")
 
 
-
+ftp = FTP("ftp.online.net")  # connect to host, default port
+        ftp.login("travis@idefix64.fr", "sRhf45cU_d")
 
 

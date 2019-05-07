@@ -45,7 +45,7 @@ data_files=[('/usr/share/pdfbooklet/data', glob.glob('pdfbooklet/data/*.*')),
 
 
 setup(name='pdfbooklet',
-      version='3.0.6',
+      version='3.1.0',
       author='GAF Software',
       author_email='Averell7 at sourceforge dot net',
       description='A simple application for creating booklets and other layouts from PDF files',
