@@ -22,13 +22,12 @@ def alert(message, type = 0) :
 class Chooser:
     def __init__(self,
                  inputFiles_a = None,
-                 cfg_path_u = "",
+                 share_path_u = "",
                  mru_dir = ""):
-
 
         self.inputFiles_a = inputFiles_a
         self.chooser1 = Gtk.Builder()
-        self.chooser1.add_from_file(os.path.join(cfg_path_u, 'data/chooser_dialog.glade'))
+        self.chooser1.add_from_file(os.path.join(share_path_u, 'data/chooser_dialog.glade'))
         self.chooser1.connect_signals(self)
         self.chooser = self.chooser1.get_object("filechooserdialog1")
 

@@ -1165,7 +1165,7 @@ class gtkGui:
         mrudir = self.read_mru2()
         if mrudir == "" :
             mrudir = prog_path_u
-        self.chooser = Chooser(inputFiles_a, cfg_path_u, mrudir)
+        self.chooser = Chooser(inputFiles_a, share_path_u, mrudir)
         inputFiles_a = self.chooser.inputFiles_a
         if len(inputFiles_a) == 0 :
             return
