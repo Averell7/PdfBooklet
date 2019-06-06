@@ -26,7 +26,7 @@ deploy:
   provider: releases
   api_key:
     secure: pxqF0sLkmvkWy+EzC4brEzAnmP1hCnyLv/UgleSiZomURfRfudR6nGFAiVjvAf5tWpKQdmsbaxqo1C3rajMqlrgw2TXs93wVPF3IsmBrs2qKzXbq92g/C19o7/kgk9NlA6vs/S2KL60aBe9WR46rKKbo9gaUM4heYcZqwaXfq4tSTI8cwHmMaZ8wIY2va4J4rxptjHlIvApuRhFHzG7ng4Mmh8mJBDKoevOmT3R6PdO626CooCRtnZHBs3hfqHGSxGlCHPMMaEFJI1MXvYtWaP6zOlOePoxjBWKFk1hP+IPvb65/K8/iUZQ7FK+X+KQuHe0pyieO4QMSqKiVlJgXM4SXSNm+VGbmqXDXyBhoesU6jr6TWUTPTB2ZF5QFPTGgUyV14GrlAxRkWRMsk4BN/vJMIts2fuz6niVbXUSTA5yj6IKcLhflsmzC7j6Z8QjCdv9y6wGKtSzDqWtQUuIPbT5AJNCfEIjwNSFWzEyhhv06crILZFt12moGchtXkIegfy1ymOTr8Mvd8PidIoYsXJnUuBr2+dxfHFRphmZMd4afg0jWBWQRFGnmkR1RKQPPxh+VcZAAMZ9DncTK4xsRk7pcMJ8r7jMHXXBe02yXRLpJGq8uGZwgyjxtRkZV8jJeEqAd/pcwEuAJFnWSqDDeUpOHnIS5w4oL2xwGppgQR08=
-  file: dist/*
+  file: "dist/*"
   file_glob: true
   on:
     repo: Averell7/PdfBooklet
