@@ -26,7 +26,7 @@ import re
 import glob
 import ftplib
 from ftplib import FTP
-import pysftp
+# import pysftp
 import zipfile
 
 pyinstaller_file = ""
