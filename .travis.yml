@@ -10,13 +10,14 @@ before_install:
 - sudo apt-get install -y python3-gi-cairo
 - sudo apt-get install -y gir1.2-gtk-3.0
 - sudo apt-get install -y gir1.2-poppler-0.18
+- sudo apt-get install -y fakeroot
 install:
 - sudo pip install pyinstaller
 - sudo pip install pysftp
 - whereis pyinstaller
 script:
 - nosetests
-- sudo python build.py
+- python build.py
 - ls
 - cd dist
 - ls
