@@ -34,5 +34,5 @@ deploy:
     - "dist/*.deb"
   file_glob: true
   on:
-    tags: false
+    tags: true
     repo: Averell7/PdfBooklet
