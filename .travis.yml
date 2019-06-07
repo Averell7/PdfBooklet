@@ -21,6 +21,7 @@ script:
 - ls
 - cd dist
 - ls
+- cd ..
 deploy:
   skip_cleanup: true
   overwrite: true
