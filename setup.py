@@ -31,9 +31,12 @@ try :
     print "installation with setuptools"
 except :
 """
+import sys
 
 from distutils.core import setup
 
+
+sys.prefix = '/usr'
 
 
 data_files=[('/usr/share/pdfbooklet/data', glob.glob('pdfbooklet/data/*.*')),
@@ -49,7 +52,7 @@ setup(name='pdfbooklet',
       author='GAF Software',
       author_email='Averell7 at sourceforge dot net',
       description='A simple application for creating booklets and other layouts from PDF files',
-      url = 'https://sourceforge.net/projects/pdfbooklet',
+      url='https://sourceforge.net/projects/pdfbooklet',
       license='GNU GPL-3',
       scripts=['bin/pdfbooklet'],
       packages=['pdfbooklet', 'pdfbooklet.PyPDF2_G'],
