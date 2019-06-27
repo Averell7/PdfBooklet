@@ -26,18 +26,18 @@ import re
 import glob
 import ftplib
 from ftplib import FTP
-import pysftp
+# import pysftp
 import zipfile
 
 pyinstaller_file = ""
 
 version = "3.1.0"
 print ("\n\n ================ start bdist =============================\n\n")
-os.system('sudo python3 setup.py bdist > /dev/null')
+os.system('python3 setup.py bdist > /dev/null')
 print ("\n\n ================ end bdist - start sdist =================\n\n")
-os.system('sudo python3 setup.py sdist > /dev/null')
+os.system('python3 setup.py sdist > /dev/null')
 print ("\n\n ================ end sdist - start bdist_rpm =============\n\n")
-os.system('sudo python3 setup.py bdist_rpm > /dev/null')
+os.system('python3 setup.py bdist_rpm > /dev/null')
 # dependencies are set in the setup.cfg file
 print ("\n\n ================ end bdist_rpm ===========================\n\n")
 
@@ -78,7 +78,7 @@ print ("\n\n ================ Creating debian package =======================\n\
 
 
 
-os.system('sudo alien --generate --scripts ' + rpm_file)
+os.system('alien --generate --scripts ' + rpm_file)
 new_dir = "./pdfbooklet-" + version + "/"
 
 os.chdir(new_dir)
@@ -105,13 +105,13 @@ else :
 # correct pdfbooklet.cfg
 
 pb_dir = "./usr/share/pdfbooklet/"
-text = "sudo chmod 777 " + pb_dir
+text = "chmod 777 " + pb_dir
 # I am unsure of the right place of this file, so let us put it in both places
 os.system(" echo " + text + "> ./postinst")
 os.system(" echo " + text + "> ./debian/postinst")
 
 # Build debian package
-os.system("sudo dpkg-buildpackage")
+os.system("dpkg-buildpackage")
 os.chdir("..")
 
 
@@ -157,16 +157,4 @@ print ("\n\n ================ build terminated =============================\n\n
 
 
 print("\n\n ================ End of build.py =======================\n\n")
-
-
-#ftp = FTP("ftp.online.net")  # connect to host, default port
-ftp = pysftp.Connection("ftp.online.net","travis@idefix64.fr", "sRhf45cU_d") 
-#ftp.login("travis@idefix64.fr", "sRhf45cU_d")
-i = 1
-for build_file in [rpm_file, tar_file, tar64_file, deb_file]:    
-    print build_file
-    #ftp.storbinary('STOR ' + build_file, f1)     # send the file
-    print(sending(os.path.split(build_file)[1]))
-    ftp.put(build_file, "/" + os.path.split(build_file)[1])
-
 
