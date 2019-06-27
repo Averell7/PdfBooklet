@@ -5,6 +5,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
+# version 3.1.1 : workaround for a bug appeared in Ubuntu 19 (see the OnDraw function)
 # version 3.1
 # fix a serious bug which prevented auto-scale to work.
 
@@ -25,7 +26,7 @@ from __future__ import unicode_literals
 # https://stackoverflow.com/questions/45838863/gio-memoryinputstream-does-not-free-memory-when-closed
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 
-PB_version = "3.1.0"
+PB_version = "3.1.1"
 
 
 """
@@ -209,7 +210,6 @@ from subprocess import Popen, PIPE
 from ctypes import *
 import threading
 import tempfile, io
-tempfile.tempdir = tempfile.gettempdir()
 import copy
 ##import urllib
 ##from urllib.parse import urlparse
@@ -932,8 +932,6 @@ class gtkGui:
         self.freeze_b = False
         self.preview_scale = 1
         self.dev1 = ""  # for development needs
-
-        #previewtempfile = tempfile.SpooledTemporaryFile(max_size = 10000000)  # max
 
         selectedIndex_a = {}
         selected_page = None
@@ -2299,7 +2297,7 @@ class gtkGui:
         pass
 
     def OnDraw(self, area, cr):
-        global page, pdftempfile
+        global page
         global areaAllocationW_i, areaAllocationH_i
         global previewColPos_a, previewRowPos_a, pageContent_a
         global refPageSize_a, numPages
@@ -2338,7 +2336,6 @@ class gtkGui:
 ##        else :
 ##            outputStream_mem = data1
 
-
         try :
             bytes_data = GLib.Bytes(data1)
             input_stream = Gio.MemoryInputStream.new_from_bytes(bytes_data)
@@ -2347,9 +2344,27 @@ class gtkGui:
             self.document= document
 
         except :
-            print("Error rendering document in poppler")
-            printExcept()
-            return False
+            # bug workaround
+            """
+            Hi there, I installed the deb on Ubuntu 19.04. It installed fine but gives this message:
+
+            Traceback (most recent call last):
+               File "/usr/local/lib/python3.7/dist-packages/pdfbooklet/pdfbooklet.py", line 2342, in OnDraw
+                document = Poppler.Document.new_from_stream(input_stream, -1, None, None)
+             gi.repository.GLib.GError: poppler-quark: Failed to load document (0)
+
+            The preview panel remains blank but when I press the Go button the .bklt file is produced correctly. I get the same if I download the tar and install manually. Also the same with many different input pdf files.
+            """
+            try:
+                filepath = os.path.join(tempfile.gettempdir(), "preview.pdf")
+                with open(filepath, "wb") as f1:
+                    f1.write(data1)
+                document = Poppler.Document.new_from_file("file:///" + filepath, None)
+                self.document= document
+            except:
+                print("Error rendering document in poppler")
+                printExcept()
+                return False
 
         page = document.get_page(0)
         self.page = page
@@ -4397,7 +4412,7 @@ class pdfRender():
 
 
     def createNewPdf(self, ar_pages, ar_layout, ar_cahiers, outputFile, preview = -1) :
-        global debug_b, inputFile_a, inputFiles_a, previewtempfile, result, pdftempfile
+        global debug_b, inputFile_a, inputFiles_a, result
         global mediabox_l
         global outputStream
 
@@ -4898,8 +4913,6 @@ def main() :
     global temp_path_u
     global cfg_path_u
     global share_path_u
-    global pdftempfile
-    pdftempfile = tempfile.NamedTemporaryFile()
 
     global rows_i
     global columns_i
