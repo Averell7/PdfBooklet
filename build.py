@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #
-# PdfBooklet 3.0.6 - GTK+ based utility to create booklets and other layouts
+# PdfBooklet 3.1.1 - GTK+ based utility to create booklets and other layouts
 # from PDF documents.
 # Copyright (C) 2008-2012 GAF Software
 # <https://sourceforge.net/projects/pdfbooklet>
@@ -31,7 +31,7 @@ import zipfile
 
 pyinstaller_file = ""
 
-version = "3.1.0"
+version = "3.1.1"
 print ("\n\n ================ start bdist =============================\n\n")
 os.system('python3 setup.py bdist > /dev/null')
 print ("\n\n ================ end bdist - start sdist =================\n\n")

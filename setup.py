@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #
-# PdfBooklet 3.0.6 - GTK+ based utility to create booklets and other layouts 
+# PdfBooklet 3.1.1 - GTK+ based utility to create booklets and other layouts 
 # from PDF documents.
 # Copyright (C) 2008-2012 GAF Software
 # <https://sourceforge.net/projects/pdfbooklet>
@@ -45,7 +45,7 @@ data_files=[('/usr/share/pdfbooklet/data', glob.glob('pdfbooklet/data/*.*')),
 
 
 setup(name='pdfbooklet',
-      version='3.1.0',
+      version='3.1.1',
       author='GAF Software',
       author_email='Averell7 at sourceforge dot net',
       description='A simple application for creating booklets and other layouts from PDF files',
