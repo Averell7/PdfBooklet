@@ -81,7 +81,7 @@ print ("\n\n ================ Creating debian package =======================\n\
 
 
 #os.system('alien --generate --scripts ' + rpm_file) 
-os.system('alien --generate --scripts ' + tar_file) 
+os.system('alien --generate --scripts ' + tar64_file) 
 new_dir = "./pdfbooklet-" + version + "/"
 
 os.chdir(new_dir)
