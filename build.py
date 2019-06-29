@@ -33,8 +33,10 @@ pyinstaller_file = ""
 
 version = "3.1.1"
 print ("\n\n ================ start bdist =============================\n\n")
+# creates pdfbooklet-3.x.x.linux-[system].tar.gz
 os.system('python3 setup.py bdist > /dev/null')
 print ("\n\n ================ end bdist - start sdist =================\n\n")
+# creates pdfbooklet-3.x.x.tar.gz
 os.system('python3 setup.py sdist > /dev/null')
 print ("\n\n ================ end sdist - start bdist_rpm =============\n\n")
 os.system('python3 setup.py bdist_rpm > /dev/null')
@@ -78,7 +80,8 @@ print ("\n\n ================ Creating debian package =======================\n\
 
 
 
-os.system('alien --generate --scripts ' + rpm_file)
+#os.system('alien --generate --scripts ' + rpm_file) 
+os.system('alien --generate --scripts ' + tar_file) 
 new_dir = "./pdfbooklet-" + version + "/"
 
 os.chdir(new_dir)
