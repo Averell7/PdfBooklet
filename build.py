@@ -28,6 +28,7 @@ import ftplib
 from ftplib import FTP
 # import pysftp
 import zipfile
+import tarfile
 
 pyinstaller_file = ""
 
@@ -71,14 +72,28 @@ tar_file =   "pdfbooklet-" + version + ".tar.gz"
 tar64_file = "pdfbooklet-" + version + ".linux-x86_64.tar.gz"
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 
+input1 = tarfile.open("./temp/pdfbooklet-3.1.1.linux-x86_64.tar.gz", "r")
+output = tarfile.open("./output/pdfbooklet-3.1.1.linux-x86_64-corrected.tar", "w")
+names = input1.getnames()
+for name in names:
+    # could be done with re
+    x = re.search(r"\./usr/lib/python.*?packages", name)
+    if x:
+        original_package = x.group(0)
+        break
 
+for name in names:
+    member = input1.getmember(name)
+    member.name = member.name.replace(original_package,"./usr/lib/python3/dist-packages")
+    file1 = input1.extractfile(member)
+    if file1:
+        output.addfile(member, file1)
 
+input1.close()
+output.close()
 
 # generate Debian package
 print ("\n\n ================ Creating debian package =======================\n\n")
-
-
-
 
 #os.system('alien --generate --scripts ' + rpm_file) 
 os.system('alien --generate --scripts ' + tar64_file) 
