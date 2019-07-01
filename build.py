@@ -73,7 +73,7 @@ tar64_file = "pdfbooklet-" + version + ".linux-x86_64.tar.gz"
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 
 input1 = tarfile.open("./pdfbooklet-3.1.1.linux-x86_64.tar.gz", "r")
-output = tarfile.open("./output/pdfbooklet-3.1.1.linux-x86_64-corrected.tar", "w")
+output = tarfile.open("./pdfbooklet-3.1.1.linux-x86_64-corrected.tar", "w")
 names = input1.getnames()
 for name in names:
     # could be done with re
