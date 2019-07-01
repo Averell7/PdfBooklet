@@ -73,7 +73,7 @@ tar64_file = "pdfbooklet-" + version + ".linux-x86_64.tar.gz"
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 
 input1 = tarfile.open("./" + tar64_file, "r")
-output = tarfile.open("./" + tar64_fie[0:-7] + "corr.tar.gz", "w")
+output = tarfile.open("./" + tar64_file[0:-7] + "corr.tar.gz", "w")
 names = input1.getnames()
 for name in names:    
     x = re.search(r"\./usr/lib/python.*?packages", name)
