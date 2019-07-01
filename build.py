@@ -70,10 +70,11 @@ os.chdir("dist")
 rpm_file =   "pdfbooklet-" + version + "-1.noarch.rpm"
 tar_file =   "pdfbooklet-" + version + ".tar.gz"
 tar64_file = "pdfbooklet-" + version + ".linux-x86_64.tar.gz"
+corr_tar64_file = "pdfbooklet-" + version + "-all_64_corr.tar.gz"
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 
 input1 = tarfile.open("./" + tar64_file, "r")
-output = tarfile.open("./" + tar64_file[0:-7] + "corr.tar.gz", "w")
+output = tarfile.open("./" + corr_tar64_file, "w")
 names = input1.getnames()
 for name in names:    
     x = re.search(r"\./usr/lib/python.*?packages", name)
@@ -94,8 +95,8 @@ output.close()
 # generate Debian package
 print ("\n\n ================ Creating debian package =======================\n\n")
 
-os.system('alien --generate --scripts ' + rpm_file) 
-#os.system('alien --generate --scripts ' + tar64_file) 
+#os.system('alien --generate --scripts ' + rpm_file) 
+os.system('alien --generate --scripts ' + tar64_file) 
 new_dir = "./pdfbooklet-" + version + "/"
 
 os.chdir(new_dir)
