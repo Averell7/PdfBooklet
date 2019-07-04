@@ -19,7 +19,8 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-# push 2
+
+# =====>  Version number must be changed in setup.py (in the comment, line 4, and in the code) and build.py (in the code)
 
 import os
 import io
