@@ -5,6 +5,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
+# version 3.1.2 : bug fix : autoscale didn't work for a mix of portrait / landscape pages.
 # version 3.1.1 : workaround for a bug appeared in Ubuntu 19 (see the OnDraw function)
 # version 3.1
 # fix a serious bug which prevented auto-scale to work.
@@ -26,7 +27,7 @@ from __future__ import unicode_literals
 # https://stackoverflow.com/questions/45838863/gio-memoryinputstream-does-not-free-memory-when-closed
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 
-PB_version = "3.1.1"
+PB_version = "3.1.2"
 
 
 """
@@ -4102,19 +4103,16 @@ class pdfRender():
         if ref_orientation == page_orientation :     # orientation is the same
             delta1 = ref_height / page_height
             delta2 = ref_width  / page_width
+        else :
+            delta1 = ref_height / page_width
+            delta2 = ref_width  / page_height
 
-            if delta1 < delta2 :
-                Scale = delta1
-            else:
-                Scale = delta2
+        if delta1 < delta2 :
+            Scale = delta1
+        else:
+            Scale = delta2
 
-            return Scale
-
-
-
-
-
-
+        return Scale
 
 
     def parsePageSelection(self, selection = "", append_prepend = 1) :
