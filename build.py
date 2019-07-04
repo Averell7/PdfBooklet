@@ -22,6 +22,7 @@
 # push 2
 
 import os
+import io
 import re
 import glob
 import ftplib
@@ -29,6 +30,16 @@ from ftplib import FTP
 # import pysftp
 import zipfile
 import tarfile
+
+def fix_bin_file(file1):
+    data1 = b"#!/usr/lib/python3\n"
+    data1b = file1.readline()
+    data2 = file1.read()
+    data3 = data1 + data2
+    x = len(data3)
+    out = io.BytesIO()
+    out.write(data3)
+    return (out, x)
 
 pyinstaller_file = ""
 
@@ -86,6 +97,12 @@ for name in names:
     member = input1.getmember(name)
     member.name = member.name.replace(original_package,"./usr/lib/python3/dist-packages")
     file1 = input1.extractfile(member)
+    if name == "./usr/bin/pdfbooklet" :
+        (file2, size) = fix_bin_file(file1)
+        file2.seek(0)
+        member.size = size
+        output.addfile(member, file2)
+        continue
     if file1:
         output.addfile(member, file1)
 
