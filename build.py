@@ -33,7 +33,7 @@ import zipfile
 import tarfile
 
 def fix_bin_file(file1):
-    data1 = b"#!/usr/lib/python3\n"
+    data1 = b"#!/usr/bin/python3\n"
     data1b = file1.readline()
     data2 = file1.read()
     data3 = data1 + data2

@@ -1950,8 +1950,8 @@ class gtkGui:
             if config.getint("options", "advanced") == 1 : self.advanced.set_active(1)
             else : self.advanced.set_active(0)
             self.guiAdvanced()
-        if "autoScale"  in config["options"] :
-            if bool_test(config["options"]["autoScale"]) == True :
+        if "autoscale"  in config["options"] :
+            if bool_test(config["options"]["autoscale"]) == True :
                 self.autoscale.set_active(1)
             else :
                 self.autoscale.set_active(0)
@@ -2032,7 +2032,7 @@ class gtkGui:
         config["options"]["repeat"] = str(self.arw["entry15"].get_text())
         config["options"]["showPdf"] = str(self.arw["show"].get_active())
         config["options"]["saveSettings"] = str(self.settings.get_active())
-        config["options"]["autoScale"] = str(self.autoscale.get_active())
+        config["options"]["autoscale"] = str(self.autoscale.get_active())
         config["options"]["width"] = str(self.arw["outputWidth"].get_text())
         config["options"]["height"] = str(self.arw["outputHeight"].get_text())
 
@@ -4072,7 +4072,7 @@ class pdfRender():
 
         return (sin_l, cos_l, Hcorr, Vcorr)
 
-    def autoScaleAndRotate(self, fileNum, page) :
+    def CalcAutoScale(self, fileNum, page) :
         global inputFiles_a, inputFile_a, refPageSize_a
 
         fileName = inputFiles_a[fileNum]
@@ -4087,32 +4087,22 @@ class pdfRender():
 
         (ref_width, ref_height) = refPageSize_a
 
-        # check source orientation
-        if ref_height > ref_width :
-            ref_orientation = "portrait"
-        else :
-            ref_orientation = "paysage"
+        delta1 = ref_height / page_height
+        delta2 = ref_width  / page_width
+        Vdiff = ref_height - (page_height * delta2)
+        Hdiff = ref_width - (page_width * delta1)
 
-        # check page orientation
-        if page_height > page_width :
-            page_orientation = "portrait"
-        else :
-            page_orientation = "paysage"
-
-
-        if ref_orientation == page_orientation :     # orientation is the same
-            delta1 = ref_height / page_height
-            delta2 = ref_width  / page_width
-        else :
-            delta1 = ref_height / page_width
-            delta2 = ref_width  / page_height
-
+        # Choose the lower factor, and calculate the translation for centering the image
         if delta1 < delta2 :
             Scale = delta1
+            Vtranslate = 0
+            Htranslate = Hdiff/2
         else:
             Scale = delta2
+            Vtranslate = Vdiff/2
+            Htranslate = 0
 
-        return Scale
+        return (Scale, Htranslate, Vtranslate)
 
 
     def parsePageSelection(self, selection = "", append_prepend = 1) :
@@ -4609,10 +4599,10 @@ class pdfRender():
 
 
                 # scale the page to fit the output sheet, if required
-                if"autoScale" in config["options"]:
-                    if ini.readBoolean(config["options"]["autoScale"]) == True :
-                        scaleFactor_f = self.autoScaleAndRotate(file_number, page_number)
-                        matrix1_s = self.calcMatrix2(0, 0, Scale = scaleFactor_f)
+                if"autoscale" in config["options"]:
+                    if ini.readBoolean(config["options"]["autoscale"]) == True :
+                        (scaleFactor_f, Htranslate, Vtranslate) = self.CalcAutoScale(file_number, page_number)
+                        matrix1_s = self.calcMatrix2(Htranslate, Vtranslate, Scale = scaleFactor_f)
                         data_x.append(matrix1_s)
 
                 file_name = inputFiles_a[file_number]
