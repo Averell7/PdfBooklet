@@ -5,6 +5,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
+# version 3.1.3 : fixes issues about most recently used directories
 # version 3.1.2 : bug fix : autoscale didn't work for a mix of portrait / landscape pages.
 # version 3.1.1 : workaround for a bug appeared in Ubuntu 19 (see the OnDraw function)
 # version 3.1
@@ -27,7 +28,7 @@ from __future__ import unicode_literals
 # https://stackoverflow.com/questions/45838863/gio-memoryinputstream-does-not-free-memory-when-closed
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 
-PB_version = "3.1.2"
+PB_version = "3.1.3a"
 
 
 """
@@ -1161,7 +1162,7 @@ class gtkGui:
 
     def file_manager(self,widget):
         global inputFiles_a
-        mrudir = self.read_mru2()
+        mrudir = self.read_mru2("manager")
         if mrudir == "" :
             mrudir = prog_path_u
         self.chooser = Chooser(inputFiles_a, share_path_u, mrudir)
@@ -1169,7 +1170,7 @@ class gtkGui:
         if len(inputFiles_a) == 0 :
             return
         # add file(s) to most recently used
-        self.mru(inputFiles_a)
+        self.mru(inputFiles_a, "manager")
         self.chooser.chooser.destroy()
         self.chooser = None
         if self.shuffler:
@@ -1214,7 +1215,7 @@ class gtkGui:
 
 
 
-        old_dir = self.read_mru2()
+        old_dir = self.read_mru2("project")
 
         gtk_chooser = Gtk.FileChooserDialog(title=_('Import...'),
                                         action=Gtk.FileChooserAction.OPEN,
@@ -1240,15 +1241,12 @@ class gtkGui:
         if response == Gtk.ResponseType.OK:
             filename = gtk_chooser.get_filename()
             filename_u = unicode2(filename, "utf-8")
-            self.mru(filename)
+            self.mru(filename, "project")
             ini.openProject2(filename_u)
             ini.loadPdfFiles()
             self.setupGui()
             self.arw["previewEntry"].set_text("1")
             self.previewUpdate()
-            self.write_mru2(filename_u)       # write the location of the opened directory in the cfg file
-
-
 
 ##        elif response == Gtk.RESPONSE_CANCEL:
 ##            print(_('Closed, no files selected'))
@@ -1321,7 +1319,7 @@ class gtkGui:
 
         if filename_u == "" :
 
-            old_dir = self.read_mru2()
+            old_dir = self.read_mru2("project")
 
             gtk_chooser = Gtk.FileChooserDialog(title=_('Save project...'),
                                             action=Gtk.FileChooserAction.SAVE,
@@ -1347,7 +1345,7 @@ class gtkGui:
                 if filename_u[-4:] != ".ini" :
                     filename_u += ".ini"
                 gtk_chooser.destroy()
-                self.mru(filename_u)
+                self.mru(filename_u, "project")            # TODO : why filename_u here and filename in another call ?
 
 
 
@@ -1368,7 +1366,6 @@ class gtkGui:
 
         #config.write(iniFile)
         self.write_ordered_config(filename_u)
-        self.write_mru2(filename_u)        # write the location of the opened directory in the cfg file
 
     def write_ordered_config(self, filename_u) :
         global config
@@ -1416,25 +1413,25 @@ class gtkGui:
 
 
 
-    def mru(self, filenames_a) :
-
+    def mru(self, filenames_a, dir_type) :
+        # "mru" section is used for the most recent used files, which appear below the file menu
+        # "mru2" section is used for the most recent dirs opened with the file/open menu
+        #      dir_type indicates the type of directory : for files manager, or for projects.
         mrudir = ""
         if isinstance(filenames_a, dict) :
             filenames = join_list(filenames_a, "|")
+            filenames = filenames.replace("\\", "/")
             if 1 in filenames_a :
                 mrudir = os.path.split(filenames_a[1])[0]
         else :
             filenames = filenames_a
             mrudir = os.path.split(filenames_a)[0]
 
+        if os.path.isfile(sfp3("pdfbooklet.cfg")) :
+            configtemp = parser.read(sfp3("pdfbooklet.cfg"))
+        else:
+            configtemp = OrderedDict()
 
-        configtemp = parser.read(sfp3("pdfbooklet.cfg"))
-
-####    if configtemp.has_section(section) == False :
-####        configtemp.add_section(section)
-####    configtemp.set(section,option,value)
-##
-##
         if not "mru" in configtemp :
             configtemp["mru"] = {}
         if not "mru2" in configtemp :
@@ -1457,7 +1454,7 @@ class gtkGui:
             configtemp["mru"]["mru2"] = configtemp["mru"]["mru1"]
         # set the new value
         configtemp["mru"]["mru1"] = filenames
-        configtemp["mru2"]["mru1"] = mrudir
+        configtemp["mru2"][dir_type] = mrudir
 ##        f = open(sfp3("pdfbooklet.cfg"),"w")
 ##        configtemp.write(f)
 ##        f.close()
@@ -1518,15 +1515,15 @@ class gtkGui:
 
 
 
-    def read_mru2(self) :
+    def read_mru2(self, key) :
 
         if os.path.isfile(sfp3("pdfbooklet.cfg")) :
             configtemp = parser.read(sfp3("pdfbooklet.cfg"))
 
             mru_dir = ""
             if "mru2" in configtemp :
-                if "mru2" in configtemp["mru2"] :
-                    mru_dir = configtemp["mru2"]["mru2"]
+                if key in configtemp["mru2"] :
+                    mru_dir = configtemp["mru2"][key]
 
             configtemp = None
             return mru_dir
@@ -1544,7 +1541,7 @@ class gtkGui:
             configtemp = None
             return mru_dir
 
-    def write_mru2(self, filename_u) :
+    def write_mru2(self, key, filename_u) :
 
         if os.path.isfile(sfp3("pdfbooklet.cfg")) :
             configtemp = parser.read(sfp3("pdfbooklet.cfg"))
@@ -1553,7 +1550,7 @@ class gtkGui:
             configtemp["mru2"] = OrderedDict()
 
         (path_u, file_u) = os.path.split(filename_u)
-        configtemp["mru2"]["mru2"] = path_u
+        configtemp["mru2"][key] = path_u
         parser.write(configtemp, sfp3("pdfbooklet.cfg"))
 
 
@@ -4087,6 +4084,34 @@ class pdfRender():
 
         (ref_width, ref_height) = refPageSize_a
 
+        # Rotate if needed
+        # check source orientation
+        if ref_height > ref_width :
+            ref_orientation = "portrait"
+        else :
+            ref_orientation = "landscape"
+
+        # check page orientation
+        if page_height > page_width :
+            page_orientation = "portrait"
+        else :
+            page_orientation = "landscape"
+
+
+        if ref_orientation != page_orientation :     # orientation is not the same
+            Rotate = 270
+            h = page_height
+            w = page_width
+            page_height = w
+            page_width = h
+            #Htranslate1 = page_width  # for 90
+            Vtranslate1 = page_height  # for 270
+        else:
+            Rotate = 0
+            #Htranslate1 = 0
+            Vtranslate1 = 0
+
+
         delta1 = ref_height / page_height
         delta2 = ref_width  / page_width
         Vdiff = ref_height - (page_height * delta2)
@@ -4101,8 +4126,10 @@ class pdfRender():
             Scale = delta2
             Vtranslate = Vdiff/2
             Htranslate = 0
+        #Htranslate += Htranslate1
+        Vtranslate += (Vtranslate1 * Scale)
 
-        return (Scale, Htranslate, Vtranslate)
+        return (Rotate, Scale, Htranslate, Vtranslate)
 
 
     def parsePageSelection(self, selection = "", append_prepend = 1) :
@@ -4601,8 +4628,8 @@ class pdfRender():
                 # scale the page to fit the output sheet, if required
                 if"autoscale" in config["options"]:
                     if ini.readBoolean(config["options"]["autoscale"]) == True :
-                        (scaleFactor_f, Htranslate, Vtranslate) = self.CalcAutoScale(file_number, page_number)
-                        matrix1_s = self.calcMatrix2(Htranslate, Vtranslate, Scale = scaleFactor_f)
+                        (Rotate, scaleFactor_f, Htranslate, Vtranslate) = self.CalcAutoScale(file_number, page_number)
+                        matrix1_s = self.calcMatrix2(Htranslate, Vtranslate, Scale = scaleFactor_f, Rotate = Rotate)
                         data_x.append(matrix1_s)
 
                 file_name = inputFiles_a[file_number]
