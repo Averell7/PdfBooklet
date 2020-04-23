@@ -794,7 +794,7 @@ class TxtOnly :
                 if inputFile_a[val].getIsEncrypted() :
                     inputFile_details[val]["encrypt"] = True
                     if not hasattr(inputFile_a[val], "_decryption_key") :   # if not already decrypted
-                        password = get_text(None, _("Please, enter the password for this file"))
+                        password = ask_text(None, _("Please, enter the password for this file"))
                         if password != None :
                             password = password.encode("utf8")
                             inputFile_a[val].decrypt(password)     # Encrypted file
