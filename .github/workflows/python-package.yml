@@ -47,10 +47,8 @@ jobs:
       run: |
         make-deb 
         
-    - name: Archive production artifacts
+    - name: debian build
       uses: actions/upload-artifact@v2
       with:
-        name: dist-without-markdown
-        path: |
-          dist
-          !dist/**/*.md
+        name: code-coverage-report
+        path: debian
