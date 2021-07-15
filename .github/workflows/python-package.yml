@@ -43,8 +43,9 @@ jobs:
     #- name: Test with pytest
     #  run: |
     #    pytest pdfbooklet.pdfbooklet3.py
-    - name: Create deb package
+    - name: Create package
       run: |
+        python build.py
         make-deb 
         ls -lR debian > lsdebian.txt
         
