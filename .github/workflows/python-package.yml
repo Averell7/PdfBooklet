@@ -47,7 +47,7 @@ jobs:
       run: |
         python build.py
         make-deb 
-        ls -lR debian > lsdebian.txt
+        ls -lR ./ > lsdebian.txt
         
     - name: debian build
       uses: actions/upload-artifact@v2
