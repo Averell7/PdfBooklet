@@ -46,7 +46,7 @@ jobs:
     - name: Create deb package
       run: |
         make-deb 
-      run : ls -lR debian > lsdebian.txt
+        ls -lR debian > lsdebian.txt
         
     - name: debian build
       uses: actions/upload-artifact@v2
@@ -54,7 +54,7 @@ jobs:
         name: code-coverage-report
         path: debian/*
      
-      uses: actions/upload-artifact@v2
+      
       with:
         name: test1 
         path: lsdebian.txt
