@@ -16,14 +16,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        #python-version: [3.7, 3.8, 3.9]
+        python-version: 3.7
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    #- name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        #python-version: ${{ matrix.python-version }}
+        python-version: 3.7
     - name: Install dependencies
       run: |
         sudo apt-get install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0 --yes
@@ -41,7 +44,7 @@ jobs:
         #flake8 . --count --builtins="_,xrange" --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest pdfbooklet3.py
+        pytest pdfbooklet.pdfbooklet3.py
     - name: Create deb package
       run: |
-        make-deb
+        make-deb 
