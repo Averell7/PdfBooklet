@@ -54,7 +54,8 @@ jobs:
         name: code-coverage-report
         path: debian/*
      
-      
+    - name: test1
+      uses: actions/upload-artifact@v2      
       with:
         name: test1 
         path: lsdebian.txt
