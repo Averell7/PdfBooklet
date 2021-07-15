@@ -26,15 +26,22 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        sudo apt-get install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0 --yes
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest
+        python -m pip install wheel
+        python -m pip install flake8 pytest stdeb make-deb
+        python -m pip install PyGObject
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --builtins="_,xrange"   ==> this causes too many F821 (undefined) errors.
+        flake8 . --count --builtins="_,xrange" --select=E9,F63,F7 --show-source --statistics  
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        flake8 . --count --builtins="_,xrange" --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        pytest pdfbooklet3.py
+    - name: Create deb package
+      run: |
+        make-deb
