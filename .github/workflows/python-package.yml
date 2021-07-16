@@ -30,7 +30,7 @@ jobs:
         sudo apt-get install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0 --yes
         python -m pip install --upgrade pip
         python -m pip install wheel
-        pip install python3-all
+        pip install python-all
         python -m pip install flake8 pytest         
         python -m pip install stdeb debhelper 
         python -m pip install PyGObject
