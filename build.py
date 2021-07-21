@@ -57,6 +57,8 @@ os.system('python3 setup.py bdist_rpm > /dev/null')
 print ("\n\n ================ end bdist_rpm ===========================\n\n")
 
 
+
+""" This works for confix, but the built installer is 166MB. Not a good system. 
 print ("\n\n ================ Generate pyinstaller file =======================\n\n" )
 
 
@@ -74,7 +76,7 @@ for mydir in os.walk("./dist/") :
 zipfile1.close()
 
 os.chdir("..")
-
+"""
 
 #os.system("tree -d")               # option -d will print directories only
 os.chdir("dist")
