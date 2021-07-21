@@ -28,7 +28,7 @@ import glob
 
 try :
     from setuptools import setup
-    print "installation with setuptools"
+    print ("installation with setuptools")
 except :
     from distutils.core import setup
 
