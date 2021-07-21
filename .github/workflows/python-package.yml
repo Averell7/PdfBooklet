@@ -47,7 +47,7 @@ jobs:
     #    pytest pdfbooklet.pdfbooklet3.py
     - name: Create package
       run: |
-        python build.py        
+        python3 build.py        
         ls -lR ./ > lsdebian.txt
         python setup.py --command-packages=stdeb.command bdist_deb
         
