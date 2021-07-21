@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+﻿#!/usr/bin/python3
+# -*- coding: utf8 -*-
 
 #
 # PdfBooklet 3.1.1 - GTK+ based utility to create booklets and other layouts
