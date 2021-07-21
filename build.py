@@ -87,7 +87,7 @@ tar64_file = "./pdfbooklet-" + version + ".linux-x86_64.tar.gz"
 corr_tar64_file = "./pdfbooklet-" + version + "-all_64_corr.tar.gz"
 deb_file = "./pdfbooklet_" + version + "-2_all.deb"
 
-# ###### to restore normalement ############################
+# ###### to be restored normalement ############################
 """
 input1 = tarfile.open(tar64_file, "r")
 output = tarfile.open(corr_tar64_file, "w")
@@ -118,6 +118,9 @@ output.close()
 
 
 # generate Debian package
+Ceci est maintenant géré par stdeb
+
+
 print ("\n\n ================ Creating debian package =======================\n\n")
 
 #os.system('alien --generate --scripts ' + rpm_file) 

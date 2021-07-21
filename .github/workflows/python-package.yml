@@ -50,14 +50,26 @@ jobs:
         find . -iname *.pyc -delete
         python3 setup.py --command-packages=stdeb.command bdist_deb
         
-    - name: builds 1
+    - name: builds
       uses: actions/upload-artifact@v2
       with:
-        name: builds1
-        path: dist
+        name: PyInstaller Archive
+        path: dist/pyinstaller-*.zip
      
-    - name: deb 
+    - name: source
       uses: actions/upload-artifact@v2      
       with:
-        name: deb 
-        path: deb_dist
+        name: Source Packages
+        path: dist/confix-*.tar.gz
+
+    - name: rpm
+      uses: actions/upload-artifact@v2
+      with:
+        name: RPM Packages
+        path: dist/confix-*.rpm
+
+    - name: deb
+      uses: actions/upload-artifact@v2
+      with:
+        name: Debian Packages
+        path: deb_dist/python3-confix_*.deb
