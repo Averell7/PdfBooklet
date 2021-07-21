@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# -*- coding: utf8 -*-
+
  
 #
 # PdfBooklet 3.1.1 - GTK+ based utility to create booklets and other layouts
@@ -119,7 +119,7 @@ output.close()
 
 
 # generate Debian package
-Ceci est maintenant géré par stdeb
+Now handled by stdeb
 
 
 print ("\n\n ================ Creating debian package =======================\n\n")
