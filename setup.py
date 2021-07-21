@@ -25,15 +25,15 @@ import os
 import re
 import glob
 
-"""
+
 try :
     from setuptools import setup
     print "installation with setuptools"
 except :
-"""
+    from distutils.core import setup
+
 import sys
 
-from distutils.core import setup
 
 
 sys.prefix = '/usr'
