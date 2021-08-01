@@ -60,16 +60,16 @@ jobs:
       uses: actions/upload-artifact@v2      
       with:
         name: Source Packages
-        path: dist/confix-*.tar.gz
+        path: dist/pdfbooklet-*.tar.gz
 
     - name: rpm
       uses: actions/upload-artifact@v2
       with:
         name: RPM Packages
-        path: dist/confix-*.rpm
+        path: dist/pdfbooklet-*.rpm
 
     - name: deb
       uses: actions/upload-artifact@v2
       with:
         name: Debian Packages
-        path: deb_dist/python3-confix_*.deb
+        path: deb_dist/python3-pdfbooklet_*.deb
