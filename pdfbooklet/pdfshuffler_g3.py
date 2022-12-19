@@ -1037,7 +1037,7 @@ class PdfShuffler:
         if len(selection) > 0:
             self.set_unsaved(True)
         rotate_times = (((-angle) % 360 + 45) / 90) % 4
-        if rotate_times is not 0:
+        if rotate_times != 0:
             for path in selection:
                 iter = model.get_iter(path)
                 nfile = model.get_value(iter, 2)
