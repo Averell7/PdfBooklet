@@ -5,6 +5,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
+# version 3.1.4 : new icon
 # version 3.1.3 : fixes issues about most recently used directories
 # version 3.1.2 : bug fix : autoscale didn't work for a mix of portrait / landscape pages.
 # version 3.1.1 : workaround for a bug appeared in Ubuntu 19 (see the OnDraw function)
@@ -28,7 +29,9 @@ from __future__ import unicode_literals
 # https://stackoverflow.com/questions/45838863/gio-memoryinputstream-does-not-free-memory-when-closed
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 
-PB_version = "3.1.3a"
+PB_version = "3.1.4"
+# it integrates the changes of the file which have 3.1.5 as reference. 
+# Next version should be 3.1.6
 
 
 """
@@ -846,12 +849,12 @@ class TxtOnly :
         oHeight_i = ury_i * rows_i
 
         if radiosize == 1 :
-            mediabox_l = [oWidth_i, oHeight_i]
+            mediabox_l = [oWidth_i, oHeight_i, columns_i, rows_i]
         elif radiosize == 2 :                         # size = no change
             if oWidth_i < oHeight_i :                           # set orientation
-                mediabox_l = [urx_i, ury_i]
+                mediabox_l = [urx_i, ury_i, columns_i, rows_i]
             else :
-                mediabox_l = [ury_i, urx_i]
+                mediabox_l = [ury_i, urx_i, columns_i, rows_i]
 
             # calculate  the scale factor
             deltaW = mediabox_l[0] / oWidth_i
@@ -870,7 +873,7 @@ class TxtOnly :
                 if customY == None : return False
 
 
-                mediabox_l = [ customX * (1 / adobe_l), customY * (1 / adobe_l)]
+                mediabox_l = [ customX * (1 / adobe_l), customY * (1 / adobe_l), columns_i, rows_i]
 
 
                 # calculate  the scale factor
@@ -1042,7 +1045,7 @@ class gtkGui:
 
 
 
-# ##################### Themes #################################
+# ##################### Themes [disabled] #################################
 
 
         menu_themes = Gtk.Menu()
@@ -1113,7 +1116,7 @@ class gtkGui:
                 commandes.connect("activate", self.change_theme, rcpath, menu_name)
                 commandes.show()
 
-            self.arw["themes"].set_submenu(menu_themes)
+            #self.arw["themes"].set_submenu(menu_themes)
             aaa = 1
 
 
@@ -4088,8 +4091,8 @@ class pdfRender():
 
         return (sin_l, cos_l, Hcorr, Vcorr)
 
-    def CalcAutoScale(self, fileNum, page) :
-        global inputFiles_a, inputFile_a, refPageSize_a
+    def autoScaleAndRotate(self, fileNum, page) :
+        global inputFiles_a, inputFile_a, refPageSize_a, mediabox_l
 
         fileName = inputFiles_a[fileNum]
         page0 = inputFile_a[fileName].getPage(page)
@@ -4101,14 +4104,21 @@ class pdfRender():
         page_width = float(urx_i) - float(llx_i)
         page_height =  float(ury_i) - float(lly_i)
 
-        (ref_width, ref_height) = refPageSize_a
+
+        #(ref_width, ref_height) = refPageSize_a
+        available_width = mediabox_l[0] / mediabox_l[2]  # mediabox_l[2] contains the number of columns
+        available_height = mediabox_l[1] / mediabox_l[3]  # mediabox_l[3] contains the number of rows
+
+
+
+
 
         # Rotate if needed
         # check source orientation
-        if ref_height > ref_width :
-            ref_orientation = "portrait"
+        if available_height > available_width :
+            available_orientation = "portrait"
         else :
-            ref_orientation = "landscape"
+            available_orientation = "landscape"
 
         # check page orientation
         if page_height > page_width :
@@ -4117,7 +4127,7 @@ class pdfRender():
             page_orientation = "landscape"
 
 
-        if ref_orientation != page_orientation :     # orientation is not the same
+        if available_orientation != page_orientation :     # orientation is not the same
             Rotate = 270
             h = page_height
             w = page_width
@@ -4131,10 +4141,10 @@ class pdfRender():
             Vtranslate1 = 0
 
 
-        delta1 = ref_height / page_height
-        delta2 = ref_width  / page_width
-        Vdiff = ref_height - (page_height * delta2)
-        Hdiff = ref_width - (page_width * delta1)
+        delta1 = available_height / page_height
+        delta2 = available_width  / page_width
+        Vdiff = available_height - (page_height * delta2)
+        Hdiff = available_width - (page_width * delta1)
 
         # Choose the lower factor, and calculate the translation for centering the image
         if delta1 < delta2 :
@@ -4487,8 +4497,8 @@ class pdfRender():
             page2 = output.addBlankPage(100,100)
             newSheet = page2.getObject()
             newSheet[generic.NameObject("/Contents")] = generic.ArrayObject([])
-            newSheet.mediaBox.upperRight = mediabox_l       # output page size
-            newSheet.cropBox.upperRight = mediabox_l
+            newSheet.mediaBox.upperRight = (mediabox_l[0], mediabox_l[1])       # output page size
+            newSheet.cropBox.upperRight = (mediabox_l[0], mediabox_l[1])
             # global rotation
             if ("options" in config) and ("globalRotation" in config["options"]) :
                 gr = config["options"]["globalRotation"]
@@ -4504,6 +4514,7 @@ class pdfRender():
             if outputScale != 1 and app.autoscale.get_active() == 1 :
                 temp1 = "%s 0 0 %s 0 0 cm \n" % (str(outputScale), str(outputScale))
                 ar_data.append([temp1])
+                #print("====>", outputScale)
 
 
             #Output page transformations
@@ -4647,7 +4658,7 @@ class pdfRender():
                 # scale the page to fit the output sheet, if required
                 if"autoscale" in config["options"]:
                     if ini.readBoolean(config["options"]["autoscale"]) == True :
-                        (Rotate, scaleFactor_f, Htranslate, Vtranslate) = self.CalcAutoScale(file_number, page_number)
+                        (Rotate, scaleFactor_f, Htranslate, Vtranslate) = self.autoScaleAndRotate(file_number, page_number)
                         matrix1_s = self.calcMatrix2(Htranslate, Vtranslate, Scale = scaleFactor_f, Rotate = Rotate)
                         data_x.append(matrix1_s)
 
@@ -4696,6 +4707,7 @@ class pdfRender():
             datay = []
             for datax in ar_data :
                 datay += datax + ["\n"]
+
 
 ##            datay += ["q n 10 10 m 10 122 l S \n"]
 ##            datay += ["  n 10 10 m 72 10  l S \n"]

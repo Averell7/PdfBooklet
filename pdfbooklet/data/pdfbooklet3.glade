@@ -11,7 +11,7 @@
     <property name="deletable">False</property>
     <property name="transient_for">window1</property>
     <property name="program_name">Pdf-Booklet</property>
-    <property name="version">3.0.6</property>
+    <property name="version">3.1.4</property>
     <property name="website">http://pdfbooklet.sourceforge.net/</property>
     <property name="website_label">http://pdfbooklet.sourceforge.net/</property>
     <property name="license" translatable="yes">Pdf-Shuffler is delivered under the GNU General Public Licence (GPL) Version 3.
@@ -860,6 +860,15 @@ Example :
                       </object>
                     </child>
                     <child>
+                      <object class="GtkMenuItem" id="menuitem1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Online Guide</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="pdfBooklet_online_doc" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem10">
                         <property name="label" translatable="yes">_About</property>
                         <property name="visible">True</property>
@@ -874,13 +883,6 @@ Example :
                     </child>
                   </object>
                 </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkMenuItem" id="themes">
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Themes</property>
-                <property name="use_underline">True</property>
               </object>
             </child>
           </object>
@@ -3105,9 +3107,6 @@ May work or not...</property>
                                   <placeholder/>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="numbers_margin">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -3163,6 +3162,12 @@ May work or not...</property>
                                   <placeholder/>
                                 </child>
                                 <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
                                   <object class="GtkLabel" id="numbers_start_from_label">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -3176,6 +3181,12 @@ May work or not...</property>
                                     <property name="x_options">GTK_FILL</property>
                                     <property name="x_padding">6</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -3224,6 +3235,12 @@ May work or not...</property>
                                     <property name="x_options"/>
                                     <property name="y_options"/>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
