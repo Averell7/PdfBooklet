@@ -434,14 +434,12 @@ def _install(domain, localedir, asglobal=False):
 
     # The locale module on Max OS X lacks bindtextdomain so we specifically
     # test on linux2 here. See commit 4ae8b26fd569382ab66a9e844daa0e01de409ceb
-    if sys.platform == 'linux2':
+    if sys.platform.startswith('linux'):
         locale.bindtextdomain(domain, localedir)
-        locale.bind_textdomain_codeset(domain, 'UTF-8')
         locale.textdomain(domain)
 
     # initialize Python's gettext interface
     gettext.bindtextdomain(domain, localedir)
-    gettext.bind_textdomain_codeset(domain, 'UTF-8')
 
     if asglobal:
         gettext.textdomain(domain)
@@ -453,8 +451,7 @@ def _install(domain, localedir, asglobal=False):
         from ctypes import cdll
         libintl = cdll.LoadLibrary("libintl-8.dll")
         libintl.bindtextdomain(domain, localedir)
-        libintl.bind_textdomain_codeset(domain, 'UTF-8')
-
+        
         if asglobal:
             libintl.textdomain(domain)
 

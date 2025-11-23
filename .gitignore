@@ -27,3 +27,5 @@
 
 # Virtualenv magic, see https://gist.github.com/bittner/8830745
 .venv
+build_deb/
+*.deb

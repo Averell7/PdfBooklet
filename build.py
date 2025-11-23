@@ -137,7 +137,7 @@ if os.path.isfile(control_file) :
     f1 = open(control_file, "r")
 
     data1 = f1.read()
-    data1 = data1.replace("${shlibs:Depends}", "python (>= 2.7), python-gi, python-gi-cairo, python3-gi, python3-gi-cairo, python3-cairo, gir1.2-gtk-3.0, gir1.2-poppler-0.18")
+    data1 = data1.replace("${shlibs:Depends}", "python3-gi, python3-gi-cairo, python3-cairo, gir1.2-gtk-3.0, gir1.2-poppler-0.18")
     # above dependencies are for Debian. Unsure if python3-cairo is necessary. 
     # for rpm, something like that will be necessary, but unsufficient : python-gobject, python-gobject-2, pypoppler|python-poppler\n")
 

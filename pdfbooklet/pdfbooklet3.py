@@ -259,9 +259,9 @@ def join_list(my_list, separator) :
     elif isinstance(my_list, dict) :
         for s in my_list :
             try :
-                item1 = unicode(my_list[s], "utf-8")
+                item1 = unicode2(my_list[s])
             except :
-                item1 = my_list[s]
+                item1 = str(my_list[s])
             mydata += item1 + separator
     crop = len(separator) * -1
     mydata = mydata[0:crop]
@@ -278,19 +278,20 @@ def get_value(dictionary, key, default = 0) :
 
 def unicode2(string, dummy = "") :
 
-    if sys.version_info[0] == 2 :
-        if isinstance(string,unicode) :
-            return string
-
-    try :
-        return unicode(string,"utf_8")
-    except :
+    if isinstance(string, str):
+        return string
+    
+    if isinstance(string, bytes):
         try :
-#               print string, " est ecrit en cp1252"
-            return unicode(string,"cp1252")
+            return string.decode("utf_8")
         except :
-            return string       # Is this the good option ? Return False or an empty string ?
-            #return "inconnu"
+            try :
+    #               print string, " est ecrit en cp1252"
+                return string.decode("cp1252")
+            except :
+                return str(string)       # Is this the good option ? Return False or an empty string ?
+                #return "inconnu"
+    return str(string)
 
 def printExcept() :
     a,b,c = sys.exc_info()
@@ -1585,8 +1586,26 @@ class gtkGui:
 
     def pdfBooklet_doc(self, widget) :
 
-        userGuide_s = "documentation/" + _("Pdf-Booklet_User's_Guide.pdf")
+        filename = _("Pdf-Booklet_User's_Guide.pdf")
+        userGuide_s = "documentation/" + filename
+
         if 'linux' in sys.platform :
+            # Try to find the file in standard locations
+            paths_to_check = [
+                os.path.join("/usr/share/pdfbooklet/documentation", filename),
+                os.path.join("documentation", filename),
+                os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "documentation", filename))
+            ]
+            
+            found_path = None
+            for path in paths_to_check:
+                if os.path.exists(path):
+                    found_path = path
+                    break
+            
+            if found_path:
+                userGuide_s = found_path
+                
             subprocess.call(["xdg-open", userGuide_s])
         else:
             os.startfile(sfp(userGuide_s))
