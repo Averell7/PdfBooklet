@@ -1586,8 +1586,26 @@ class gtkGui:
 
     def pdfBooklet_doc(self, widget) :
 
-        userGuide_s = "documentation/" + _("Pdf-Booklet_User's_Guide.pdf")
+        filename = _("Pdf-Booklet_User's_Guide.pdf")
+        userGuide_s = "documentation/" + filename
+
         if 'linux' in sys.platform :
+            # Try to find the file in standard locations
+            paths_to_check = [
+                os.path.join("/usr/share/pdfbooklet/documentation", filename),
+                os.path.join("documentation", filename),
+                os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "documentation", filename))
+            ]
+            
+            found_path = None
+            for path in paths_to_check:
+                if os.path.exists(path):
+                    found_path = path
+                    break
+            
+            if found_path:
+                userGuide_s = found_path
+                
             subprocess.call(["xdg-open", userGuide_s])
         else:
             os.startfile(sfp(userGuide_s))
