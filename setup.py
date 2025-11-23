@@ -24,6 +24,7 @@
 import os
 import re
 import glob
+import webbrowser
 
 
 try :
@@ -48,7 +49,7 @@ data_files=[('/usr/share/pdfbooklet/data', glob.glob('pdfbooklet/data/*.*')),
 
 
 setup(name='pdfbooklet',
-      version='3.1.4',
+      version='3.1.4a',
       author='GAF Software',
       author_email='Averell7 at sourceforge dot net',
       maintainer='Averell7',

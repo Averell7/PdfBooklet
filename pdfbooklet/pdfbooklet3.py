@@ -4,7 +4,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-
+# version 3.1.4a : fixed missing online documentation function and "Autoscale" checkbox check, reverted changes made to the autoScaleAndRotate function
 # version 3.1.4 : new icon
 # version 3.1.3 : fixes issues about most recently used directories
 # version 3.1.2 : bug fix : autoscale didn't work for a mix of portrait / landscape pages.
@@ -29,7 +29,7 @@ from __future__ import unicode_literals
 # https://stackoverflow.com/questions/45838863/gio-memoryinputstream-does-not-free-memory-when-closed
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 
-PB_version = "3.1.4"
+PB_version = "3.1.4a"
 # it integrates the changes of the file which have 3.1.5 as reference. 
 # Next version should be 3.1.6
 
@@ -216,6 +216,7 @@ from ctypes import *
 import threading
 import tempfile, io
 import copy
+import webbrowser
 ##import urllib
 ##from urllib.parse import urlparse
 ##from urllib.request import urljoin
@@ -647,6 +648,8 @@ class TxtOnly :
         if isinstance(entry, str) :
             if entry.strip().lower() == "true" :
                 value = True
+            elif entry.strip() == "1" :
+                value = True
             else :
                 value = False
         elif isinstance(entry, bool) :
@@ -659,7 +662,7 @@ class TxtOnly :
             else :
                 return True
         except :
-            showwarning(_("Invalid data"), _("Invalid data for %s - must be 0 or 1. Aborting \n") % widget_s)
+            return False
 
 
     def parseIniFile(self, inifile = "") :
@@ -1612,6 +1615,10 @@ class gtkGui:
             subprocess.call(["xdg-open", userGuide_s])
         else:
             os.startfile(sfp(userGuide_s))
+
+
+    def pdfBooklet_online_doc(self, widget) :
+        webbrowser.open("https://pdfbooklet.sourceforge.io/wordpress/guide/")
 
 
     def popup_rotate(self, widget):
@@ -4092,7 +4099,7 @@ class pdfRender():
         return (sin_l, cos_l, Hcorr, Vcorr)
 
     def autoScaleAndRotate(self, fileNum, page) :
-        global inputFiles_a, inputFile_a, refPageSize_a, mediabox_l
+        global inputFiles_a, inputFile_a, refPageSize_a
 
         fileName = inputFiles_a[fileNum]
         page0 = inputFile_a[fileName].getPage(page)
@@ -4105,9 +4112,9 @@ class pdfRender():
         page_height =  float(ury_i) - float(lly_i)
 
 
-        #(ref_width, ref_height) = refPageSize_a
-        available_width = mediabox_l[0] / mediabox_l[2]  # mediabox_l[2] contains the number of columns
-        available_height = mediabox_l[1] / mediabox_l[3]  # mediabox_l[3] contains the number of rows
+        (ref_width, ref_height) = refPageSize_a
+        #available_width = mediabox_l[0] / mediabox_l[2]  # mediabox_l[2] contains the number of columns
+        #available_height = mediabox_l[1] / mediabox_l[3]  # mediabox_l[3] contains the number of rows
 
 
 
@@ -4115,10 +4122,10 @@ class pdfRender():
 
         # Rotate if needed
         # check source orientation
-        if available_height > available_width :
-            available_orientation = "portrait"
+        if ref_height > ref_width :
+            ref_orientation = "portrait"
         else :
-            available_orientation = "landscape"
+            ref_orientation = "landscape"
 
         # check page orientation
         if page_height > page_width :
@@ -4127,7 +4134,7 @@ class pdfRender():
             page_orientation = "landscape"
 
 
-        if available_orientation != page_orientation :     # orientation is not the same
+        if ref_orientation != page_orientation :     # orientation is not the same
             Rotate = 270
             h = page_height
             w = page_width
@@ -4141,10 +4148,10 @@ class pdfRender():
             Vtranslate1 = 0
 
 
-        delta1 = available_height / page_height
-        delta2 = available_width  / page_width
-        Vdiff = available_height - (page_height * delta2)
-        Hdiff = available_width - (page_width * delta1)
+        delta1 = ref_height / page_height
+        delta2 = ref_width  / page_width
+        Vdiff = ref_height - (page_height * delta2)
+        Hdiff = ref_width - (page_width * delta1)
 
         # Choose the lower factor, and calculate the translation for centering the image
         if delta1 < delta2 :
