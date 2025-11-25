@@ -45,7 +45,7 @@ data_files=[('/usr/share/pdfbooklet/data', glob.glob('pdfbooklet/data/*.*')),
             ('/usr/share/applications', ['pdfbooklet/data/pdfbooklet.desktop']),
             ('/usr/share/locale/fr/LC_MESSAGES', glob.glob('locale/fr/LC_MESSAGES/*.*')),
             ('/usr/share/pixmaps', ['pdfbooklet/data/pdfbooklet.png']),
-            ('/usr/share/pdfbooklet/icons/hicolor/scalable', ['pdfbooklet/data/pdfbooklet.svg'])]
+            ('/usr/share/icons/hicolor/48x48/apps', ['pdfbooklet/data/pdfbooklet.png'])]
 
 
 setup(name='pdfbooklet',

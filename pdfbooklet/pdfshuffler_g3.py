@@ -43,6 +43,7 @@ import sys          # for proccessing of command line args
 import stat
 import urllib       # for parsing filename information passed by DnD
 import threading
+import multiprocessing
 import tempfile
 import glob
 from copy import copy
@@ -77,6 +78,44 @@ GObject.type_register(CellRendererImage)
 
 
 import time
+
+def render_page_task(args):
+    """
+    Standalone function to render a PDF page.
+    args: (filename, page_index, resample, row_index)
+    Returns: (row_index, width, height, stride, data) or None on error
+    """
+    filename, page_index, resample, row_index = args
+    try:
+        # We must re-open the document in the new process
+        # Note: file_prefix is a global in the module, but might not be available if not initialized.
+        # However, we can construct the URI directly.
+        uri = 'file://' + os.path.abspath(filename)
+        document = Poppler.Document.new_from_file(uri, None)
+        page = document.get_page(page_index)
+        w, h = page.get_size()
+        
+        target_w = int(w/resample)
+        target_h = int(h/resample)
+        
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, target_w, target_h)
+        cr = cairo.Context(surface)
+        
+        if resample != 1.:
+            cr.scale(1./resample, 1./resample)
+            
+        page.render(cr)
+        
+        # Extract raw data
+        stride = surface.get_stride()
+        data = surface.get_data()
+        # Convert memoryview/buffer to bytes for pickling
+        data_bytes = bytes(data)
+        
+        return (row_index, target_w, target_h, stride, data_bytes)
+    except Exception as e:
+        # print(f"Error rendering page {page_index} of {filename}: {e}")
+        return None
 
 Gtk.rc_parse("./gtkrc")
 
@@ -114,13 +153,19 @@ class PdfShuffler:
         # Create the temporary directory
         self.tmp_dir = tempfile.mkdtemp("pdfshuffler")
         self.selection_start = 0
-        os.chmod(self.tmp_dir, stat.S_IRWXO)        # TODO il y avait 0700. RWXO est plutôt 777 ?
+        os.chmod(self.tmp_dir, stat.S_IRWXU)        # TODO il y avait 0700. RWXO est plutôt 777 ?
         icon_theme = Gtk.IconTheme.get_default()
         # TODO : icontheme
-##        try:
-##            Gtk.window_set_default_icon(icon_theme.load_icon("pdfshuffler", 64, 0))
-##        except:
-##            print(_("Can't load icon. Application is not installed correctly."))
+        # Set default icon
+        icon_path = '/usr/share/pdfbooklet/data/pdfbooklet.ico'
+        if not os.path.exists(icon_path):
+            icon_path = '/usr/local/share/pdfbooklet/data/pdfbooklet.ico'
+        
+        try:
+            if os.path.exists(icon_path):
+                Gtk.Window.set_default_icon_from_file(icon_path)
+        except Exception as e:
+            print(_("Can't load icon:"), e)
 
         # Import the user interface file, trying different possible locations
         ui_path = '/usr/share/pdfbooklet/data/pdfshuffler_g.glade'
@@ -295,9 +340,10 @@ class PdfShuffler:
                            GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE,
                            [GObject.TYPE_INT, GObject.TYPE_PYOBJECT,
                             GObject.TYPE_FLOAT])
-        self.rendering_thread = 0
 
         self.set_unsaved(False)
+        self.resample = 1.0
+        self.pool = None
 
         # Importing documents passed as command line arguments
         for filename in sys.argv[1:]:
@@ -307,19 +353,89 @@ class PdfShuffler:
 
 
     def render(self):
-        if self.rendering_thread:
-            self.rendering_thread.quit = True
-            self.rendering_thread.join()
-        #FIXME: the resample=2. factor has to be dynamic when lazy rendering
-        #       is implemented
-        self.rendering_thread = PDF_Renderer(self.model, self.pdfqueue, 2)
-        self.rendering_thread.connect('update_thumbnail', self.update_thumbnail)
-        self.rendering_thread.start()
+        """Renders the thumbnails using multiprocessing"""
+        if hasattr(self, 'pool') and self.pool:
+            self.pool.terminate()
+            self.pool.join()
 
-        if self.progress_bar_timeout_id:
-            GObject.source_remove(self.progress_bar_timeout_id)
-        self.progress_bar_timout_id = \
-            GObject.timeout_add(50, self.progress_bar_timeout)
+        self.pool = multiprocessing.Pool()
+        
+        tasks = []
+        # We need to iterate and collect tasks. 
+        # Note: enumerate returns 0-based index which matches row index in ListStore if not sorted/filtered.
+        # But ListStore paths are safer? No, idx from enumerate on model is fine if we don't modify model while rendering.
+        for idx, row in enumerate(self.model):
+            if not row[1]: # If thumbnail is missing
+                nfile = row[2]
+                npage = row[3]
+                if nfile > 0 and nfile <= len(self.pdfqueue):
+                    pdfdoc = self.pdfqueue[nfile - 1]
+                    tasks.append((pdfdoc.filename, npage - 1, self.resample, idx))
+        
+        self.total_tasks = len(tasks)
+        self.finished_tasks = 0
+        
+        if self.total_tasks > 0:
+            self.progress_bar.show()
+            self.update_progress_bar_mp()
+            
+            for args in tasks:
+                self.pool.apply_async(render_page_task, args=(args,), callback=self.on_thumbnail_rendered)
+        else:
+            self.progress_bar.hide()
+
+    def on_thumbnail_rendered(self, result):
+        if result:
+            GObject.idle_add(self.update_thumbnail_ui, result)
+
+    def update_thumbnail_ui(self, result):
+        row_index, width, height, stride, data_bytes = result
+        
+        # Reconstruct surface
+        # We need to create a mutable buffer from bytes
+        # cairo.ImageSurface.create_for_data requires a writable buffer.
+        # 'data_bytes' is immutable bytes. bytearray is mutable.
+        data_mutable = bytearray(data_bytes)
+        
+        surface = cairo.ImageSurface.create_for_data(
+            data_mutable, cairo.FORMAT_ARGB32, width, height, stride)
+            
+        # Update model
+        # We assume row_index is valid. 
+        # We need to get the iter from path/index
+        try:
+            path = Gtk.TreePath.new_from_indices([row_index])
+            iter_ = self.model.get_iter(path)
+            self.model.set_value(iter_, 1, surface)
+            
+            # Update other columns if needed (width, height, resample)
+            # Original code updated these in PDF_Renderer? No, PDF_Renderer only returned thumbnail.
+            # Wait, PDF_Renderer emitted 'update_thumbnail' with (idx, thumbnail, resample).
+            # And 'update_thumbnail' handler in PdfShuffler did:
+            # row[1] = thumbnail
+            # row[13] = resample
+            self.model.set_value(iter_, 13, self.resample)
+            
+        except ValueError:
+            # Model might have changed (rows deleted)
+            pass
+            
+        self.finished_tasks += 1
+        self.update_progress_bar_mp()
+        return False # Stop idle function
+
+    def update_progress_bar_mp(self):
+        if self.total_tasks > 0:
+            fraction = float(self.finished_tasks) / float(self.total_tasks)
+            self.progress_bar.set_fraction(fraction)
+            self.progress_bar.set_text(_('Rendering thumbnails... [%(i1)s/%(i2)s]')
+                                       % {'i1' : self.finished_tasks, 'i2' : self.total_tasks})
+            if fraction >= 0.999:
+                self.progress_bar.hide()
+                # Close pool if done? Maybe not, keep it for next time or close it.
+                # self.pool.close() 
+        else:
+            self.progress_bar.hide()
 
     def set_unsaved(self, flag):
         self.is_unsaved = flag
@@ -971,7 +1087,7 @@ class PdfShuffler:
     def sw_scroll_event(self, scrolledwindow, event):
         """Manages mouse scroll events in scrolledwindow"""
 
-        if event.state & Gdk.CONTROL_MASK:
+        if event.state & Gdk.ModifierType.CONTROL_MASK:
             if event.direction == Gdk.SCROLL_UP:
                 self.zoom_change(1)
                 return 1
@@ -1191,47 +1307,7 @@ class PDF_Doc:
 
 
 
-class PDF_Renderer(threading.Thread, GObject.GObject):
 
-    def __init__(self, model, pdfqueue, resample=1.):
-
-        threading.Thread.__init__(self)
-        GObject.GObject.__init__(self)
-        self.model = model
-        self.pdfqueue = pdfqueue
-        self.resample = resample
-        self.quit = False
-
-    def run(self):
-        for idx, row in enumerate(self.model):
-            if self.quit:
-                return
-            if not row[1]:
-                try:
-                    nfile = row[2]
-                    npage = row[3]
-                    pdfdoc = self.pdfqueue[nfile - 1]
-                    page = pdfdoc.document.get_page(npage-1)
-                    w, h = page.get_size()
-                    thumbnail = cairo.ImageSurface(cairo.FORMAT_ARGB32,
-                                                   int(w/self.resample),
-                                                   int(h/self.resample))
-##                    thumbnail1 = cairo.image_surface_create()
-##                    thumbnail = thumbnail1(1,
-##                                                   int(w/self.resample),
-##                                                   int(h/self.resample))
-
-
-                    cr = cairo.Context(thumbnail)
-                    if self.resample != 1.:
-                        cr.scale(1./self.resample, 1./self.resample)
-                    page.render(cr)
-                    time.sleep(0.003)
-                    GObject.idle_add(self.emit,'update_thumbnail',
-                                     idx, thumbnail, self.resample,
-                                     priority=GObject.PRIORITY_LOW)
-                except Exception as e:
-                    print(e)
 
 
 class PdfShuffler_Linux_code :
