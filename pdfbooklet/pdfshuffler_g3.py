@@ -114,14 +114,10 @@ class PdfShuffler:
         # Create the temporary directory
         self.tmp_dir = tempfile.mkdtemp("pdfshuffler")
         self.selection_start = 0
-        os.chmod(self.tmp_dir, stat.S_IRWXO)        # TODO il y avait 0700. RWXO est plutôt 777 ?
-        icon_theme = Gtk.IconTheme.get_default()
-        # TODO : icontheme
-##        try:
-##            Gtk.window_set_default_icon(icon_theme.load_icon("pdfshuffler", 64, 0))
-##        except:
-##            print(_("Can't load icon. Application is not installed correctly."))
-
+        # Try to set the new icon
+        # icon_path = os.path.join(os.path.dirname(__file__), 'data', 'pdfbooklet.png')
+        # ... (moved to after window creation)
+        
         # Import the user interface file, trying different possible locations
         ui_path = '/usr/share/pdfbooklet/data/pdfshuffler_g.glade'
         if not os.path.exists(ui_path):
@@ -159,6 +155,16 @@ class PdfShuffler:
         self.window.move(self.prefs['window x'], self.prefs['window y'])
         self.window.set_default_size(self.prefs['window width'],
                                      self.prefs['window height'])
+                                     
+        # Set window icon
+        icon_path = os.path.join(os.path.dirname(__file__), 'data', 'pdfbooklet.png')
+        try:
+            self.window.set_icon_from_file(icon_path)
+        except:
+            try:
+                self.window.set_icon_name('pdfbooklet')
+            except:
+                pass
         self.window.connect('delete_event', self.close_application)
 
         # Create a scrolled window to hold the thumbnails-container
@@ -298,6 +304,7 @@ class PdfShuffler:
         self.rendering_thread = 0
 
         self.set_unsaved(False)
+        self.resample = 1.0
 
         # Importing documents passed as command line arguments
         for filename in sys.argv[1:]:
@@ -307,19 +314,17 @@ class PdfShuffler:
 
 
     def render(self):
-        if self.rendering_thread:
+        """Renders the thumbnails in a separate thread"""
+        if hasattr(self, 'rendering_thread') and self.rendering_thread and self.rendering_thread.is_alive():
             self.rendering_thread.quit = True
             self.rendering_thread.join()
-        #FIXME: the resample=2. factor has to be dynamic when lazy rendering
-        #       is implemented
-        self.rendering_thread = PDF_Renderer(self.model, self.pdfqueue, 2)
+
+        self.rendering_thread = PDF_Renderer(self.model, self.pdfqueue, self.resample)
         self.rendering_thread.connect('update_thumbnail', self.update_thumbnail)
         self.rendering_thread.start()
 
-        if self.progress_bar_timeout_id:
-            GObject.source_remove(self.progress_bar_timeout_id)
-        self.progress_bar_timout_id = \
-            GObject.timeout_add(50, self.progress_bar_timeout)
+        self.progress_bar.show()
+        GObject.timeout_add(100, self.progress_bar_timeout)
 
     def set_unsaved(self, flag):
         self.is_unsaved = flag
@@ -971,7 +976,7 @@ class PdfShuffler:
     def sw_scroll_event(self, scrolledwindow, event):
         """Manages mouse scroll events in scrolledwindow"""
 
-        if event.state & Gdk.CONTROL_MASK:
+        if event.state & Gdk.ModifierType.CONTROL_MASK:
             if event.direction == Gdk.SCROLL_UP:
                 self.zoom_change(1)
                 return 1
@@ -1156,7 +1161,9 @@ class PdfShuffler:
             'Developed using GTK+ and Python') % APPNAME)
         about_dialog.set_authors(['Konstantinos Poulios',])
         about_dialog.set_website_label(WEBSITE)
-        about_dialog.set_logo_icon_name('pdfshuffler')
+        # about_dialog.set_logo_icon_name('pdfshuffler')
+        # Use the window icon (which we set to pdfbooklet.ico)
+        about_dialog.set_logo(self.window.get_icon())
         about_dialog.set_license(LICENSE)
         about_dialog.connect('response', lambda w, *args: w.destroy())
         about_dialog.connect('delete_event', lambda w, *args: w.destroy())
@@ -1201,37 +1208,41 @@ class PDF_Renderer(threading.Thread, GObject.GObject):
         self.pdfqueue = pdfqueue
         self.resample = resample
         self.quit = False
+        
+        # Extract data needed for rendering to avoid accessing Gtk.ListStore in the thread
+        self.tasks = []
+        for idx, row in enumerate(self.model):
+            # Store (idx, has_thumbnail, nfile, npage)
+            self.tasks.append((idx, bool(row[1]), row[2], row[3]))
 
     def run(self):
-        for idx, row in enumerate(self.model):
+        for idx, has_thumbnail, nfile, npage in self.tasks:
             if self.quit:
                 return
-            if not row[1]:
-                try:
-                    nfile = row[2]
-                    npage = row[3]
-                    pdfdoc = self.pdfqueue[nfile - 1]
-                    page = pdfdoc.document.get_page(npage-1)
-                    w, h = page.get_size()
-                    thumbnail = cairo.ImageSurface(cairo.FORMAT_ARGB32,
-                                                   int(w/self.resample),
-                                                   int(h/self.resample))
-##                    thumbnail1 = cairo.image_surface_create()
-##                    thumbnail = thumbnail1(1,
-##                                                   int(w/self.resample),
-##                                                   int(h/self.resample))
+            try:
+                if not has_thumbnail:
+                    try:
+                        # nfile and npage are already extracted
+                        pdfdoc = self.pdfqueue[nfile - 1]
+                        page = pdfdoc.document.get_page(npage-1)
+                        w, h = page.get_size()
+                        thumbnail = cairo.ImageSurface(cairo.FORMAT_ARGB32,
+                                                       int(w/self.resample),
+                                                       int(h/self.resample))
 
-
-                    cr = cairo.Context(thumbnail)
-                    if self.resample != 1.:
-                        cr.scale(1./self.resample, 1./self.resample)
-                    page.render(cr)
-                    time.sleep(0.003)
-                    GObject.idle_add(self.emit,'update_thumbnail',
-                                     idx, thumbnail, self.resample,
-                                     priority=GObject.PRIORITY_LOW)
-                except Exception as e:
-                    print(e)
+                        cr = cairo.Context(thumbnail)
+                        if self.resample != 1.:
+                            cr.scale(1./self.resample, 1./self.resample)
+                        page.render(cr)
+                        time.sleep(0.003)
+                        GObject.idle_add(self.emit,'update_thumbnail',
+                                         idx, thumbnail, self.resample,
+                                         priority=GObject.PRIORITY_LOW)
+                    except Exception as e:
+                        print(e)
+            except (TypeError, ValueError):
+                # Model changed or invalid iter, stop rendering
+                return
 
 
 class PdfShuffler_Linux_code :

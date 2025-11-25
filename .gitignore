@@ -29,3 +29,4 @@
 .venv
 build_deb/
 *.deb
+PdfBooklet.code-workspace

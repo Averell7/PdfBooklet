@@ -4,6 +4,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
+# version 3.1.4b : fixed PDFShuffler on Python3, added "Reset" button to PDFShuffler, change app icon
 # version 3.1.4a : fixed missing online documentation function and "Autoscale" checkbox check, reverted changes made to the autoScaleAndRotate function
 # version 3.1.4 : new icon
 # version 3.1.3 : fixes issues about most recently used directories
@@ -996,7 +997,10 @@ class gtkGui:
         self.window1 = self.arw["window1"]
         self.window1.show_all()
         self.window1.set_title("Pdf-Booklet  [ " + PB_version + " ]")
-##        self.window1.connect("destroy", lambda w: Gtk.main_quit())
+        try:
+            self.window1.set_icon_from_file(sfp2('data/pdfbooklet.ico'))
+        except Exception as e:
+            print("Could not load icon:", e)
         self.window1.connect("destroy", self.close_application)
 
         """
@@ -3318,11 +3322,34 @@ class gtkGui:
             self.loadShuffler()
 
         else :
+            self.reloadShuffler()
             self.shuffler_window.show()
 
 
-    def loadShuffler(self) :
-            render.parsePageSelection("", 0)
+    def reloadShuffler(self):
+        """Reloads the shuffler from the current application state (app.selection_s)."""
+        if hasattr(self.shuffler, 'pool') and self.shuffler.pool:
+            self.shuffler.pool.terminate()
+            self.shuffler.pool.join()
+        self.shuffler.model.clear()
+        self.shuffler.pdfqueue = []
+        self.shuffler.nfile = 0
+        self.loadShuffler()
+
+    def resetShuffler(self, widget=None):
+        """Resets the shuffler to the original PDF order (1..N)."""
+        print(f"DEBUG: resetShuffler called. Forcing default selection.")
+        if hasattr(self.shuffler, 'pool') and self.shuffler.pool:
+            self.shuffler.pool.terminate()
+            self.shuffler.pool.join()
+        self.shuffler.model.clear()
+        self.shuffler.pdfqueue = []
+        self.shuffler.nfile = 0
+        # Passing " " (space) forces parsePageSelection to generate the default 1..N selection
+        self.loadShuffler(" ")
+
+    def loadShuffler(self, selection="") :
+            self.render.parsePageSelection(selection, 0)
 
             for key in inputFiles_a :
                 pdfdoc = PDF_Doc(inputFiles_a[key], self.shuffler.nfile, self.shuffler.tmp_dir)
@@ -3332,6 +3359,7 @@ class gtkGui:
 
             angle=0
             crop=[0.,0.,0.,0.]
+            res = False
             for page in pagesSel :
                 file1, page1 = page.split(":")
                 npage = int(page1) + 1

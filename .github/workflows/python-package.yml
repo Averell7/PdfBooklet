@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     #- name: Set up Python ${{ matrix.python-version }}
     #  uses: actions/setup-python@v2
     #  with:
@@ -51,25 +51,25 @@ jobs:
         python3 setup.py --command-packages=stdeb.command bdist_deb
         
     - name: builds
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: PyInstaller Archive
         path: dist/pyinstaller-*.zip
      
     - name: source
-      uses: actions/upload-artifact@v2      
+      uses: actions/upload-artifact@v4      
       with:
         name: Source Packages
         path: dist/pdfbooklet-*.tar.gz
 
     - name: rpm
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: RPM Packages
         path: dist/pdfbooklet-*.rpm
 
     - name: deb
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Debian Packages
         path: deb_dist/python3-pdfbooklet_*.deb
