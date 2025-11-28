@@ -10,7 +10,7 @@ def run_command(command):
 
 def main():
     app_name = "pdfbooklet"
-    version = "3.1.4b"
+    version = "3.1.4c"
     arch = "all"
     package_name = f"{app_name}_{version}_{arch}"
     build_dir = os.path.abspath("build_deb")
