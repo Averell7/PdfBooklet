@@ -4,6 +4,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
+# version 3.1.4b : fixed PDFShuffler on Python3, added "Reset" button to PDFShuffler, change app icon
 # version 3.1.4a : fixed missing online documentation function and "Autoscale" checkbox check, reverted changes made to the autoScaleAndRotate function
 # version 3.1.4 : new icon
 # version 3.1.3 : fixes issues about most recently used directories

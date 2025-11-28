@@ -155,19 +155,9 @@ class PdfShuffler:
         self.thumbnail_cache = {}
         self.selection_start = 0
         os.chmod(self.tmp_dir, stat.S_IRWXU)        # TODO il y avait 0700. RWXO est plutôt 777 ?
-        icon_theme = Gtk.IconTheme.get_default()
-        # TODO : icontheme
-        # Set default icon
-        icon_path = '/usr/share/pdfbooklet/data/pdfbooklet.ico'
-        if not os.path.exists(icon_path):
-            icon_path = '/usr/local/share/pdfbooklet/data/pdfbooklet.ico'
-        
-        try:
-            if os.path.exists(icon_path):
-                Gtk.Window.set_default_icon_from_file(icon_path)
-        except Exception as e:
-            print(_("Can't load icon:"), e)
-
+        # Try to set the new icon
+        # icon_path = os.path.join(os.path.dirname(__file__), 'data', 'pdfbooklet.png')
+        # ... (moved to after window creation)
         # Import the user interface file, trying different possible locations
         ui_path = '/usr/share/pdfbooklet/data/pdfshuffler_g.glade'
         if not os.path.exists(ui_path):
@@ -205,6 +195,16 @@ class PdfShuffler:
         self.window.move(self.prefs['window x'], self.prefs['window y'])
         self.window.set_default_size(self.prefs['window width'],
                                      self.prefs['window height'])
+                                     
+        # Set window icon
+        icon_path = os.path.join(os.path.dirname(__file__), 'data', 'pdfbooklet.png')
+        try:
+            self.window.set_icon_from_file(icon_path)
+        except:
+            try:
+                self.window.set_icon_name('pdfbooklet')
+            except:
+                pass
         self.window.connect('delete_event', self.close_application)
 
         # Create a scrolled window to hold the thumbnails-container
@@ -1309,7 +1309,9 @@ class PdfShuffler:
             'Developed using GTK+ and Python') % APPNAME)
         about_dialog.set_authors(['Konstantinos Poulios',])
         about_dialog.set_website_label(WEBSITE)
-        about_dialog.set_logo_icon_name('pdfshuffler')
+        # about_dialog.set_logo_icon_name('pdfshuffler')
+        # Use the window icon (which we set to pdfbooklet.ico)
+        about_dialog.set_logo(self.window.get_icon())
         about_dialog.set_license(LICENSE)
         about_dialog.connect('response', lambda w, *args: w.destroy())
         about_dialog.connect('delete_event', lambda w, *args: w.destroy())
@@ -1341,6 +1343,7 @@ class PDF_Doc:
         else:
             self.nfile = 0
             self.npage = 0
+
 
 
 
