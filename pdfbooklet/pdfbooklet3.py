@@ -4,6 +4,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
+# version 3.1.4d : added output size dropdown, replace PDFShuffler icon for a newer icon.
 # version 3.1.4c : fixed horizontal scrollbar, optimized zoom, fixed multiprocessing pool error, implemented thumbnail caching
 # version 3.1.4b : fixed PDFShuffler on Python3, added "Reset" button to PDFShuffler, change app icon
 # version 3.1.4a : fixed missing online documentation function and "Autoscale" checkbox check, reverted changes made to the autoScaleAndRotate function
@@ -31,7 +32,7 @@ from __future__ import unicode_literals
 # https://stackoverflow.com/questions/45838863/gio-memoryinputstream-does-not-free-memory-when-closed
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 
-PB_version = "3.1.4c"
+PB_version = "3.1.4d"
 # it integrates the changes of the file which have 3.1.5 as reference. 
 # Next version should be 3.1.6
 
@@ -250,6 +251,8 @@ from pdfbooklet.files_chooser import Chooser
 
 import locale       #for multilanguage support
 import gettext
+
+
 import pdfbooklet.elib_intl3 as elib_intl3
 elib_intl3.install("pdfbooklet", "share/locale")
 
@@ -1050,6 +1053,13 @@ class gtkGui:
 ##        self.area.drag_dest_set_target_list(targets)
 
         # self.area is connected to drag_motion in glade
+        
+        # Initialize outputSizeDropdown sensitivity
+        if "radiosize3" in self.arw and "outputSizeDropdown" in self.arw:
+             self.arw["outputSizeDropdown"].set_sensitive(self.arw["radiosize3"].get_active())
+             self.arw["outputSizeDropdown"].set_active_id("preset_placeholder")
+             
+        self.updating_from_dropdown = False
 
 
 
@@ -3188,6 +3198,52 @@ class gtkGui:
                         self.arw["drawingarea1"].show()
 
 
+    PAPER_SIZES = {
+        "A0": (841, 1189), "A1": (594, 841), "A2": (420, 594), "A3": (297, 420),
+        "A4": (210, 297), "A5": (148, 210), "A6": (105, 148), "A7": (74, 105),
+        "A8": (52, 74), "A9": (37, 52), "A10": (26, 37),
+        "B0": (1000, 1414), "B1": (707, 1000), "B2": (500, 707), "B3": (353, 500),
+        "B4": (250, 353), "B5": (176, 250), "B6": (125, 176), "B7": (88, 125),
+        "B8": (62, 88), "B9": (44, 62), "B10": (31, 44),
+        "C0": (917, 1297), "C1": (648, 917), "C2": (458, 648), "C3": (324, 458),
+        "C4": (229, 324), "C5": (162, 229), "C6": (114, 162), "C7": (81, 114),
+        "C8": (57, 81), "C9": (40, 57), "C10": (28, 40),
+        "Letter": (216, 279), "Legal": (216, 356), "Tabloid": (279, 432),
+        "Ledger": (432, 279), "Executive": (184, 267), "Folio": (210, 330),
+        "Quarto": (215, 275), "Statement": (140, 216), "A4_Landscape": (297, 210),
+        "Letter_Landscape": (279, 216), "HalfLetter": (139.7, 215.9)
+    }
+
+    def on_radiosize_toggled(self, widget):
+        is_user_defined = widget.get_active()
+        self.arw["outputSizeDropdown"].set_sensitive(is_user_defined)
+        if is_user_defined:
+             self.output_page_size(3) # 3 is user defined
+        
+    def on_output_size_changed(self, widget):
+        active_id = widget.get_active_id()
+        if active_id in self.PAPER_SIZES:
+            self.updating_from_dropdown = True
+            width, height = self.PAPER_SIZES[active_id]
+            self.arw["outputWidth"].set_text(str(height))
+            self.arw["outputHeight"].set_text(str(width))
+            self.updating_from_dropdown = False
+            self.previewUpdate(widget)
+
+    def on_output_dimension_changed(self, widget):
+        if not self.updating_from_dropdown:
+            # Check if current values match the selected preset
+            active_id = self.arw["outputSizeDropdown"].get_active_id()
+            if active_id:
+                try:
+                    current_width = float(self.arw["outputWidth"].get_text())
+                    current_height = float(self.arw["outputHeight"].get_text())
+                    preset_width, preset_height = self.PAPER_SIZES[active_id]
+                    epsilon = 0.01
+                    if abs(current_width - preset_height) > epsilon or abs(current_height - preset_width) > epsilon:
+                         self.arw["outputSizeDropdown"].set_active_id("preset_placeholder")
+                except ValueError:
+                    self.arw["outputSizeDropdown"].set_active_id("preset_placeholder")
 
     def preview_keys(self, widget, event = None) :
         print ( "==========>>", event)

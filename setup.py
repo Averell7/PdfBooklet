@@ -49,7 +49,7 @@ data_files=[('/usr/share/pdfbooklet/data', glob.glob('pdfbooklet/data/*.*')),
 
 
 setup(name='pdfbooklet',
-      version='3.1.4c',
+      version='3.1.4d',
       author='GAF Software',
       author_email='Averell7 at sourceforge dot net',
       maintainer='Averell7',

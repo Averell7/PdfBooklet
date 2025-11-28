@@ -11,7 +11,7 @@
     <property name="deletable">False</property>
     <property name="transient_for">window1</property>
     <property name="program_name">Pdf-Booklet</property>
-    <property name="version">3.1.4c</property>
+    <property name="version">3.1.4d</property>
     <property name="website">http://pdfbooklet.sourceforge.net/</property>
     <property name="website_label">http://pdfbooklet.sourceforge.net/</property>
     <property name="license" translatable="yes">Pdf-Shuffler is delivered under the GNU General Public Licence (GPL) Version 3.
@@ -1388,6 +1388,7 @@ Example :
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">radiosize1</property>
+                                        <signal name="toggled" handler="on_radiosize_toggled" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -1402,6 +1403,7 @@ Example :
                                         <property name="max_length">5</property>
                                         <property name="invisible_char">●</property>
                                         <property name="width_chars">5</property>
+                                        <signal name="changed" handler="on_output_dimension_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -1429,6 +1431,7 @@ Example :
                                         <property name="max_length">5</property>
                                         <property name="invisible_char">●</property>
                                         <property name="width_chars">5</property>
+                                        <signal name="changed" handler="on_output_dimension_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -1448,6 +1451,28 @@ Example :
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
                                         <property name="position">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBoxText" id="outputSizeDropdown">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <items>
+                                          <item id="preset_placeholder" translatable="yes">Preset</item>
+                                          <item id="A3">A3</item>
+                                          <item id="A4">A4</item>
+                                          <item id="A5">A5</item>
+                                          <item id="A6">A6</item>
+                                          <item id="Letter">Letter</item>
+                                          <item id="Legal">Legal</item>
+                                          <item id="HalfLetter">Half-Letter</item>
+                                        </items>
+                                        <signal name="changed" handler="on_output_size_changed" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">5</property>
                                       </packing>
                                     </child>
                                   </object>
