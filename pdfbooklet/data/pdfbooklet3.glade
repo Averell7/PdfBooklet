@@ -11,7 +11,7 @@
     <property name="deletable">False</property>
     <property name="transient_for">window1</property>
     <property name="program_name">Pdf-Booklet</property>
-    <property name="version">3.1.4d</property>
+    <property name="version">3.1.4e</property>
     <property name="website">http://pdfbooklet.sourceforge.net/</property>
     <property name="website_label">http://pdfbooklet.sourceforge.net/</property>
     <property name="license" translatable="yes">Pdf-Shuffler is delivered under the GNU General Public Licence (GPL) Version 3.

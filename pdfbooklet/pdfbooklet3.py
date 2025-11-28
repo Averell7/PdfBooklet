@@ -4,6 +4,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
+# 3.1.4e : small bugfix
 # version 3.1.4d : added output size dropdown, replace PDFShuffler icon for a newer icon.
 # version 3.1.4c : fixed horizontal scrollbar, optimized zoom, fixed multiprocessing pool error, implemented thumbnail caching
 # version 3.1.4b : fixed PDFShuffler on Python3, added "Reset" button to PDFShuffler, change app icon
@@ -32,7 +33,7 @@ from __future__ import unicode_literals
 # https://stackoverflow.com/questions/45838863/gio-memoryinputstream-does-not-free-memory-when-closed
 # Fix bug for display of red rectangles when the output page is rotated 90° or 270°
 
-PB_version = "3.1.4d"
+PB_version = "3.1.4e"
 # it integrates the changes of the file which have 3.1.5 as reference. 
 # Next version should be 3.1.6
 
@@ -908,7 +909,7 @@ class dummy:
         self.arw = {}
 
 
-class gtkGui:
+class gtkGui(TxtOnly):
     # parameters :
     # render is an instance of pdfRenderer
     # pdfList is a dictionary of path of pdf files : { 1:"...", 2:"...", ... }
@@ -917,6 +918,8 @@ class gtkGui:
                     render,
                     pdfList = None,
                     pageSelection = None):
+
+        TxtOnly.__init__(self, render, pdfList, pageSelection)
 
         global config, rows_i, columns_i, step_i, sections, output, input1, adobe_l, inputFiles_a, inputFile_a
         global numfolio, prependPages, appendPages, ref_page, selection, PSSelection
@@ -3234,7 +3237,7 @@ class gtkGui:
         if not self.updating_from_dropdown:
             # Check if current values match the selected preset
             active_id = self.arw["outputSizeDropdown"].get_active_id()
-            if active_id:
+            if active_id and active_id != "preset_placeholder":
                 try:
                     current_width = float(self.arw["outputWidth"].get_text())
                     current_height = float(self.arw["outputHeight"].get_text())
