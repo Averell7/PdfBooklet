@@ -3333,6 +3333,7 @@ class gtkGui:
         if hasattr(self.shuffler, 'pool') and self.shuffler.pool:
             self.shuffler.pool.terminate()
             self.shuffler.pool.join()
+            self.shuffler.pool = None
         self.shuffler.model.clear()
         self.shuffler.pdfqueue = []
         self.shuffler.nfile = 0
@@ -3344,6 +3345,7 @@ class gtkGui:
         if hasattr(self.shuffler, 'pool') and self.shuffler.pool:
             self.shuffler.pool.terminate()
             self.shuffler.pool.join()
+            self.shuffler.pool = None
         self.shuffler.model.clear()
         self.shuffler.pdfqueue = []
         self.shuffler.nfile = 0

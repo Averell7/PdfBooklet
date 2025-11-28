@@ -109,10 +109,10 @@ def render_page_task(args):
         # Extract raw data
         stride = surface.get_stride()
         data = surface.get_data()
-        # Convert memoryview/buffer to bytes for pickling
-        data_bytes = bytes(data)
         
-        return (row_index, target_w, target_h, stride, data_bytes)
+        # Return bytes because surface/buffer cannot be pickled easily across processes
+        # Also return the cache key components
+        return (row_index, filename, page_index, resample, target_w, target_h, stride, bytes(data))
     except Exception as e:
         # print(f"Error rendering page {page_index} of {filename}: {e}")
         return None
@@ -152,6 +152,7 @@ class PdfShuffler:
 
         # Create the temporary directory
         self.tmp_dir = tempfile.mkdtemp("pdfshuffler")
+        self.thumbnail_cache = {}
         self.selection_start = 0
         os.chmod(self.tmp_dir, stat.S_IRWXU)        # TODO il y avait 0700. RWXO est plutôt 777 ?
         icon_theme = Gtk.IconTheme.get_default()
@@ -208,6 +209,7 @@ class PdfShuffler:
 
         # Create a scrolled window to hold the thumbnails-container
         self.sw = self.uiXML.get_object('scrolledwindow')
+        self.sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         self.sw.drag_dest_set(Gtk.DestDefaults.MOTION |
                               Gtk.DestDefaults.HIGHLIGHT |
                               Gtk.DestDefaults.DROP |
@@ -220,8 +222,8 @@ class PdfShuffler:
         self.sw.connect('scroll_event', self.sw_scroll_event)
 
         # Create an alignment to keep the thumbnails center-aligned
-        align = Gtk.Alignment.new(0.5, 0.5, 0, 0)       # python 3
-        self.sw.add_with_viewport(align)
+        self.align = Gtk.Alignment.new(0.5, 0.5, 0, 0)       # python 3
+        self.sw.add_with_viewport(self.align)
 
         # Create ListStore model and IconView
         self.model = Gtk.ListStore(str,         # 0.Text descriptor
@@ -287,14 +289,14 @@ class PdfShuffler:
         self.iconview.connect('drag_end', self.iv_dnd_leave_end)
         self.iconview.connect('button_press_event', self.iv_button_press_event)
 
-        align.add(self.iconview)
+        self.align.add(self.iconview)
 
         # Progress bar
         self.progress_bar = self.uiXML.get_object('progressbar')
         self.progress_bar_timeout_id = 0
 
         # Define window callback function and show window
-        self.window.connect('size_allocate', self.on_window_size_request)        # resize
+        self.align.connect('size_allocate', self.on_grid_resize)        # resize
         self.window.connect('key_press_event', self.on_keypress_event ) # keypress
         self.window.show_all()
         self.progress_bar.hide()
@@ -333,13 +335,10 @@ class PdfShuffler:
         self.nfile = 0
         self.iv_auto_scroll_direction = 0
         self.iv_auto_scroll_timer = None
+        self.zoom_timer_id = None
         self.pdfqueue = []
 
-        GObject.type_register(PDF_Renderer)
-        GObject.signal_new('update_thumbnail', PDF_Renderer,
-                           GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE,
-                           [GObject.TYPE_INT, GObject.TYPE_PYOBJECT,
-                            GObject.TYPE_FLOAT])
+
 
         self.set_unsaved(False)
         self.resample = 1.0
@@ -354,11 +353,8 @@ class PdfShuffler:
 
     def render(self):
         """Renders the thumbnails using multiprocessing"""
-        if hasattr(self, 'pool') and self.pool:
-            self.pool.terminate()
-            self.pool.join()
-
-        self.pool = multiprocessing.Pool()
+        if not (hasattr(self, 'pool') and self.pool):
+             self.pool = multiprocessing.Pool()
         
         tasks = []
         # We need to iterate and collect tasks. 
@@ -370,7 +366,26 @@ class PdfShuffler:
                 npage = row[3]
                 if nfile > 0 and nfile <= len(self.pdfqueue):
                     pdfdoc = self.pdfqueue[nfile - 1]
-                    tasks.append((pdfdoc.filename, npage - 1, self.resample, idx))
+                    
+                    # Check cache
+                    cache_key = (pdfdoc.filename, npage - 1, self.resample)
+                    if cache_key in self.thumbnail_cache:
+                        width, height, stride, data_bytes = self.thumbnail_cache[cache_key]
+                        try:
+                            data_mutable = bytearray(data_bytes)
+                            surface = cairo.ImageSurface.create_for_data(
+                                data_mutable, cairo.FORMAT_ARGB32, width, height, stride)
+                            
+                            path = Gtk.TreePath.new_from_indices([idx])
+                            iter_ = self.model.get_iter(path)
+                            self.model.set_value(iter_, 1, surface)
+                            self.model.set_value(iter_, 13, self.resample)
+                        except Exception as e:
+                            print(f"Error using cached thumbnail: {e}")
+                            # If cache fails, add to tasks to re-render
+                            tasks.append((pdfdoc.filename, npage - 1, self.resample, idx))
+                    else:
+                        tasks.append((pdfdoc.filename, npage - 1, self.resample, idx))
         
         self.total_tasks = len(tasks)
         self.finished_tasks = 0
@@ -389,36 +404,33 @@ class PdfShuffler:
             GObject.idle_add(self.update_thumbnail_ui, result)
 
     def update_thumbnail_ui(self, result):
-        row_index, width, height, stride, data_bytes = result
-        
-        # Reconstruct surface
-        # We need to create a mutable buffer from bytes
-        # cairo.ImageSurface.create_for_data requires a writable buffer.
-        # 'data_bytes' is immutable bytes. bytearray is mutable.
-        data_mutable = bytearray(data_bytes)
-        
-        surface = cairo.ImageSurface.create_for_data(
-            data_mutable, cairo.FORMAT_ARGB32, width, height, stride)
-            
-        # Update model
-        # We assume row_index is valid. 
-        # We need to get the iter from path/index
         try:
+            row_index, filename, page_index, resample, width, height, stride, data_bytes = result
+            
+            # Cache the result
+            cache_key = (filename, page_index, resample)
+            self.thumbnail_cache[cache_key] = (width, height, stride, data_bytes)
+            
+            # Reconstruct surface
+            data_mutable = bytearray(data_bytes)
+            
+            surface = cairo.ImageSurface.create_for_data(
+                data_mutable, cairo.FORMAT_ARGB32, width, height, stride)
+                
+            # Update model
             path = Gtk.TreePath.new_from_indices([row_index])
             iter_ = self.model.get_iter(path)
             self.model.set_value(iter_, 1, surface)
             
             # Update other columns if needed (width, height, resample)
-            # Original code updated these in PDF_Renderer? No, PDF_Renderer only returned thumbnail.
-            # Wait, PDF_Renderer emitted 'update_thumbnail' with (idx, thumbnail, resample).
-            # And 'update_thumbnail' handler in PdfShuffler did:
-            # row[1] = thumbnail
-            # row[13] = resample
             self.model.set_value(iter_, 13, self.resample)
-            
-        except ValueError:
-            # Model might have changed (rows deleted)
+                
+        except (ValueError, IndexError, TypeError) as e:
+            # Model might have changed (rows deleted) or data is invalid
+            print(f"Error updating thumbnail UI: {e}")
             pass
+        except Exception as e:
+            print(f"Unexpected error in update_thumbnail_ui: {e}")
             
         self.finished_tasks += 1
         self.update_progress_bar_mp()
@@ -485,14 +497,25 @@ class PdfShuffler:
         row[1] = thumbnail
         Gdk.threads_leave()
 
-    def on_window_size_request(self, window, event):
-        """Main Window resize - workaround for autosetting of
-           iconview cols no."""
-
-        #add 12 because of: http://bugzilla.gnome.org/show_bug.cgi?id=570152
-        col_num = 9 * window.get_size()[0] \
-            / (10 * (self.iv_col_width + self.iconview.get_column_spacing() * 2))
-        self.iconview.set_columns(col_num)
+    def on_grid_resize(self, widget, allocation):
+        """Adjusts columns when the scrolled window is resized"""
+        width = allocation.width
+        
+        item_width = self.iv_col_width + 20
+        spacing = self.iconview.get_column_spacing()
+        
+        # 2px margin for rounding safety
+        available_width = width - 2
+        
+        if available_width < item_width:
+            col_num = 1
+        else:
+            col_num = int((available_width + spacing) / (item_width + spacing))
+            
+        col_num = max(1, col_num)
+        
+        if self.iconview.get_columns() != col_num:
+            self.iconview.set_columns(col_num)
 
     def update_geometry(self, iter):
         """Recomputes the width and height of the rotated page and saves
@@ -528,7 +551,7 @@ class PdfShuffler:
             self.celltxt.set_property('width', self.iv_col_width)
             self.celltxt.set_property('wrap-width', self.iv_col_width)
             self.iconview.set_item_width(self.iv_col_width + 12) #-1)
-            self.on_window_size_request(self.window, None)
+            self.on_grid_resize(self.align, self.align.get_allocation())
 
     def on_keypress_event(self, widget, event):
         """Keypress events in Main Window"""
@@ -541,9 +564,10 @@ class PdfShuffler:
         """Termination"""
 
         try :
-            if self.rendering_thread:
-                self.rendering_thread.quit = True
-                self.rendering_thread.join()
+            if hasattr(self, 'pool') and self.pool:
+                self.pool.terminate()
+                self.pool.join()
+                self.pool = None
         except :
             pass    # PdfShuffler may be already closed
 
@@ -1118,9 +1142,22 @@ class PdfShuffler:
         self.zoom_change(-5)
 
     def zoom_bar(self,widget,a=None, b=None):
-        """Modifies the zoom level with the slider"""
+        """Modifies the zoom level with the slider, debounced"""
         zoom_scale = widget.get_value()
-        self.zoom_set(zoom_scale)
+        
+        # Cancel previous timer if it exists
+        if hasattr(self, 'zoom_timer_id') and self.zoom_timer_id:
+            GObject.source_remove(self.zoom_timer_id)
+            
+        self.pending_zoom_level = zoom_scale
+        # Set a timer for 100ms
+        self.zoom_timer_id = GObject.timeout_add(100, self.apply_zoom_delayed)
+
+    def apply_zoom_delayed(self):
+        if hasattr(self, 'pending_zoom_level'):
+            self.zoom_set(self.pending_zoom_level)
+        self.zoom_timer_id = None
+        return False # Stop timer
 
 
 
